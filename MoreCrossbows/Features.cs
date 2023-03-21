@@ -27,6 +27,7 @@ namespace MoreCrossbows
             if (prefab != null)
             {
                 instance.m_items.Remove(prefab);
+                //ObjectDB.instance.m_itemByHash.Remove(item.ItemPrefab.name.GetStableHashCode());
                 return true;
             }
 
