@@ -1,0 +1,239 @@
+ManifestFileVersion: 0
+CRC: 1210450201
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ed0c1b4f05e0c434b24904d97cde250d
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 6162e9f62a9d81b45862a2d09ee081c6
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 825357479, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 313648218, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 1521249158, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 469224316, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 1541706127, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 1404409730, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 69470131, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 368864397, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 1109157524, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: assembly_valheim
+  ClassName: Attack
+- AssemblyName: assembly_valheim
+  ClassName: EffectList
+- AssemblyName: assembly_valheim
+  ClassName: EffectList/EffectData
+- AssemblyName: assembly_valheim
+  ClassName: HitData/DamageTypes
+- AssemblyName: assembly_valheim
+  ClassName: ItemDrop/ItemData
+- AssemblyName: assembly_valheim
+  ClassName: ItemDrop/ItemData/SharedData
+Assets:
+- Assets/Material/JVLmock_dust_particle.mat
+- Assets/PrefabInstance/sfx_lightning_hit.prefab
+- Assets/Sprite/frost_bolt.png
+- Assets/Material/CrossbowIron_matt.mat
+- Assets/Material/JVLmock_cold_sparcs.mat
+- Assets/PrefabInstance/JVLmock_fx_block_camshake.prefab
+- Assets/Material/JVLmock_trail.mat
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_11.ogg
+- Assets/Material/JVLmock_flame.mat
+- Assets/Mesh/WoodCrossbowLoaded.mesh
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_16.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_01.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_11.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_14.ogg
+- Assets/PrefabInstance/bow_projectile_lightning.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_02.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_14.ogg
+- Assets/PrefabInstance/JVLmock_sfx_bomb_throw.prefab
+- Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_01.ogg
+- Assets/Mesh/BronzeCrossbowUnloaded.mesh
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_06.ogg
+- Assets/Texture2D/CrossbowBlackmetal_n.png
+- Assets/Material/CrossbowBronze_mat.mat
+- Assets/AudioClip/JVLmock_Weapons_ArbalestCrossbow_Shot_01.ogg
+- Assets/Texture2D/bolts_d.png
+- Assets/AudioClip/JVLmock_Eiter_Impact_02.ogg
+- Assets/PrefabInstance/BoltFrost.prefab
+- Assets/Sprite/poison_bolt.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_09.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_10.ogg
+- Assets/Texture2D/CrossbowBlackmetal_d.png
+- Assets/PrefabInstance/JVLmock_sfx_bow_draw.prefab
+- Assets/AudioClip/JVLmock_Eiter_Impact_08.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_02.ogg
+- Assets/Texture2D/CrossbowIron_n.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_01.ogg
+- Assets/Material/JVLmock_radiation_particle.mat
+- Assets/Texture2D/Crossbow_n.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_13.ogg
+- Assets/Material/JVLmock_item_particle.mat
+- Assets/PrefabInstance/BoltExplosive.prefab
+- Assets/Texture2D/CrossbowIron_m.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_08.ogg
+- Assets/Material/JVLmock_arrow.mat
+- Assets/PrefabInstance/arbalest_projectile_frost.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_09.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_13.ogg
+- Assets/Texture2D/Crossbow_d.png
+- Assets/AudioClip/JVLmock_Eiter_Impact_07.ogg
+- Assets/AudioClip/JVLmock_Weapons_ArbalestCrossbow_Shot_03.ogg
+- Assets/PrefabInstance/BoltPoison.prefab
+- Assets/Sprite/silver_bolt.png
+- Assets/PrefabInstance/CrossbowIron.prefab
+- Assets/Material/JVLmock_Bolts_mat.mat
+- Assets/PrefabInstance/BoltWood.prefab
+- Assets/Mesh/boltModel.mesh
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_07.ogg
+- Assets/PrefabInstance/JVLmock_sfx_arrow_hit.prefab
+- Assets/Texture2D/CrossbowBlackmetal_m.png
+- Assets/AudioClip/JVLmock_Eiter_Impact_05.ogg
+- Assets/Sprite/lightning_arrow.png
+- Assets/Mesh/CrossbowBlackmetalUnloaded.mesh
+- Assets/Sprite/crossbow_silver.png
+- Assets/Mesh/CrossbowIronUnloaded.mesh
+- Assets/Material/CrossbowWood_mat.mat
+- Assets/Material/CrossbowBlackmetal_mat.mat
+- Assets/AudioClip/JVLmock_Eiter_Impact_03.ogg
+- Assets/PrefabInstance/JVLmock_vfx_blocked.prefab
+- Assets/Material/JVLmock_arrow_frost.mat
+- Assets/Mesh/BronzeCrossbowLoaded.mesh
+- Assets/Texture2D/bolts_n.png
+- Assets/PrefabInstance/CrossbowBlackmetal.prefab
+- Assets/Texture2D/WoodCrossbow_d.png
+- Assets/Sprite/crossbow_wood.png
+- Assets/Material/JVLmock_TurretBoltWood.mat
+- Assets/PrefabInstance/JVLmock_sfx_arbalest_fire.prefab
+- Assets/AudioClip/JVLmock_Eiter_Impact_06.ogg
+- Assets/PrefabInstance/sfx_wood_crossbow_fire.prefab
+- Assets/Shader/JVLmock_Custom_Creature.shader
+- Assets/PrefabInstance/CrossbowSilver.prefab
+- Assets/Mesh/JVLmock_polySurface20.mesh
+- Assets/PrefabInstance/JVLmock_vfx_arbalest_fire.prefab
+- Assets/Sprite/wood_bolt.png
+- Assets/Shader/JVLmock_Standard TwoSided.shader
+- Assets/Sprite/crossbow_bronze.png
+- Assets/Mesh/default_327.asset
+- Assets/Sprite/lightning_bolt.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_04.ogg
+- Assets/Material/JVLmock_light_glow.mat
+- Assets/Material/JVLmock_lightning_sparcs.mat
+- Assets/PrefabInstance/JVLmock_fx_radiation_hit.prefab
+- Assets/PrefabInstance/sfx_bronze_crossbow_fire.prefab
+- Assets/AudioClip/JVLmock_Eiter_Impact_04.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_15.ogg
+- Assets/Texture2D/bolts_m.png
+- Assets/Shader/JVLmock_Particles_Standard Unlit2.shader
+- Assets/AudioClip/JVLmock_Eiter_Projectile_08.ogg
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_10.ogg
+- Assets/Mesh/CrossbowSilverUnloaded.mesh
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_12.ogg
+- Assets/Material/CrossbowSilver_mat.mat
+- Assets/Material/arrow_lightning.mat
+- Assets/Sprite/crossbow_blackmetal.png
+- Assets/PrefabInstance/BoltLightning.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_05.ogg
+- Assets/AudioClip/JVLmock_Weapons_ArbalestCrossbow_Shot_02.ogg
+- Assets/Mesh/CrossbowSilverLoaded.mesh
+- Assets/PrefabInstance/JVLmock_vfx_frostarrow_hit.prefab
+- Assets/Texture2D/CrossbowSilver_m.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_05.ogg
+- Assets/Texture2D/Crossbow_m.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_04.ogg
+- Assets/Material/JVLmock_arrow_poison.mat
+- Assets/AudioClip/JVLmock_Eiter_Impact_01.ogg
+- Assets/Shader/JVLmock_Custom_Piece.shader
+- Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_02.ogg
+- Assets/PrefabInstance/CrossbowBronze.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_03.ogg
+- Assets/Texture2D/JVLmock_arrow_white.png
+- Assets/PrefabInstance/arbalest_projectile_lightning.prefab
+- Assets/Mesh/CrossbowIronLoaded.mesh
+- Assets/PrefabInstance/JVLmock_vfx_arrowhit.prefab
+- Assets/Mesh/JVLmock_default_327.mesh
+- Assets/PrefabInstance/JVLmock_staff_fireball_projectile.prefab
+- Assets/Texture2D/CrossbowSilver_n.png
+- Assets/Material/JVLmock_flametal.mat
+- Assets/AudioClip/JVLmock_Eiter_Projectile_12.ogg
+- Assets/PrefabInstance/arbalest_projectile_poison.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_15.ogg
+- Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_03.ogg
+- Assets/PrefabInstance/arbalest_projectile_fire.prefab
+- Assets/PrefabInstance/JVLmock_fx_swing_camshake.prefab
+- Assets/AudioClip/JVLmock_Eiter_Projectile_07.ogg
+- Assets/Sprite/fire_bolt.png
+- Assets/AudioClip/JVLmock_Eiter_Projectile_06.ogg
+- Assets/Mesh/CrossbowBlackmetalLoaded.mesh
+- Assets/PrefabInstance/JVLmock_vfx_poisonarrow_hit.prefab
+- Assets/PrefabInstance/JVLmock_sfx_wood_blocked.prefab
+- Assets/Mesh/WoodCrossbowUnloaded.mesh
+- Assets/AudioClip/JVLmock_Eiter_Projectile_03.ogg
+- Assets/Texture2D/CrossbowIron_d.png
+- Assets/Sprite/crossbow_iron.png
+- Assets/Texture2D/CrossbowSilver_d.png
+- Assets/PrefabInstance/CrossbowWood.prefab
+- Assets/PrefabInstance/ArrowLightning.prefab
+- Assets/PrefabInstance/BoltFire.prefab
+- Assets/Material/Bolts_mat.mat
+- Assets/PrefabInstance/arbalest_projectile_wood.prefab
+- Assets/Mesh/default_405.asset
+- Assets/PrefabInstance/BoltSilver.prefab
+- Assets/Sprite/explosive_bolt.png
+Dependencies: []
