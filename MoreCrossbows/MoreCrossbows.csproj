@@ -118,7 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features.cs" />
-    <Compile Include="FutureFeatures.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="MoreCrossbows.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

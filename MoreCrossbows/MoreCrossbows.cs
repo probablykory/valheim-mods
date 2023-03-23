@@ -1,10 +1,6 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using System.Linq;
-using HarmonyLib;
-using JetBrains.Annotations;
 using Jotunn;
-using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
@@ -14,12 +10,10 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-
 namespace MoreCrossbows
 {
     public enum CraftingTable
     {
-        Disabled,
         Inventory,
         [InternalName("piece_workbench")] Workbench,
         [InternalName("piece_cauldron")] Cauldron,
@@ -27,8 +21,7 @@ namespace MoreCrossbows
         [InternalName("piece_artisanstation")] ArtisanTable,
         [InternalName("piece_stonecutter")] StoneCutter,
         [InternalName("piece_magetable")] MageTable,
-        [InternalName("blackforge")] BlackForge,
-        Custom
+        [InternalName("blackforge")] BlackForge
     }
 
     public class InternalName : Attribute
@@ -74,7 +67,7 @@ namespace MoreCrossbows
 
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.0.0.0";
+        public const string PluginVersion = "1.1.0.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         public static string ConfigFileName
@@ -85,17 +78,16 @@ namespace MoreCrossbows
             }
         }
 
-        internal AssetBundle _bundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
+        internal static MoreCrossbows Instance;
+        internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
         private bool _vanillaPrefabsAvailable = false;
         private List<Feature> _features = new List<Feature>();
 
         // Main entry point
         private void Awake()
         {
+            MoreCrossbows.Instance = this;
             base.Config.SaveOnConfigSet = true;
-
-            var ct = CraftingTable.Workbench.InternalName();
-
 #if DEBUG
             InitializeConfigWatcher();
 #endif
@@ -112,8 +104,8 @@ namespace MoreCrossbows
 
             if (_debug)
             {
-                Jotunn.Logger.LogInfo("DEBUG: config sync");
-                Jotunn.Logger.LogInfo("DEBUG: " + sender + " " + e.ToString());
+                Jotunn.Logger.LogDebug("DEBUG: config sync");
+                Jotunn.Logger.LogDebug("DEBUG: " + sender + " " + e.ToString());
             }
 
             if (_vanillaPrefabsAvailable)
@@ -137,28 +129,52 @@ namespace MoreCrossbows
             base.Config.Save();
         }
 
+        //private WeakReference<Dictionary<string, CustomPrefab>> prefabsDict = null;
+        private Dictionary<string, CustomPrefab> prefabsDict = null;
         private bool PrefabExists(string name)
         {
+            bool result = false;
+
             if (String.IsNullOrEmpty(name))
             {
-                return false;
+                return result;
             }
 
-            var result = PrefabManager.Instance.GetPrefab(name);
-            return result != null;
+            //Dictionary<string, CustomPrefab> dict = null;
+            //if (prefabsDict == null || !prefabsDict.TryGetTarget(out dict))
+            if (prefabsDict == null)
+            {
+                var prefabsMember = PrefabManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Prefabs");
+                var prefabsProp = prefabsMember as PropertyInfo;
+                if (prefabsProp != null)
+                {
+                    var dict = prefabsProp.GetValue(PrefabManager.Instance) as Dictionary<string, CustomPrefab>;
+                    if (dict != null)
+                    {
+                        prefabsDict = dict;
+                    }
+                }
+            }
+            if (prefabsDict != null)
+            {
+                result = prefabsDict.ContainsKey(name);
+            }
+
+            return result;
         }
 
         // force references to fix for indirect dependencies
-        private void RegisterCustomPrefab(AssetBundle bundle, string prefabName)
+        private void RegisterCustomPrefab(AssetBundle bundle, string assetName)
         {
+            string prefabName = assetName.Replace(".prefab", "");
             if (!String.IsNullOrEmpty(prefabName) && !PrefabExists(prefabName))
             {
-                var prefab = new CustomPrefab(bundle, prefabName, true);
+                var prefab = new CustomPrefab(bundle, assetName, true);
                 Jotunn.Logger.LogInfo("Registering " + prefab.Prefab.name);
                 if (prefab != null && prefab.IsValid())
                 {
                     prefab.Prefab.FixReferences(true);
-                    PrefabManager.Instance.AddPrefab(prefab.Prefab);
+                    PrefabManager.Instance.AddPrefab(prefab);
                 }
             }
         }
@@ -183,8 +199,13 @@ namespace MoreCrossbows
 
                 if (_debug)
                 {
-                    Jotunn.Logger.LogInfo("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
-                    Jotunn.Logger.LogInfo("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
+                    Jotunn.Logger.LogDebug("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
+                    Jotunn.Logger.LogDebug("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
+                }
+
+                if (f.RequiresUnload)
+                {
+                    f.Unload();
                 }
 
                 if (isEnabled != f.LoadedInGame)
@@ -195,7 +216,7 @@ namespace MoreCrossbows
                         {
                             foreach (string dep in f.DependencyNames)
                             {
-                                RegisterCustomPrefab(_bundle, dep);
+                                RegisterCustomPrefab(assetBundle, dep);
                             }
                         }
                         f.Load();
@@ -275,352 +296,249 @@ namespace MoreCrossbows
 
         private void InitializeFeatures()
         {
-            ConfigurationManagerAttributes isAdminOnly = new ConfigurationManagerAttributes { IsAdminOnly = true };
 
-            var enableBoltBone = Config.Bind("Bolts", "EnableBoltBone", true, new ConfigDescription("Enables bone bolts to be craftable earlier", null, isAdminOnly));
-            var enableBoltIron = Config.Bind("Bolts", "EnableBoltIron", true, new ConfigDescription("Enables iron bolts to be craftable earlier", null, isAdminOnly));
-            var enableBoltBlackmetal = Config.Bind("Bolts", "EnableBoltBlackmetal", true, new ConfigDescription("Enables blackmetal bolts to be craftable earlier", null, isAdminOnly));
-            var enableBoltWood = Config.Bind("Bolts", "EnableBoltWood", true, new ConfigDescription("Adds new wood bolts", null, isAdminOnly));
-            var enableBoltFire = Config.Bind("Bolts", "EnableBoltFire", true, new ConfigDescription("Adds new fire bolts", null, isAdminOnly));
-            var enableBoltSilver = Config.Bind("Bolts", "EnableBoltSilver", true, new ConfigDescription("Adds new spirit bolts", null, isAdminOnly));
-            var enableBoltFrost = Config.Bind("Bolts", "EnableBoltFrost", true, new ConfigDescription("Adds new frost bolts", null, isAdminOnly));
-            var enableBoltPoison = Config.Bind("Bolts", "EnableBoltPoison", true, new ConfigDescription("Adds new poison bolts", null, isAdminOnly));
-
-            var enableBoltLightning = Config.Bind("Bolts", "EnableBoltLightning", false, new ConfigDescription("Adds new lightning bolts", null, isAdminOnly));
-            var enableArrowLightning = Config.Bind("Arrows", "EnableArrowLightning", false, new ConfigDescription("Adds new lightning arrows", null, isAdminOnly));
-
-            var enableCrossbowWood = Config.Bind("Crossbows", "EnableCrossbowWood", true, new ConfigDescription("Adds a new Wooden Crossbow weapon", null, isAdminOnly));
-            var enableCrossbowBronze = Config.Bind("Crossbows", "EnableCrossbowBronze", true, new ConfigDescription("Adds a new Bronze Crossbow weapon", null, isAdminOnly));
-            var enableCrossbowIron = Config.Bind("Crossbows", "EnableCrossbowIron", true, new ConfigDescription("Adds a new Iron Crossbow weapon", null, isAdminOnly));
-            var enableCrossbowSilver = Config.Bind("Crossbows", "EnableCrossbowSilver", true, new ConfigDescription("Adds a new Silver Crossbow weapon", null, isAdminOnly));
-            var enableCrossbowBlackmetal = Config.Bind("Crossbows", "EnableCrossbowBlackmetal", true, new ConfigDescription("Adds a new Blackmetal Crossbow weapon", null, isAdminOnly));
-
-
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("CrossbowWood")
             {
-                Name = "CrossbowWood",
+                Category = "1 - Crossbows",
+                Description = "Adds a new Wooden Crossbow weapon",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowWood.prefab",
-                EnabledConfigEntry = enableCrossbowWood,
-                ItemConfig = new ItemConfig()
-                {
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 20, 8),
-                        new RequirementConfig("Stone", 8, 2),
-                        new RequirementConfig("LeatherScraps", 8, 2),
-                    }
-                }
+
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 2,
+                Requirements = "Wood:20:8,Stone:8:2,LeatherScraps:8:2",
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("CrossbowBronze")
             {
-                Name = "CrossbowBronze",
+                Category = "1 - Crossbows",
+                Description = "Adds a new Bronze Crossbow weapon",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowBronze.prefab",
-                EnabledConfigEntry = enableCrossbowBronze,
-                ItemConfig = new ItemConfig()
-                {
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 10, 4),
-                        new RequirementConfig("FineWood", 4, 2),
-                        new RequirementConfig("Bronze", 8, 2),
-                        new RequirementConfig("DeerHide", 2, 1),
-                    }
-                }
+
+                Table = CraftingTable.Forge,
+                MinTableLevel = 1,
+                Requirements = "Wood:10:4,FineWood:4:2,Bronze:8:2,DeerHide:2:1",
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("CrossbowIron")
             {
-                Name = "CrossbowIron",
+                Category = "1 - Crossbows",
+                Description = "Adds a new Iron Crossbow weapon",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowIron.prefab",
-                EnabledConfigEntry = enableCrossbowIron,
-                ItemConfig = new ItemConfig()
-                {
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 10, 4),
-                        new RequirementConfig("ElderBark", 4, 2),
-                        new RequirementConfig("Iron", 8, 2),
-                        new RequirementConfig("Root", 1, 0),
-                    }
-                }
+
+                Table = CraftingTable.Forge,
+                MinTableLevel = 1,
+                Requirements = "Wood:10:4,ElderBark:4:2,Iron:8:2,Root:1",
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("CrossbowSilver")
             {
-                Name = "CrossbowSilver",
+                Category = "1 - Crossbows",
+                Description = "Adds a new Silver Crossbow weapon",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowSilver.prefab",
-                EnabledConfigEntry = enableCrossbowSilver,
-                ItemConfig = new ItemConfig()
-                {
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 10, 5),
-                        new RequirementConfig("Silver", 4, 2),
-                        new RequirementConfig("Iron", 8, 4),
-                        new RequirementConfig("WolfHairBundle", 6, 0),
-                    }
-                }
+
+                Table = CraftingTable.Forge,
+                MinTableLevel = 1,
+                Requirements = "Wood:10:4,Silver:4:2,Iron:8:4,WolfHairBundle:6",
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("CrossbowBlackmetal")
             {
-                Name = "CrossbowBlackmetal",
+                Category = "1 - Crossbows",
+                Description = "Adds a new Blackmetal Crossbow weapon",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowBlackmetal.prefab",
-                EnabledConfigEntry = enableCrossbowBlackmetal,
-                ItemConfig = new ItemConfig()
-                {
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("FineWood", 10, 5),
-                        new RequirementConfig("BlackMetal", 10, 5),
-                        new RequirementConfig("Iron", 8, 4),
-                        new RequirementConfig("LoxPelt", 2, 1)
-                    }
-                }
+
+                Table = CraftingTable.Forge,
+                MinTableLevel = 1,
+                Requirements = "FineWood:10:4,BlackMetal:10:4,Iron:8:4,LoxPelt:2:1",
             });
 
-            _features.Add(new FeatureItem(this)
+
+            _features.Add(new FeatureItem("BoltWood")
             {
-                Name = "BoltWood",
+                Category = "2 - Bolts",
+                Description = "Adds new wood bolts",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltWood.prefab",
-                EnabledConfigEntry = enableBoltWood,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8)
-                    }
-                },
+
+                Amount = 20,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 2,
+                Requirements = "Wood:8",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_wood.prefab"
                 }
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("BoltFire")
             {
-                Name = "BoltFire",
+                Category = "2 - Bolts",
+                Description = "Adds new fire bolts",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFire.prefab",
-                EnabledConfigEntry = enableBoltFire,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
 
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Resin", 8),
-                        new RequirementConfig("Feathers", 2)
-                    }
-                },
+                Amount = 20,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 2,
+                Requirements = "Wood:8,Resin:8,Feathers:2",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_fire.prefab"
                 }
             });
 
-            _features.Add(new FeatureItem(this)
+
+            _features.Add(new FeatureItem("BoltSilver")
             {
-                Name = "BoltSilver",
+                Category = "2 - Bolts",
+                Description = "Adds new silver bolts",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltSilver.prefab",
-                EnabledConfigEntry = enableBoltSilver,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    MinStationLevel = 3,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Silver", 1),
-                        new RequirementConfig("Feathers", 2)
-                    }
-                },
+
+                Amount = 20,
+                Table = CraftingTable.Forge,
+                MinTableLevel = 3,
+                Requirements = "Wood:8,Silver:1,Feathers:2",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_wood.prefab"
                 }
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("BoltPoison")
             {
-                Name = "BoltFrost",
-                AssetPath = "Assets/PrefabInstance/BoltFrost.prefab",
-                EnabledConfigEntry = enableBoltFrost,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
-                    MinStationLevel = 4,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Obsidian", 4),
-                        new RequirementConfig("Feathers", 2),
-                        new RequirementConfig("FreezeGland", 1)
-                    }
-                },
-                DependencyNames = new List<string>()
-                {
-                    "arbalest_projectile_frost.prefab"
-                }
-            });
-
-            _features.Add(new FeatureItem(this)
-            {
-                Name = "BoltPoison",
+                Category = "2 - Bolts",
+                Description = "Adds new poison bolts",
+                EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltPoison.prefab",
-                EnabledConfigEntry = enableBoltPoison,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
-                    MinStationLevel = 3,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Obsidian", 4),
-                        new RequirementConfig("Feathers", 2),
-                        new RequirementConfig("Ooze", 2)
-                    }
-                },
+
+                Amount = 20,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 3,
+                Requirements = "Wood:8,Obsidian:4,Feathers:2,Ooze:2",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_poison.prefab"
                 }
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("BoltFrost")
             {
-                Name = "BoltLightning",
-                AssetPath = "Assets/PrefabInstance/BoltLightning.prefab",
-                EnabledConfigEntry = enableBoltLightning,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.BlackForge.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Feathers", 2),
-                        new RequirementConfig("Eitr", 1)
-                    }
+                Category = "2 - Bolts",
+                Description = "Adds new frost bolts",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltFrost.prefab",
 
-                },
+                Amount = 20,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 4,
+                Requirements = "Wood:8,Obsidian:4,Feathers:2,FreezeGland:1",
                 DependencyNames = new List<string>()
                 {
-                    "sfx_lightning_hit",
+                    "arbalest_projectile_frost.prefab"
+                }
+            });
+
+
+            _features.Add(new FeatureItem("BoltLightning")
+            {
+                Category = "2 - Bolts",
+                Description = "Adds new lightning bolts",
+                EnabledByDefault = false,
+                AssetPath = "Assets/PrefabInstance/BoltLightning.prefab",
+
+                Amount = 20,
+                Table = CraftingTable.BlackForge,
+                MinTableLevel = 2,
+                Requirements = "Wood:8,Feathers:2,Eitr:1",
+                DependencyNames = new List<string>()
+                {
+                    "sfx_lightning_hit.prefab",
                     "arbalest_projectile_lightning.prefab"
                 }
             });
 
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("ArrowLightning")
             {
-                Name = "ArrowLightning",
+                Category = "3 - Arrows",
+                Description = "Adds new lightning arrows",
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/ArrowLightning.prefab",
-                EnabledConfigEntry = enableArrowLightning,
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 20,
-                    CraftingStation = CraftingTable.BlackForge.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Feathers", 2),
-                        new RequirementConfig("Eitr", 1)
-                    }
 
-                },
+                Amount = 20,
+                Table = CraftingTable.BlackForge,
+                MinTableLevel = 2,
+                Requirements = "Wood:8,Feathers:2,Eitr:1",
                 DependencyNames = new List<string>()
                 {
-                    "sfx_lightning_hit",
-                    "bow_projectile_lightning.prefab"
+                    "sfx_lightning_hit.prefab",
+                    "arbalest_projectile_lightning.prefab"
                 }
             });
+
 
             // new workbench recipes for existing bolts
-            _features.Add(new FeatureRecipe(this)
+            _features.Add(new FeatureRecipe("BoltBone")
             {
-                Name = "BoltBone",
-                EnabledConfigEntry = enableBoltBone,
-                RecipeConfig = new RecipeConfig()
-                {
-                    Name = "CraftEarlyBoltBone",
-                    Item = "BoltBone",
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Workbench.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("BoneFragments", 8),
-                        new RequirementConfig("Feathers", 2)
-                    }
-                }
+                Category = "2 - Bolts",
+                Description = "Enables bone bolts to be craftable earlier",
+                EnabledByDefault = true,
+
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 2,
+                Requirements = "BoneFragments:8,Feathers:2",
+                Amount = 20,
             });
 
-            _features.Add(new FeatureRecipe(this)
+            _features.Add(new FeatureRecipe("BoltIron")
             {
-                Name = "BoltIron",
-                EnabledConfigEntry = enableBoltIron,
-                RecipeConfig = new RecipeConfig()
-                {
-                    Name = "CraftEarlyBoltIron",
-                    Item = "BoltIron",
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("Iron", 1),
-                        new RequirementConfig("Feathers", 2)
-                    }
+                Category = "2 - Bolts",
+                Description = "Enables iron bolts to be craftable earlier",
+                EnabledByDefault = true,
 
-                }
+                Table = CraftingTable.Forge,
+                MinTableLevel = 2,
+                Requirements = "Wood:8,Iron:1,Feathers:2",
+                Amount = 20,
             });
 
-            _features.Add(new FeatureRecipe(this)
+            _features.Add(new FeatureRecipe("BoltBlackmetal")
             {
-                Name = "BoltBlackmetal",
-                EnabledConfigEntry = enableBoltBlackmetal,
-                RecipeConfig = new RecipeConfig()
-                {
-                    Name = "CraftEarlyBoltBlackmetal",
-                    Item = "BoltBlackmetal",
-                    Amount = 20,
-                    CraftingStation = CraftingTable.Forge.InternalName(),
-                    MinStationLevel = 4,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 8),
-                        new RequirementConfig("BlackMetal", 2),
-                        new RequirementConfig("Feathers", 2)
-                    }
+                Category = "2 - Bolts",
+                Description = "Enables blackmetal bolts to be craftable earlier",
+                EnabledByDefault = true,
 
-                }
+                Table = CraftingTable.Forge,
+                MinTableLevel = 4,
+                Requirements = "Wood:8,BlackMetal:2,Feathers:2",
+                Amount = 20,
             });
 
             // Must be last - easter egg
-            _features.Add(new FeatureItem(this)
+            _features.Add(new FeatureItem("BoltExplosive")
             {
-                Name = "BoltExplosive",
                 AssetPath = "Assets/PrefabInstance/BoltExplosive.prefab",
                 // no enabled setting
-                ItemConfig = new ItemConfig()
-                {
-                    Amount = 10,
-                    CraftingStation = CraftingTable.BlackForge.InternalName(),
-                    MinStationLevel = 2,
-                    Requirements = new RequirementConfig[] {
-                        new RequirementConfig("Wood", 5),
-                        new RequirementConfig("Feathers", 2),
-                        new RequirementConfig("Ooze", 5),
-                        new RequirementConfig("SurtlingCore", 5),
-                        new RequirementConfig("Coal", 5),
-                        new RequirementConfig("Eitr", 5),
-                        new RequirementConfig("Flametal", 1) //maybe 2, unsure
-                    }
-                }
+                //Category = "2 - Bolts",
+                //Description = "",
+                //EnabledByDefault = false,
+
+                Table = CraftingTable.BlackForge,
+                MinTableLevel = 2,
+                Requirements = "Wood:5,Feathers:2,Ooze:5,SurtlingCore:5,Coal:5,Eitr:5,Flametal:1",
+                Amount = 10,
             });
+
+            foreach (var f in _features)
+            {
+                f.Initialize();
+
+            }
         }
     }
 }
