@@ -45,15 +45,15 @@ namespace MoreCrossbows
                 case "Cauldron":
                     return "piece_cauldron";
                 case "Forge":
-                    return "piece_workbench";
+                    return "forge";
                 case "ArtisanTable":
-                    return "piece_workbench";
+                    return "piece_artisanstation";
                 case "StoneCutter":
-                    return "piece_workbench";
+                    return "piece_stonecutter";
                 case "MageTable":
-                    return "piece_workbench";
+                    return "piece_magetable";
                 case "BlackForge":
-                    return "piece_workbench";
+                    return "blackforge";
             }
             return string.Empty; // "Inventory" or error
         }
