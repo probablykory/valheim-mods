@@ -43,7 +43,7 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
 
 ## Changelog
 
-### v1.1.0 (Unreleased)
+### v1.1.0 (Release pending)
  * Item and Recipe requirements are now configurable.
  * Small bugfixes and adjustments.
 

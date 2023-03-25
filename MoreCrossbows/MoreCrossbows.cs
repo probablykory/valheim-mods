@@ -1,54 +1,61 @@
 ﻿using BepInEx;
-using System.Linq;
 using Jotunn;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using UnityEngine;
+using HarmonyLib;
 
 namespace MoreCrossbows
 {
-    public enum CraftingTable
+    public static class CraftingTable
     {
-        Inventory,
-        [InternalName("piece_workbench")] Workbench,
-        [InternalName("piece_cauldron")] Cauldron,
-        [InternalName("forge")] Forge,
-        [InternalName("piece_artisanstation")] ArtisanTable,
-        [InternalName("piece_stonecutter")] StoneCutter,
-        [InternalName("piece_magetable")] MageTable,
-        [InternalName("blackforge")] BlackForge
-    }
+        public static string Inventory { get { return "Inventory"; } }
+        public static string Workbench { get { return "Workbench"; } }
+        public static string Cauldron { get { return "Cauldron"; } }
+        public static string Forge { get { return "Forge"; } }
+        public static string ArtisanTable { get { return "ArtisanTable"; } }
+        public static string StoneCutter { get { return "StoneCutter"; } }
+        public static string MageTable { get { return "MageTable"; } }
+        public static string BlackForge { get { return "BlackForge"; } }
 
-    public class InternalName : Attribute
-    {
-        public static string GetName<T>(T value) where T : struct => ((InternalName)typeof(T).GetMember(value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).internalName;
-
-
-        public readonly string internalName;
-        public InternalName(string internalName) => this.internalName = internalName;
-    }
-
-    public static class EnumExtensions
-    {
-        public static string InternalName(this CraftingTable value)
+        public static string[] GetValues()
         {
-            switch (value)
+            return new string[]
             {
-                case CraftingTable.Workbench:
-                case CraftingTable.Cauldron:
-                case CraftingTable.Forge:
-                case CraftingTable.ArtisanTable:
-                case CraftingTable.StoneCutter:
-                case CraftingTable.MageTable:
-                case CraftingTable.BlackForge:
-                    return ((InternalName)typeof(CraftingTable).GetMember(value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).internalName;
+                Inventory,
+                Workbench,
+                Cauldron,
+                Forge,
+                ArtisanTable,
+                StoneCutter,
+                MageTable,
+                BlackForge
+            };
+        }
+
+        public static string GetInternalName(string name)
+        {
+            switch (name)
+            {
+                case "Workbench":
+                    return "piece_workbench";
+                case "Cauldron":
+                    return "piece_cauldron";
+                case "Forge":
+                    return "piece_workbench";
+                case "ArtisanTable":
+                    return "piece_workbench";
+                case "StoneCutter":
+                    return "piece_workbench";
+                case "MageTable":
+                    return "piece_workbench";
+                case "BlackForge":
+                    return "piece_workbench";
             }
-            return string.Empty;
+            return string.Empty; // "Inventory" or error
         }
     }
 
@@ -58,55 +65,45 @@ namespace MoreCrossbows
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class MoreCrossbows : BaseUnityPlugin
     {
-
-#if DEBUG
-        private bool _debug = true;
-#else
-        private bool _debug = false;
-#endif
-
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
         public const string PluginVersion = "1.1.0.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
-        public static string ConfigFileName
-        {
-            get
-            {
-                return PluginAuthor + "." + PluginName + ".cfg";
-            }
-        }
-
         internal static MoreCrossbows Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
+        private Harmony harmony = null;
         private bool _vanillaPrefabsAvailable = false;
         private List<Feature> _features = new List<Feature>();
 
         // Main entry point
         private void Awake()
         {
+            harmony = new Harmony(PluginGUID);
+            harmony.PatchAll();
+
             MoreCrossbows.Instance = this;
-            base.Config.SaveOnConfigSet = true;
-#if DEBUG
-            InitializeConfigWatcher();
-#endif
+            Config.SaveOnConfigSet = true;
+
             InitializeFeatures();
-            this.AddLocalizations();
+            AddLocalizations();
+
+            Patches.OnPlayerSpawned += OnPlayerSpawned;
+
 
             SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
-            PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable; // handled only once
+            PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+        }
+
+        private void OnPlayerSpawned(Player obj)
+        {
+            Jotunn.Logger.LogDebug("Player spawned received.");
+            EnsureFeaturesUpdates();
         }
 
         private void OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)
         {
-            Jotunn.Logger.LogInfo("Configuration Sync recieved.");
-
-            if (_debug)
-            {
-                Jotunn.Logger.LogDebug("DEBUG: config sync");
-                Jotunn.Logger.LogDebug("DEBUG: " + sender + " " + e.ToString());
-            }
+            Jotunn.Logger.LogDebug("Configuration Sync received.");
 
             if (_vanillaPrefabsAvailable)
             {
@@ -116,58 +113,27 @@ namespace MoreCrossbows
 
         private void OnVanillaPrefabsAvailable()
         {
+            Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
             _vanillaPrefabsAvailable = true;
             AddOrRemoveFeatures();
-
-            PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }
 
         private void OnDestroy()
         {
+            Jotunn.Logger.LogDebug("OnDestroy called.");
+
             SynchronizationManager.OnConfigurationSynchronized -= OnConfigurationSynchronized;
+            PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
+            Patches.OnPlayerSpawned -= OnPlayerSpawned;
 
-            base.Config.Save();
-        }
-
-        //private WeakReference<Dictionary<string, CustomPrefab>> prefabsDict = null;
-        private Dictionary<string, CustomPrefab> prefabsDict = null;
-        private bool PrefabExists(string name)
-        {
-            bool result = false;
-
-            if (String.IsNullOrEmpty(name))
-            {
-                return result;
-            }
-
-            //Dictionary<string, CustomPrefab> dict = null;
-            //if (prefabsDict == null || !prefabsDict.TryGetTarget(out dict))
-            if (prefabsDict == null)
-            {
-                var prefabsMember = PrefabManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Prefabs");
-                var prefabsProp = prefabsMember as PropertyInfo;
-                if (prefabsProp != null)
-                {
-                    var dict = prefabsProp.GetValue(PrefabManager.Instance) as Dictionary<string, CustomPrefab>;
-                    if (dict != null)
-                    {
-                        prefabsDict = dict;
-                    }
-                }
-            }
-            if (prefabsDict != null)
-            {
-                result = prefabsDict.ContainsKey(name);
-            }
-
-            return result;
+            Config.Save();
         }
 
         // force references to fix for indirect dependencies
         private void RegisterCustomPrefab(AssetBundle bundle, string assetName)
         {
             string prefabName = assetName.Replace(".prefab", "");
-            if (!String.IsNullOrEmpty(prefabName) && !PrefabExists(prefabName))
+            if (!String.IsNullOrEmpty(prefabName) && !PrefabManager.Instance.PrefabExists(prefabName))
             {
                 var prefab = new CustomPrefab(bundle, assetName, true);
                 Jotunn.Logger.LogInfo("Registering " + prefab.Prefab.name);
@@ -175,6 +141,19 @@ namespace MoreCrossbows
                 {
                     prefab.Prefab.FixReferences(true);
                     PrefabManager.Instance.AddPrefab(prefab);
+                }
+            }
+        }
+
+        private void EnsureFeaturesUpdates()
+        {
+            Jotunn.Logger.LogDebug("Ensuring feature updates.");
+
+            foreach (Feature f in _features)
+            {
+                if (f.RequiresUpdate)
+                {
+                    f.Update();
                 }
             }
         }
@@ -197,16 +176,11 @@ namespace MoreCrossbows
                     areAllFeaturesEnabled = areAllFeaturesEnabled && isEnabled;
                 }
 
-                if (_debug)
-                {
-                    Jotunn.Logger.LogDebug("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
-                    Jotunn.Logger.LogDebug("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
-                }
-
-                if (f.RequiresUnload)
-                {
-                    f.Unload();
-                }
+                //if (_debug)
+                //{
+                //    Jotunn.Logger.LogDebug("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
+                //    Jotunn.Logger.LogDebug("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
+                //}
 
                 if (isEnabled != f.LoadedInGame)
                 {
@@ -255,44 +229,6 @@ namespace MoreCrossbows
 
             LocalizationManager.Instance.AddLocalization(loc);
         }
-
-#if DEBUG
-        private void InitializeConfigWatcher()
-        {
-            FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(BepInEx.Paths.ConfigPath, ConfigFileName);
-            fileSystemWatcher.Changed += this.onConfigFileChangedCreatedOrRenamed;
-            fileSystemWatcher.Created += this.onConfigFileChangedCreatedOrRenamed;
-            fileSystemWatcher.Renamed += new RenamedEventHandler(this.onConfigFileChangedCreatedOrRenamed);
-            fileSystemWatcher.IncludeSubdirectories = true;
-            fileSystemWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
-            fileSystemWatcher.EnableRaisingEvents = true;
-        }
-
-        private void onConfigFileChangedCreatedOrRenamed(object sender, FileSystemEventArgs e)
-        {
-            string path = BepInEx.Paths.ConfigPath + Path.DirectorySeparatorChar.ToString() + ConfigFileName;
-            if (!File.Exists(path))
-            {
-                return;
-            }
-
-            try
-            {
-                Jotunn.Logger.LogInfo("Reading configuration.");
-                base.Config.Reload();
-            }
-            catch
-            {
-                Jotunn.Logger.LogError("There was an issue with your " + ConfigFileName + " file.");
-                Jotunn.Logger.LogError("Please check the format and spelling.");
-            }
-
-            if (_vanillaPrefabsAvailable)
-            {
-                AddOrRemoveFeatures();
-            }
-        }
-#endif
 
         private void InitializeFeatures()
         {
@@ -356,7 +292,6 @@ namespace MoreCrossbows
                 MinTableLevel = 1,
                 Requirements = "FineWood:10:4,BlackMetal:10:4,Iron:8:4,LoxPelt:2:1",
             });
-
 
             _features.Add(new FeatureItem("BoltWood")
             {
@@ -537,7 +472,6 @@ namespace MoreCrossbows
             foreach (var f in _features)
             {
                 f.Initialize();
-
             }
         }
     }

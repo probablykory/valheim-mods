@@ -4,52 +4,9 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
 
 namespace MoreCrossbows
 {
-
-    public static class Extensions
-    {
-        // A workaround until ItemManager.i.RemoveItem gets fixed.
-        private static Dictionary<int, GameObject> itemsByHash = null;
-        public static bool Remove(this ObjectDB instance, string prefabName)
-        {
-            if (string.IsNullOrEmpty(prefabName))
-            {
-                return false;
-            }
-
-            GameObject prefab = instance.GetItemPrefab(prefabName);
-            if (prefab != null)
-            {
-                if (itemsByHash == null)
-                {
-                    var ibhMember = ObjectDB.instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "m_itemByHash");
-                    var ibhField = ibhMember as FieldInfo;
-                    if (ibhField != null)
-                    {
-                        var dict = ibhField.GetValue(ObjectDB.instance) as Dictionary<int, GameObject>;
-                        if (dict != null)
-                        {
-                            itemsByHash = dict;
-                        }
-                    }
-                }
-
-                instance.m_items.Remove(prefab);
-                if (itemsByHash != null)
-                {
-                    itemsByHash.Remove(prefab.name.GetStableHashCode());
-                }
-                return true;
-            }
-
-            return false;
-        }
-    }
 
     internal class Feature
     {
@@ -60,7 +17,7 @@ namespace MoreCrossbows
             DependencyNames = new List<string>();
         }
 
-        public bool RequiresUnload { get; protected set; }
+        public bool RequiresUpdate { get; protected set; }
         public bool LoadedInGame { get; protected set; }
 
         // config data
@@ -70,7 +27,7 @@ namespace MoreCrossbows
         public string Description { get; set; }
 
         // entity data
-        public CraftingTable Table { get; set; }
+        public string Table { get; set; }
         public int MinTableLevel { get; set; } = 1;
         public string Requirements { get; set; }
         public int Amount { get; set; } = 1;
@@ -84,19 +41,22 @@ namespace MoreCrossbows
         public virtual bool Initialize() { return false; }
         public virtual bool Load() { return false; }
         public virtual bool Unload() { return false; }
+        public virtual bool Update() { return false; }
     }
+
 
     internal class FeatureItem : Feature
     {
         public FeatureItem(string name) : base(name) { }
         public string AssetPath { get; set; }
 
-        private void OnEntrySettingChanged(object sender, EventArgs e)
+        private CustomItem _customItem = null;
+
+        private void OnRecipeSettingChanged(object sender, EventArgs e)
         {
-#if DEBUG
-            Jotunn.Logger.LogInfo("OnEntrySettingChanged fired on feature " + Name);
-#endif
-            RequiresUnload = true;
+            Jotunn.Logger.LogDebug("OnEntrySettingChanged fired on feature " + Name);
+
+            RequiresUpdate = true;
         }
 
         public override bool Initialize()
@@ -104,25 +64,49 @@ namespace MoreCrossbows
             if (!string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(Description))
             {
                 Entries = Entries.GetFromFeature(this);
-                Entries.AddSettingsChangedHandler(OnEntrySettingChanged);
+                Entries.AddSettingsChangedHandler(OnRecipeSettingChanged);
                 EnabledConfigEntry = ConfigHelper.Config(Category, "Enable" + Name, EnabledByDefault, Description);
             }
             return true;
         }
 
-        public override bool Load()
+        public override bool Update()
         {
-            Jotunn.Logger.LogInfo("Adding item " + Name);
-
-            ItemConfig config = new ItemConfig()
+            RequiresUpdate = false;
+            
+            RecipeConfig newRecipe = new RecipeConfig()
             {
-                CraftingStation = Entries != null ? Entries.Table.Value.InternalName() : Table.InternalName(),
-                RepairStation = Entries != null ? Entries.Table.Value.InternalName() : Table.InternalName(),
+                Name = Entries.Name,
+                Item = Entries.Name,
+                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
                 MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
                 Amount = Entries != null ? Entries.Amount.Value : Amount,
                 Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
             };
-            ItemManager.Instance.AddItem(new CustomItem(MoreCrossbows.Instance.assetBundle, AssetPath, true, config));
+
+            // Directly update the recipe
+            Jotunn.Logger.LogDebug("Updating recipe for " + _customItem.ItemDrop.name);
+            Jotunn.Logger.LogDebug("... reqs: " + Entries != null ? Entries.Requirements.Value : Requirements);
+            _customItem.Recipe.Update(newRecipe);
+
+            return true;
+        }
+
+        public override bool Load()
+        {
+            Jotunn.Logger.LogInfo("Loading item " + Name);
+
+            ItemConfig config = new ItemConfig()
+            {
+                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
+                Amount = Entries != null ? Entries.Amount.Value : Amount,
+                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
+            };
+            _customItem = new CustomItem(MoreCrossbows.Instance.assetBundle, AssetPath, true, config);
+            ItemManager.Instance.AddItem(_customItem);
             LoadedInGame = true;
 
             return true;
@@ -130,22 +114,23 @@ namespace MoreCrossbows
 
         public override bool Unload()
         {
-            Jotunn.Logger.LogInfo("Removing item " + Name);
+            Jotunn.Logger.LogInfo("Unloading item " + Name);
             ItemManager.Instance.RemoveItem(Name);
             ObjectDB.instance.Remove(Name);
             LoadedInGame = false;
-            RequiresUnload = false;
+            RequiresUpdate = false;
 
             return true;
         }
     }
+
 
     internal class FeatureRecipe : Feature
     {
         public FeatureRecipe(string name) : base(name) { }
         private void OnEntrySettingChanged(object sender, EventArgs e)
         {
-            RequiresUnload = true;
+            RequiresUpdate = true;
         }
 
         public override bool Initialize()
@@ -156,14 +141,42 @@ namespace MoreCrossbows
             return true;
         }
 
+        public override bool Update()
+        {
+            RequiresUpdate = false;
+
+            RecipeConfig newRecipe = new RecipeConfig()
+            {
+                Name = Entries.Name,
+                Item = Entries.Name,
+                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
+                Amount = Entries != null ? Entries.Amount.Value : Amount,
+                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
+            };
+
+            var recipe = ItemManager.Instance.GetRecipe("CraftEarly" + Name);
+
+            Jotunn.Logger.LogDebug("Updating recipe " + Entries.Name);
+            Jotunn.Logger.LogDebug("... reqs: " + Entries != null ? Entries.Requirements.Value : Requirements);
+            recipe.Update(newRecipe);
+
+
+            RequiresUpdate = false;
+
+            return true;
+        }
+
+
         public override bool Load()
         {
-            Jotunn.Logger.LogInfo("Adding recipe for " + Name);
+            Jotunn.Logger.LogInfo("Loading recipe for " + Name);
             RecipeConfig config = new RecipeConfig()
             {
                 Name = "CraftEarly" + Entries.Name,
                 Item = Entries.Name,
-                CraftingStation = Entries.Table.Value.InternalName(),
+                CraftingStation = CraftingTable.GetInternalName(Entries.Table.Value),
                 MinStationLevel = Entries.MinTableLevel.Value,
                 Amount = Entries.Amount.Value,
                 Requirements = RequirementsEntry.Deserialize(Entries.Requirements.Value)
@@ -176,9 +189,10 @@ namespace MoreCrossbows
 
         public override bool Unload()
         {
-            Jotunn.Logger.LogInfo("Removing recipe for " + Name);
+            Jotunn.Logger.LogInfo("Unloading recipe for " + Name);
             ItemManager.Instance.RemoveRecipe("CraftEarly" + Name);
             LoadedInGame = false;
+            RequiresUpdate = false;
 
             return true;
         }

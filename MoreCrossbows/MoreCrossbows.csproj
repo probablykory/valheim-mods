@@ -117,8 +117,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Features.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Patches.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="MoreCrossbows.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

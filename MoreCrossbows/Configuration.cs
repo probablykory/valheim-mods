@@ -6,32 +6,20 @@ using System.Linq;
 namespace MoreCrossbows
 {
     // use bepinex ConfigEntry settings for items+recipes
-
     internal static class ConfigHelper
     {
-        public static ConfigurationManagerAttributes IsAdminOnly = new ConfigurationManagerAttributes { IsAdminOnly = true };
-
-        public static ConfigEntry<CraftingTable> Config(string group, string name, string strValue, ConfigDescription description) => Config<CraftingTable>(group, name, GetCraftingTable(strValue), description);
+        public static ConfigurationManagerAttributes GetAdminOnlyFlag()
+        {
+            return new ConfigurationManagerAttributes { IsAdminOnly = true };
+        }
 
         public static ConfigEntry<T> Config<T>(string group, string name, T value, ConfigDescription description)
         {
             return MoreCrossbows.Instance.Config.Bind(group, name, value, description);
         }
 
-        public static ConfigEntry<T> Config<T>(string group, string name, T value, string description) => Config(group, name, value, new ConfigDescription(description, null, IsAdminOnly));
+        public static ConfigEntry<T> Config<T>(string group, string name, T value, string description) => Config(group, name, value, new ConfigDescription(description, null, GetAdminOnlyFlag()));
 
-
-        public static CraftingTable GetCraftingTable(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return CraftingTable.Inventory;
-            }
-
-            return Enum.GetValues(typeof(CraftingTable))
-                .Cast<CraftingTable>()
-                .FirstOrDefault(x => x.ToString() == str);
-        }
     }
 
     public static class RequirementsEntry
@@ -62,25 +50,23 @@ namespace MoreCrossbows
     internal class Entries
     {
         public string Name { get; set; } = string.Empty;
-        public ConfigEntry<CraftingTable> Table { get; set; } = null;
+        public ConfigEntry<string> Table { get; set; } = null;
         public ConfigEntry<int> MinTableLevel { get; set; } = null;
         public ConfigEntry<int> Amount { get; set; } = null;
         public ConfigEntry<string> Requirements { get; set; } = null;
 
         public static Entries GetFromFeature(Feature config)
         {
-            var isAdminOnly = ConfigHelper.IsAdminOnly;
-
             Entries entries = new Entries();
             entries.Name = config.Name;
             entries.Table = ConfigHelper.Config(entries.Name, "Table", config.Table,
-                new ConfigDescription($"Crafting station where {entries.Name} is available.", null, isAdminOnly));
+                new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
             entries.MinTableLevel = ConfigHelper.Config(entries.Name, "Table Level", config.MinTableLevel,
-                new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, isAdminOnly));
+                new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
             entries.Amount = ConfigHelper.Config(entries.Name, "Amount", config.Amount,
-                new ConfigDescription($"The amount of {entries.Name} created.", null, isAdminOnly));
+                new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
             entries.Requirements = ConfigHelper.Config<string>(entries.Name, "Requirements", config.Requirements,
-                 new ConfigDescription($"The required items to craft {entries.Name}.", null, isAdminOnly));
+                 new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
             
 
             return entries;
