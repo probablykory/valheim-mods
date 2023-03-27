@@ -32,6 +32,8 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
 
 ## Installation
 
+> **_NOTE:_**  Users that are upgrading should delete their config file and run the game to let the plugin generate a new one.  Lots of new settings were added between versions, and old configs may be incompatible. 
+
 ### Manual
 
   * Un-zip `MoreCrossbows.dll` to your `/Valheim/BepInEx/plugins/` folder.
@@ -43,9 +45,11 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
 
 ## Changelog
 
-### v1.1.0 (Release pending)
+### v1.1.0
  * Item and Recipe requirements are now configurable.
- * Small bugfixes and adjustments.
+ * Adjusted default upgrade costs of several xbows.
+ * Wooden Crossbow size reduced by 5%.
+ * Several bugfixes.
 
 ### 1.0.0
  * Initial Version

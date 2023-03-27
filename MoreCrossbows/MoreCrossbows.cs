@@ -242,7 +242,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 2,
-                Requirements = "Wood:20:8,Stone:8:2,LeatherScraps:8:2",
+                Requirements = "Wood:20:5,Stone:8:2,LeatherScraps:8:2",
             });
 
             _features.Add(new FeatureItem("CrossbowBronze")
@@ -254,7 +254,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "Wood:10:4,FineWood:4:2,Bronze:8:2,DeerHide:2:1",
+                Requirements = "Wood:10:5,FineWood:4:2,Bronze:8:4,DeerHide:2:1",
             });
 
             _features.Add(new FeatureItem("CrossbowIron")
@@ -266,7 +266,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "Wood:10:4,ElderBark:4:2,Iron:8:2,Root:1",
+                Requirements = "Wood:10:5,ElderBark:4:2,Iron:8:4,Root:1",
             });
 
             _features.Add(new FeatureItem("CrossbowSilver")
@@ -290,7 +290,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "FineWood:10:4,BlackMetal:10:4,Iron:8:4,LoxPelt:2:1",
+                Requirements = "FineWood:10:5,BlackMetal:10:5,Iron:8:4,LoxPelt:2:1",
             });
 
             _features.Add(new FeatureItem("BoltWood")
