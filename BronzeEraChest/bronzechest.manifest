@@ -1,0 +1,75 @@
+ManifestFileVersion: 0
+CRC: 315526594
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 2e7be6f9bcda3130094bd1ec70c3afa6
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4488fa6670bf3864d50009f72596ef9f
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 1521249158, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 1790797106, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 963225042, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 2094620348, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 114
+  Script: {fileID: 895252998, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: assembly_valheim
+  ClassName: DropTable
+- AssemblyName: assembly_valheim
+  ClassName: EffectList
+- AssemblyName: assembly_valheim
+  ClassName: EffectList/EffectData
+- AssemblyName: assembly_valheim
+  ClassName: HitData/DamageModifiers
+Assets:
+- Assets/Material/bronzechest.mat
+- Assets/Shader/JVLmock_Custom_Piece.shader
+- Assets/PrefabInstance/JVLmock_vfx_SawDust.prefab
+- Assets/Texture2D/bronzechest_m.png
+- Assets/PrefabInstance/JVLmock_sfx_chest_open.prefab
+- Assets/Sprite/chest_bronze.png
+- Assets/Texture2D/bronzechest_n.png
+- Assets/Mesh/BronzeChestTop.mesh
+- Assets/PrefabInstance/JVLmock_piece_workbench.prefab
+- Assets/PrefabInstance/piece_chest_bronze.prefab
+- Assets/PrefabInstance/JVLmock_vfx_Place_chest.prefab
+- Assets/PrefabInstance/JVLmock_sfx_wood_destroyed.prefab
+- Assets/Mesh/BronzeChestTopOpen.mesh
+- Assets/PrefabInstance/JVLmock_empty.prefab
+- Assets/PrefabInstance/JVLmock_sfx_build_hammer_wood.prefab
+- Assets/Texture2D/JVLmock_Noise.png
+- Assets/Texture2D/bronzechest_d.png
+- Assets/Mesh/BronzeChest.mesh
+- Assets/PrefabInstance/JVLmock_sfx_chest_close.prefab
+Dependencies: []

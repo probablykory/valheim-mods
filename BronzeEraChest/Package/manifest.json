@@ -1,0 +1,10 @@
+﻿{
+  "name": "BronzeEraChest",
+  "description": "Adds the chest that should be there, a bronze one in between Wood and Iron.",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/probablykory/valheim-mods",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2102",
+    "ValheimModding-Jotunn-2.11.2"
+  ]
+}
