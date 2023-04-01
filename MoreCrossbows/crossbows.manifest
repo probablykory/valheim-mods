@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3925644428
+CRC: 2444872405
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 48accaa1605bdb7048a480ba5fb3cbb7
+    Hash: a7cd88afc01946233f9846dc0afea6b8
   TypeTreeHash:
     serializedVersion: 2
     Hash: 6162e9f62a9d81b45862a2d09ee081c6
@@ -199,14 +199,13 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Projectile_04.ogg
 - Assets/Material/JVLmock_arrow_poison.mat
 - Assets/AudioClip/JVLmock_Eiter_Impact_01.ogg
-- Assets/Shader/JVLmock_Custom_Piece.shader
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_03.ogg
 - Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_02.ogg
 - Assets/PrefabInstance/CrossbowBronze.prefab
-- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_03.ogg
+- Assets/PrefabInstance/JVLmock_vfx_arrowhit.prefab
 - Assets/Texture2D/JVLmock_arrow_white.png
 - Assets/PrefabInstance/arbalest_projectile_lightning.prefab
 - Assets/Mesh/CrossbowIronLoaded.mesh
-- Assets/PrefabInstance/JVLmock_vfx_arrowhit.prefab
 - Assets/Mesh/JVLmock_default_327.mesh
 - Assets/PrefabInstance/JVLmock_staff_fireball_projectile.prefab
 - Assets/Texture2D/CrossbowSilver_n.png

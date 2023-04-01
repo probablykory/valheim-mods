@@ -60,6 +60,7 @@ namespace MoreCrossbows
     }
 
 
+
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
@@ -67,7 +68,7 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.1.0.0";
+        public const string PluginVersion = "1.1.1.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static MoreCrossbows Instance;
@@ -254,7 +255,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "Wood:10:5,FineWood:4:2,Bronze:8:4,DeerHide:2:1",
+                Requirements = "Wood:10:5,FineWood:4:2,Bronze:10:5,DeerHide:2:1",
             });
 
             _features.Add(new FeatureItem("CrossbowIron")
@@ -266,7 +267,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "Wood:10:5,ElderBark:4:2,Iron:8:4,Root:1",
+                Requirements = "Wood:10:5,ElderBark:4:2,Iron:20:10,Root:1",
             });
 
             _features.Add(new FeatureItem("CrossbowSilver")
@@ -278,7 +279,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "Wood:10:4,Silver:4:2,Iron:8:4,WolfHairBundle:6",
+                Requirements = "Wood:10:4,Silver:10:5,Iron:10:5,WolfHairBundle:6",
             });
 
             _features.Add(new FeatureItem("CrossbowBlackmetal")
@@ -290,7 +291,7 @@ namespace MoreCrossbows
 
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
-                Requirements = "FineWood:10:5,BlackMetal:10:5,Iron:8:4,LoxPelt:2:1",
+                Requirements = "FineWood:10:5,BlackMetal:16:8,Iron:8:4,LoxPelt:2:1",
             });
 
             _features.Add(new FeatureItem("BoltWood")
