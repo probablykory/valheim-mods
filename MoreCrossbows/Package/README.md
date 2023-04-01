@@ -61,4 +61,4 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
  * Initial Version
 
 ## Known issues
-You can find the github at: https://github.com/probablykory/more-crossbows
+You can find the github at: https://github.com/probablykory/valheim-mods
