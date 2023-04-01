@@ -45,7 +45,7 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
 
 ## Changelog
 
-### v1.1.1 (Release pending)
+### v1.1.1
  * Repo move to accommodate other mod plugin projects.
  * Minor balance adjustments to crossbow damage.
  * Increased default create and update costs for Iron, Silver and Blackmetal xbows.
