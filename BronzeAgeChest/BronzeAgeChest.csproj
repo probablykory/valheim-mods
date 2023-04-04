@@ -7,8 +7,8 @@
     <ProjectGuid>{EB8B2C76-81BB-4F86-A882-86273772AEDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BronzeEraChest</RootNamespace>
-    <AssemblyName>BronzeEraChest</AssemblyName>
+    <RootNamespace>BronzeAgeChest</RootNamespace>
+    <AssemblyName>BronzeAgeChest</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -81,8 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
-    <Compile Include="BronzeEraChest.cs" />
+    <Compile Include="BronzeAgeChest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

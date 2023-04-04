@@ -1,6 +1,6 @@
 ﻿{
-  "name": "BronzeEraChest",
-  "description": "Adds the chest that should be there, a bronze one in between Wood and Iron.",
+  "name": "BronzeAgeChest",
+  "description": "Adds the chest that should be there, one made from bronze, sized between Wood and Iron.",
   "version_number": "1.0.0",
   "website_url": "https://github.com/probablykory/valheim-mods",
   "dependencies": [

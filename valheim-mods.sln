@@ -5,7 +5,9 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreCrossbows", "MoreCrossbows\MoreCrossbows.csproj", "{DEAF4438-8089-40ED-8175-398E1261D45B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BronzeEraChest", "BronzeEraChest\BronzeEraChest.csproj", "{EB8B2C76-81BB-4F86-A882-86273772AEDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BronzeAgeChest", "BronzeAgeChest\BronzeAgeChest.csproj", "{EB8B2C76-81BB-4F86-A882-86273772AEDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftedBossDrops", "CraftedBossDrops\CraftedBossDrops.csproj", "{0491AAC2-0B1E-4331-9CE5-D1EB03D33F60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EB8B2C76-81BB-4F86-A882-86273772AEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB8B2C76-81BB-4F86-A882-86273772AEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB8B2C76-81BB-4F86-A882-86273772AEDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0491AAC2-0B1E-4331-9CE5-D1EB03D33F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0491AAC2-0B1E-4331-9CE5-D1EB03D33F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0491AAC2-0B1E-4331-9CE5-D1EB03D33F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0491AAC2-0B1E-4331-9CE5-D1EB03D33F60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
