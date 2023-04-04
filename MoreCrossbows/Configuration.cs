@@ -5,7 +5,62 @@ using System.Linq;
 
 namespace MoreCrossbows
 {
-    // use bepinex ConfigEntry settings for items+recipes
+
+    public static class CraftingTable
+    {
+        public static string Inventory { get { return "Inventory"; } }
+        public static string Workbench { get { return "Workbench"; } }
+        public static string Cauldron { get { return "Cauldron"; } }
+        public static string Forge { get { return "Forge"; } }
+        public static string ArtisanTable { get { return "ArtisanTable"; } }
+        public static string StoneCutter { get { return "StoneCutter"; } }
+        public static string MageTable { get { return "MageTable"; } }
+        public static string BlackForge { get { return "BlackForge"; } }
+
+        public static string[] GetValues()
+        {
+            return new string[]
+            {
+                Inventory,
+                Workbench,
+                Cauldron,
+                Forge,
+                ArtisanTable,
+                StoneCutter,
+                MageTable,
+                BlackForge
+            };
+        }
+
+        public static string GetInternalName(string name)
+        {
+            switch (name)
+            {
+                case "Workbench":
+                    return "piece_workbench";
+                case "Cauldron":
+                    return "piece_cauldron";
+                case "Forge":
+                    return "forge";
+                case "ArtisanTable":
+                    return "piece_artisanstation";
+                case "StoneCutter":
+                    return "piece_stonecutter";
+                case "MageTable":
+                    return "piece_magetable";
+                case "BlackForge":
+                    return "blackforge";
+            }
+            return string.Empty; // "Inventory" or error
+        }
+    }
+
+    public interface IPlugin
+    {
+        ConfigFile Config { get; }
+    }
+
+    // use bepinex ConfigEntry settings
     internal static class ConfigHelper
     {
         public static ConfigurationManagerAttributes GetAdminOnlyFlag()
@@ -13,13 +68,12 @@ namespace MoreCrossbows
             return new ConfigurationManagerAttributes { IsAdminOnly = true };
         }
 
-        public static ConfigEntry<T> Config<T>(string group, string name, T value, ConfigDescription description)
+        public static ConfigEntry<T> Config<T>(this IPlugin instance, string group, string name, T value, ConfigDescription description)
         {
-            return MoreCrossbows.Instance.Config.Bind(group, name, value, description);
+            return instance.Config.Bind(group, name, value, description);
         }
 
-        public static ConfigEntry<T> Config<T>(string group, string name, T value, string description) => Config(group, name, value, new ConfigDescription(description, null, GetAdminOnlyFlag()));
-
+        public static ConfigEntry<T> Config<T>(this IPlugin instance, string group, string name, T value, string description) => Config(instance, group, name, value, new ConfigDescription(description, null, GetAdminOnlyFlag()));
     }
 
     public static class RequirementsEntry
@@ -55,17 +109,17 @@ namespace MoreCrossbows
         public ConfigEntry<int> Amount { get; set; } = null;
         public ConfigEntry<string> Requirements { get; set; } = null;
 
-        public static Entries GetFromFeature(Feature config)
+        public static Entries GetFromFeature(IPlugin instance, Feature config)
         {
             Entries entries = new Entries();
             entries.Name = config.Name;
-            entries.Table = ConfigHelper.Config(entries.Name, "Table", config.Table,
+            entries.Table = instance.Config(entries.Name, "Table", config.Table,
                 new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
-            entries.MinTableLevel = ConfigHelper.Config(entries.Name, "Table Level", config.MinTableLevel,
+            entries.MinTableLevel = instance.Config(entries.Name, "Table Level", config.MinTableLevel,
                 new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
-            entries.Amount = ConfigHelper.Config(entries.Name, "Amount", config.Amount,
+            entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
                 new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
-            entries.Requirements = ConfigHelper.Config<string>(entries.Name, "Requirements", config.Requirements,
+            entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
                  new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
             
 

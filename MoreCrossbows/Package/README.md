@@ -6,7 +6,7 @@ A Valheim mod which adds several crossbows and bolts.
 ![Showcase](https://raw.githubusercontent.com/probablykory/valheim-mods/main/MoreCrossbows/showcase.jpg)
 
 Progression-appropriate crossbow options for every 'age'.  
-New bolts to provide elemmental damage.  
+New bolts to provide elemental damage.  
 New recipes for crafting the existing bolts from Workbench or Forge.  
 
 

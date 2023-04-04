@@ -63,9 +63,9 @@ namespace MoreCrossbows
         {
             if (!string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(Description))
             {
-                Entries = Entries.GetFromFeature(this);
+                Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
                 Entries.AddSettingsChangedHandler(OnRecipeSettingChanged);
-                EnabledConfigEntry = ConfigHelper.Config(Category, "Enable" + Name, EnabledByDefault, Description);
+                EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
             }
             return true;
         }
@@ -135,9 +135,9 @@ namespace MoreCrossbows
 
         public override bool Initialize()
         {
-            Entries = Entries.GetFromFeature(this);
+            Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
             Entries.AddSettingsChangedHandler(this.OnEntrySettingChanged);
-            EnabledConfigEntry = ConfigHelper.Config(Category, "Enable" + Name, EnabledByDefault, Description);
+            EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
             return true;
         }
 

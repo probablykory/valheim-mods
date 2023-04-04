@@ -10,61 +10,10 @@ using HarmonyLib;
 
 namespace MoreCrossbows
 {
-    public static class CraftingTable
-    {
-        public static string Inventory { get { return "Inventory"; } }
-        public static string Workbench { get { return "Workbench"; } }
-        public static string Cauldron { get { return "Cauldron"; } }
-        public static string Forge { get { return "Forge"; } }
-        public static string ArtisanTable { get { return "ArtisanTable"; } }
-        public static string StoneCutter { get { return "StoneCutter"; } }
-        public static string MageTable { get { return "MageTable"; } }
-        public static string BlackForge { get { return "BlackForge"; } }
-
-        public static string[] GetValues()
-        {
-            return new string[]
-            {
-                Inventory,
-                Workbench,
-                Cauldron,
-                Forge,
-                ArtisanTable,
-                StoneCutter,
-                MageTable,
-                BlackForge
-            };
-        }
-
-        public static string GetInternalName(string name)
-        {
-            switch (name)
-            {
-                case "Workbench":
-                    return "piece_workbench";
-                case "Cauldron":
-                    return "piece_cauldron";
-                case "Forge":
-                    return "forge";
-                case "ArtisanTable":
-                    return "piece_artisanstation";
-                case "StoneCutter":
-                    return "piece_stonecutter";
-                case "MageTable":
-                    return "piece_magetable";
-                case "BlackForge":
-                    return "blackforge";
-            }
-            return string.Empty; // "Inventory" or error
-        }
-    }
-
-
-
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
-    internal class MoreCrossbows : BaseUnityPlugin
+    internal class MoreCrossbows : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
@@ -77,7 +26,6 @@ namespace MoreCrossbows
         private bool _vanillaPrefabsAvailable = false;
         private List<Feature> _features = new List<Feature>();
 
-        // Main entry point
         private void Awake()
         {
             harmony = new Harmony(PluginGUID);
