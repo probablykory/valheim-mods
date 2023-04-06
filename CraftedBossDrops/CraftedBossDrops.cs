@@ -60,7 +60,7 @@ namespace CraftedBossDrops
 
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [NetworkCompatibility(CompatibilityLevel.NotEnforced, VersionStrictness.Minor)]
     internal class CraftedBossDrops : BaseUnityPlugin
     {
         public const string PluginAuthor = "probablykory";
