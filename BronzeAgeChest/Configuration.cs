@@ -87,7 +87,8 @@ namespace BronzeAgeChest
                 {
                     Item = parts[0],
                     Amount = parts.Length > 1 && int.TryParse(parts[1], out int amount) ? amount : 1,
-                    AmountPerLevel = parts.Length > 2 && int.TryParse(parts[2], out int apl) ? apl : 0
+                    AmountPerLevel = parts.Length > 2 && int.TryParse(parts[2], out int apl) ? apl : 0,
+                    Recover = true // defaulting to true
                 };
             }).ToArray();
         }
