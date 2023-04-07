@@ -214,7 +214,7 @@ namespace MoreCrossbows
                 AssetPath = "Assets/PrefabInstance/CrossbowIron.prefab",
 
                 Table = CraftingTable.Forge,
-                MinTableLevel = 1,
+                MinTableLevel = 2,
                 Requirements = "Wood:10:5,ElderBark:4:2,Iron:20:10,Root:1",
             });
 
@@ -226,7 +226,7 @@ namespace MoreCrossbows
                 AssetPath = "Assets/PrefabInstance/CrossbowSilver.prefab",
 
                 Table = CraftingTable.Forge,
-                MinTableLevel = 1,
+                MinTableLevel = 3,
                 Requirements = "Wood:10:4,Silver:10:5,Iron:10:5,WolfHairBundle:6",
             });
 
@@ -238,7 +238,7 @@ namespace MoreCrossbows
                 AssetPath = "Assets/PrefabInstance/CrossbowBlackmetal.prefab",
 
                 Table = CraftingTable.Forge,
-                MinTableLevel = 1,
+                MinTableLevel = 4,
                 Requirements = "FineWood:10:5,BlackMetal:16:8,Iron:8:4,LoxPelt:2:1",
             });
 
