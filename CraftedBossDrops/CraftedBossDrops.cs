@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using HarmonyLib;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -13,9 +14,10 @@ namespace CraftedBossDrops
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.0.0";
+        public const string PluginVersion = "1.0.1.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
+        private Harmony harmony = null;
         internal static CraftedBossDrops Instance;
 
         public Entries HardAntlerEntry { get; protected set; }
@@ -26,6 +28,9 @@ namespace CraftedBossDrops
 
         private void Awake()
         {
+            harmony = new Harmony(PluginGUID);
+            harmony.PatchAll();
+
             Instance = this;
 
             InitializeFeatures();
