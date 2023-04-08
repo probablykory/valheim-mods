@@ -96,6 +96,15 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
+*.zip
+/bronzechest
+/bronzechest.manifest
+/crossbows
+/crossbows.manifest
+/valheim-mods
+/valheim-mods.manifest
+
+
 # Chutzpah Test files
 _Chutzpah*
 

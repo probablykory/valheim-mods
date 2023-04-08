@@ -1,4 +1,4 @@
-﻿![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/CraftedBossDrops/splash.jpg)  
+![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/CraftedBossDrops/splash.jpg)  
 A Valheim mod which adds recipes to craft all boss drops, enabling progression without boss kills.
 
 ## Features
