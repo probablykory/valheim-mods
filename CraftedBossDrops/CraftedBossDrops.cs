@@ -132,10 +132,11 @@ namespace CraftedBossDrops
             ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
             {
                 Item = "YagluthDrop",
+                Amount = 2,
                 CraftingStation = CraftingTable.GetInternalName(CraftingTable.ArtisanTable),
                 MinStationLevel = 1,
                 Requirements = new RequirementConfig[] {
-                    new RequirementConfig("GoblinTotem", 15),
+                    new RequirementConfig("GoblinTotem", 10),
                     new RequirementConfig("TrophyGoblin", 1),
                     new RequirementConfig("TrophyGoblinShaman", 1),
                     new RequirementConfig("TrophyGoblinBrute", 1)
