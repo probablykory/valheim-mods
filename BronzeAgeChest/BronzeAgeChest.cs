@@ -13,7 +13,6 @@ namespace BronzeAgeChest
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BronzeAgeChest : BaseUnityPlugin, IPlugin
     {
-
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
         public const string PluginVersion = "1.0.0.0";  
@@ -65,12 +64,5 @@ namespace BronzeAgeChest
 
             LocalizationManager.Instance.AddLocalization(loc);
         }
-
-        //private void OnDestroy()
-        //{
-        //    Jotunn.Logger.LogDebug("OnDestroy called.");
-
-        //    PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
-        //}
     }
 }

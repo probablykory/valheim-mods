@@ -45,6 +45,10 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
 
 ## Changelog
 
+### v1.1.2
+ * Fixed minimum table level requirement defaults for the later crossbows.
+ * Texture fixes for all crossbows, should now have a more pixelated look, just like all vanilla valheim weapons.
+
 ### v1.1.1
  * Repo move to accommodate other mod plugin projects.
  * Minor balance adjustments to crossbow damage.
