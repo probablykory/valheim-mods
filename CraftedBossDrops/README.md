@@ -3,13 +3,13 @@ A Valheim mod which adds recipes to craft all boss drops, enabling progression w
 
 ## Features
 
-TBD
+Configurable recipes for Hard Antler, Swamp Key, Wishbone, Dragon Tear, and Torn Spirit.  The default recipes require a large amount of the summon material plus something else from the respective biome.  Modor and Yagluth recipes are intentionally annoying.  🙂
 
 ## Rationale 
 
 Sometimes I play Valheim without killing bosses, and it's a very relaxing way to enjoy the world without stressing out about raids or finding bosses, etc.  Although it's technically possible to play this way in vanilla, you will eventually hit a hard stop at Modor, because you need his drop to craft in Plains.  Ditto for Mistlands.  This mod provides a straight-forward way to craft every boss drop in the game, so you can play this way without abusing trolls or clipping through gates.
 
-I was thinking about finding more thematic recipes than what's setup currently, things like crafting a key mould and stuffing that into the smelter which will pop out the swamp key.  But for now, these simpler recipes will work. 🙂
+I was thinking about finding more thematic recipes than what's setup currently, things like crafting a key mould and stuffing that into the smelter which will pop out the swamp key.  But for now, these simpler recipes will work.
 
 ## Installation
 
@@ -24,7 +24,7 @@ I was thinking about finding more thematic recipes than what's setup currently, 
 
 ## Changelog
 
-### 1.0.0  Unreleased
+### 1.0.0
  * Initial Version
 
 ## Known issues

@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using HarmonyLib;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -7,61 +6,10 @@ using Jotunn.Utils;
 
 namespace CraftedBossDrops
 {
-
-    public static class CraftingTable
-    {
-        public static string Inventory { get { return "Inventory"; } }
-        public static string Workbench { get { return "Workbench"; } }
-        public static string Cauldron { get { return "Cauldron"; } }
-        public static string Forge { get { return "Forge"; } }
-        public static string ArtisanTable { get { return "ArtisanTable"; } }
-        public static string StoneCutter { get { return "StoneCutter"; } }
-        public static string MageTable { get { return "MageTable"; } }
-        public static string BlackForge { get { return "BlackForge"; } }
-
-        public static string[] GetValues()
-        {
-            return new string[]
-            {
-                Inventory,
-                Workbench,
-                Cauldron,
-                Forge,
-                ArtisanTable,
-                StoneCutter,
-                MageTable,
-                BlackForge
-            };
-        }
-
-        public static string GetInternalName(string name)
-        {
-            switch (name)
-            {
-                case "Workbench":
-                    return "piece_workbench";
-                case "Cauldron":
-                    return "piece_cauldron";
-                case "Forge":
-                    return "forge";
-                case "ArtisanTable":
-                    return "piece_artisanstation";
-                case "StoneCutter":
-                    return "piece_stonecutter";
-                case "MageTable":
-                    return "piece_magetable";
-                case "BlackForge":
-                    return "blackforge";
-            }
-            return string.Empty; // "Inventory" or error
-        }
-    }
-
-
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibility(CompatibilityLevel.NotEnforced, VersionStrictness.Minor)]
-    internal class CraftedBossDrops : BaseUnityPlugin
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    internal class CraftedBossDrops : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
@@ -69,81 +17,55 @@ namespace CraftedBossDrops
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static CraftedBossDrops Instance;
-        private Harmony harmony = null;
+
+        public Entries HardAntlerEntry { get; protected set; }
+        public Entries CryptKeyEntry { get; protected set; }
+        public Entries WishboneEntry { get; protected set; }
+        public Entries DragonTearEntry { get; protected set; }
+        public Entries YagluthDropEntry { get; protected set; }
 
         private void Awake()
         {
-            harmony = new Harmony(PluginGUID);
-            harmony.PatchAll();
-
             Instance = this;
 
-
+            InitializeFeatures();
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+        }
+
+        private void InitializeFeatures()
+        {
+            HardAntlerEntry = Entries.GetFromProps(Instance, "HardAntler", CraftingTable.Workbench, 3, 1, "TrophyDeer:20,Resin:2");
+            CryptKeyEntry = Entries.GetFromProps(Instance, "CryptKey", CraftingTable.Forge, 3, 1, "AncientSeed:15,Bronze:2");
+            WishboneEntry = Entries.GetFromProps(Instance, "Wishbone", CraftingTable.Forge, 7, 1, "WitheredBone:30,Iron:2");
+            DragonTearEntry = Entries.GetFromProps(Instance, "DragonTear", CraftingTable.Workbench, 5, 2, "DragonEgg:6,Crystal:10");
+            YagluthDropEntry = Entries.GetFromProps(Instance, "YagluthDrop", CraftingTable.ArtisanTable, 1, 2, "GoblinTotem:10,TrophyGoblin:3,TrophyGoblinShaman:1,TrophyGoblinBrute:1");
         }
 
         private void OnVanillaPrefabsAvailable()
         {
-            ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
-            {
-                Item = "HardAntler",
-                CraftingStation = CraftingTable.GetInternalName(CraftingTable.Workbench),
-                MinStationLevel = 3,
-                Requirements = new RequirementConfig[] {
-                    new RequirementConfig("TrophyDeer", 20),
-                    new RequirementConfig("Resin", 10)
-                }
-            }));
+            Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
 
-            ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
-            {
-                Item = "CryptKey",
-                CraftingStation = CraftingTable.GetInternalName(CraftingTable.Forge),
-                MinStationLevel = 3,
-                Requirements = new RequirementConfig[] {
-                    new RequirementConfig("AncientSeed", 15),
-                    new RequirementConfig("Bronze", 2)
-                }
-            }));
+            ItemManager.Instance.AddRecipe(getRecipeFromEntry(HardAntlerEntry));
+            ItemManager.Instance.AddRecipe(getRecipeFromEntry(CryptKeyEntry));
+            ItemManager.Instance.AddRecipe(getRecipeFromEntry(WishboneEntry));
+            ItemManager.Instance.AddRecipe(getRecipeFromEntry(DragonTearEntry));
+            ItemManager.Instance.AddRecipe(getRecipeFromEntry(YagluthDropEntry));
 
-            ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
-            {
-                Item = "Wishbone",
-                CraftingStation = CraftingTable.GetInternalName(CraftingTable.Forge),
-                MinStationLevel = 7,
-                Requirements = new RequirementConfig[] {
-                    new RequirementConfig("WitheredBone", 30),
-                    new RequirementConfig("Iron", 2)
-                }
-            }));
+        }
 
-            ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
+        private CustomRecipe getRecipeFromEntry(Entries entry)
+        {
+            CustomRecipe recipe = new CustomRecipe(new RecipeConfig()
             {
-                Item = "DragonTear",
-                Amount = 2,
-                CraftingStation = CraftingTable.GetInternalName(CraftingTable.Workbench),
-                MinStationLevel = 5,
-                Requirements = new RequirementConfig[] {
-                    new RequirementConfig("DragonEgg", 6),
-                    new RequirementConfig("Crystal", 10)
-                }
-            }));
+                Item = entry.Name,
+                CraftingStation = CraftingTable.GetInternalName(entry.Table.Value),
+                RepairStation = CraftingTable.GetInternalName(entry.Table.Value),
+                MinStationLevel = entry.MinTableLevel.Value,
+                Amount = entry.Amount.Value,
+                Requirements = RequirementsEntry.Deserialize(entry.Requirements.Value)
+            });
 
-            ItemManager.Instance.AddRecipe(new CustomRecipe(new RecipeConfig()
-            {
-                Item = "YagluthDrop",
-                Amount = 2,
-                CraftingStation = CraftingTable.GetInternalName(CraftingTable.ArtisanTable),
-                MinStationLevel = 1,
-                Requirements = new RequirementConfig[] {
-                    new RequirementConfig("GoblinTotem", 10),
-                    new RequirementConfig("TrophyGoblin", 1),
-                    new RequirementConfig("TrophyGoblinShaman", 1),
-                    new RequirementConfig("TrophyGoblinBrute", 1)
-                }
-            }));
-
-            PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
+            return recipe;
         }
     }
 }
