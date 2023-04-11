@@ -158,22 +158,22 @@ namespace MoreCrossbows
 
             loc.AddTranslation("English", new Dictionary<string, string>
             {
-                {"item_crossbow_wood", "Wooden Crossbow"}, {"item_crossbow_wood_description", "A crudely-made but powerful weapon."},
-                {"item_crossbow_bronze", "Bronze Crossbow"}, {"item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
-                {"item_crossbow_iron", "Iron Crossbow"}, {"item_crossbow_iron_description", "An accurate, powerful messenger of death."},
-                {"item_crossbow_silver", "Silver Crossbow"}, {"item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
-                {"item_crossbow_blackmetal", "Blackmetal Crossbow"}, {"item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
+                {"item_crossbow_wood", "Wooden crossbow"}, {"item_crossbow_wood_description", "A crudely-made but powerful weapon."},
+                {"item_crossbow_bronze", "Bronze crossbow"}, {"item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
+                {"item_crossbow_iron", "Iron crossbow"}, {"item_crossbow_iron_description", "An accurate, powerful messenger of death."},
+                {"item_crossbow_silver", "Silver crossbow"}, {"item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
+                {"item_crossbow_blackmetal", "Blackmetal crossbow"}, {"item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
 
-                {"item_bolt_wood", "Wood Bolt"}, {"item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
-                {"item_bolt_fire", "Fire Bolt"}, {"item_bolt_fire_description", "A piercing bolt of fire."},
-                {"item_bolt_silver", "Silver Bolt"}, {"item_bolt_silver_description", "A bolt to calm restless spirits."},
-                {"item_bolt_poison", "Poison Bolt"}, {"item_bolt_poison_description", "A bitter dose for your enemies."},
-                {"item_bolt_frost", "Frost Bolt"}, {"item_bolt_frost_description", "A piercing bolt of ice."},
+                {"item_bolt_wood", "Wood bolt"}, {"item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
+                {"item_bolt_fire", "Fire bolt"}, {"item_bolt_fire_description", "A piercing bolt of fire."},
+                {"item_bolt_silver", "Silver bolt"}, {"item_bolt_silver_description", "A bolt to calm restless spirits."},
+                {"item_bolt_poison", "Poison bolt"}, {"item_bolt_poison_description", "A bitter dose for your enemies."},
+                {"item_bolt_frost", "Frost bolt"}, {"item_bolt_frost_description", "A piercing bolt of ice."},
 
-                {"item_bolt_lightning", "Lightning Bolt"}, {"item_bolt_lightning_description", "Noone can know when or where it will strike."},
-                {"item_arrow_lightning", "Lightning Arrow"}, {"item_arrow_lightning_description", "Noone can know when or where it will strike."},
+                {"item_bolt_lightning", "Lightning bolt"}, {"item_bolt_lightning_description", "Noone can know when or where it will strike."},
+                {"item_arrow_lightning", "Lightning arrow"}, {"item_arrow_lightning_description", "Noone can know when or where it will strike."},
 
-                {"item_bolt_explosive", "Explosive Bolt"}, {"item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
+                {"item_bolt_explosive", "Flametal bolt"}, {"item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
             });
 
             LocalizationManager.Instance.AddLocalization(loc);

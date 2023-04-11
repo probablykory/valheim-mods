@@ -1,11 +1,10 @@
 ![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/BronzeAgeChest/splash.jpg)  
-A simple Valheim mod which adds the chest that should be there, one made from bronze, sized between Wood and Iron.  
 
 ## Features
 
 ![Showcase](https://raw.githubusercontent.com/probablykory/valheim-mods/main/BronzeAgeChest/showcase.jpg)  
 
-A a distinctive chest that fits into the world of Valheim.  Sized at 3 rows, 5 columns.  Build recipe is configurable, but by default costs 15x Wood, 1x Bronze, and 10x Bronze nails.
+Adds a distinctive chest that fits into the world of Valheim.  Sized between Wood and Iron, at 3 rows, 5 columns.  The build recipe is configurable, but the default is 15x Wood, 1x Bronze, and 10x Bronze nails.
 
 ## Rationale 
 
