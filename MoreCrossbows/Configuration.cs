@@ -1,7 +1,10 @@
 ﻿using BepInEx.Configuration;
 using Jotunn.Configs;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace MoreCrossbows
 {
@@ -55,6 +58,40 @@ namespace MoreCrossbows
         }
     }
 
+    public static class DamageTypes
+    {
+        public static string Damage { get { return "Damage"; } }
+        public static string Blunt { get { return "Blunt"; } }
+        public static string Slash { get { return "Slash"; } }
+        public static string Pierce { get { return "Pierce"; } }
+        public static string Chop { get { return "Chop"; } }
+        public static string Pickaxe { get { return "Pickaxe"; } }
+        public static string Fire { get { return "Fire"; } }
+        public static string Frost { get { return "Frost"; } }
+        public static string Lightning { get { return "Lightning"; } }
+        public static string Poison { get { return "Poison"; } }
+        public static string Spirit { get { return "Spirit"; } }
+
+        public static string[] GetValues()
+        {
+            return new string[]
+            {
+                Damage,
+                Blunt,
+                Slash,
+                Pierce,
+                Chop,
+                Pickaxe,
+                Fire,
+                Frost,
+                Lightning,
+                Poison,
+                Spirit
+            };
+        }
+
+    }
+
     public interface IPlugin
     {
         ConfigFile Config { get; }
@@ -74,6 +111,28 @@ namespace MoreCrossbows
         }
 
         public static ConfigEntry<T> Config<T>(this IPlugin instance, string group, string name, T value, string description) => Config(instance, group, name, value, new ConfigDescription(description, null, GetAdminOnlyFlag()));
+    }
+
+    public static class DamagesEntry
+    {
+        public static Dictionary<string, int> Deserialize(string dmgs)
+        {
+            if (string.IsNullOrEmpty(dmgs)) return null;
+
+            return dmgs.Split(',').Select(d =>
+            {
+                string[] parts = d.Split(':');
+                if (parts.Length > 1)
+                    return new KeyValuePair<string, int>(parts[0], int.TryParse(parts[1], out int amount) ? amount : 1);
+                else
+                    return new KeyValuePair<string, int>("Damage", int.TryParse(parts[0], out int amount) ? amount : 1);
+            }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
+        public static string Serialize(Dictionary<string, int> dmgs)
+        {
+            return string.Join(",", dmgs.Select(d => $"{d.Key}:{d.Value}"));
+        }
     }
 
     public static class RequirementsEntry
@@ -101,6 +160,7 @@ namespace MoreCrossbows
         }
     }
 
+
     internal class Entries
     {
         public string Name { get; set; } = string.Empty;
@@ -109,9 +169,12 @@ namespace MoreCrossbows
         public ConfigEntry<int> Amount { get; set; } = null;
         public ConfigEntry<string> Requirements { get; set; } = null;
 
-        public static Entries GetFromFeature(IPlugin instance, Feature config)
+        public static Entries GetFromFeature(IPlugin instance, Feature config, Entries entries = null)
         {
-            Entries entries = new Entries();
+            if (entries == null)
+            {
+                entries = new Entries();
+            }
             entries.Name = config.Name;
             entries.Table = instance.Config(entries.Name, "Table", config.Table,
                 new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
@@ -121,7 +184,6 @@ namespace MoreCrossbows
                 new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
             entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
                  new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
-            
 
             return entries;
         }
@@ -151,5 +213,30 @@ namespace MoreCrossbows
             Requirements.SettingChanged -= OnSettingChanged;
             _action = null;
         }
+    }
+
+    internal class ItemEntries: Entries
+    {
+        public ConfigEntry<string> Damages { get; set; } = null;
+
+        public static Entries GetFromFeature(IPlugin instance, FeatureItem config)
+        {
+            ItemEntries entries = new ItemEntries();
+            entries = (ItemEntries) GetFromFeature(instance, config, entries);
+            //entries.Name = config.Name;
+            //entries.Table = instance.Config(entries.Name, "Table", config.Table,
+            //    new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
+            //entries.MinTableLevel = instance.Config(entries.Name, "Table Level", config.MinTableLevel,
+            //    new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+            //entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
+            //    new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
+            //entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
+            //     new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+            entries.Damages = instance.Config<string>(entries.Name, "Damages", config.Damages,
+                new ConfigDescription($"The damage done by {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+
+            return entries;
+        }
+
     }
 }

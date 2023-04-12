@@ -47,8 +47,12 @@ namespace MoreCrossbows
 
     internal class FeatureItem : Feature
     {
+        public new ItemEntries Entries { get; protected set; }
+
         public FeatureItem(string name) : base(name) { }
         public string AssetPath { get; set; }
+        public string Damages { get; set; } = string.Empty;
+        public int Knockback { get; set; } = 0;
 
         private CustomItem _customItem = null;
 
@@ -63,7 +67,7 @@ namespace MoreCrossbows
         {
             if (!string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(Description))
             {
-                Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
+                Entries = (ItemEntries) ItemEntries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
                 Entries.AddSettingsChangedHandler(OnRecipeSettingChanged);
                 EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
             }
@@ -85,17 +89,21 @@ namespace MoreCrossbows
                 Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
             };
 
+
             // Directly update the recipe
             Jotunn.Logger.LogDebug("Updating recipe for " + _customItem.ItemDrop.name);
             Jotunn.Logger.LogDebug("... reqs: " + Entries != null ? Entries.Requirements.Value : Requirements);
             _customItem.Recipe.Update(newRecipe);
+
+            Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
+            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value));
 
             return true;
         }
 
         public override bool Load()
         {
-            Jotunn.Logger.LogInfo("Loading item " + Name);
+            Jotunn.Logger.LogDebug("Loading item " + Name);
 
             ItemConfig config = new ItemConfig()
             {
@@ -106,6 +114,11 @@ namespace MoreCrossbows
                 Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
             };
             _customItem = new CustomItem(MoreCrossbows.Instance.assetBundle, AssetPath, true, config);
+
+            Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
+            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value));
+            _customItem.ItemDrop.m_itemData.m_shared.m_attackForce = Knockback;
+
             ItemManager.Instance.AddItem(_customItem);
             LoadedInGame = true;
 
@@ -114,13 +127,28 @@ namespace MoreCrossbows
 
         public override bool Unload()
         {
-            Jotunn.Logger.LogInfo("Unloading item " + Name);
+            Jotunn.Logger.LogDebug("Unloading item " + Name);
             ItemManager.Instance.RemoveItem(Name);
             ObjectDB.instance.Remove(Name);
             LoadedInGame = false;
             RequiresUpdate = false;
 
             return true;
+        }
+
+        private void setDamage(Dictionary<string, int> dmgs)
+        {
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_damage = dmgs.ContainsKey(DamageTypes.Damage) ? dmgs[DamageTypes.Damage] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_blunt = dmgs.ContainsKey(DamageTypes.Blunt) ? dmgs[DamageTypes.Blunt] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_slash = dmgs.ContainsKey(DamageTypes.Slash) ? dmgs[DamageTypes.Slash] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_pierce = dmgs.ContainsKey(DamageTypes.Pierce) ? dmgs[DamageTypes.Pierce] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_chop = dmgs.ContainsKey(DamageTypes.Chop) ? dmgs[DamageTypes.Chop] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_pickaxe = dmgs.ContainsKey(DamageTypes.Pickaxe) ? dmgs[DamageTypes.Pickaxe] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_fire = dmgs.ContainsKey(DamageTypes.Fire) ? dmgs[DamageTypes.Fire] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_frost = dmgs.ContainsKey(DamageTypes.Frost) ? dmgs[DamageTypes.Frost] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_lightning = dmgs.ContainsKey(DamageTypes.Lightning) ? dmgs[DamageTypes.Lightning] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_poison = dmgs.ContainsKey(DamageTypes.Poison) ? dmgs[DamageTypes.Poison] : 0;
+            _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_spirit = dmgs.ContainsKey(DamageTypes.Spirit) ? dmgs[DamageTypes.Spirit] : 0;
         }
     }
 
@@ -171,7 +199,7 @@ namespace MoreCrossbows
 
         public override bool Load()
         {
-            Jotunn.Logger.LogInfo("Loading recipe for " + Name);
+            Jotunn.Logger.LogDebug("Loading recipe for " + Name);
             RecipeConfig config = new RecipeConfig()
             {
                 Name = "CraftEarly" + Entries.Name,
@@ -189,7 +217,7 @@ namespace MoreCrossbows
 
         public override bool Unload()
         {
-            Jotunn.Logger.LogInfo("Unloading recipe for " + Name);
+            Jotunn.Logger.LogDebug("Unloading recipe for " + Name);
             ItemManager.Instance.RemoveRecipe("CraftEarly" + Name);
             LoadedInGame = false;
             RequiresUpdate = false;

@@ -85,7 +85,7 @@ namespace MoreCrossbows
             if (!String.IsNullOrEmpty(prefabName) && !PrefabManager.Instance.PrefabExists(prefabName))
             {
                 var prefab = new CustomPrefab(bundle, assetName, true);
-                Jotunn.Logger.LogInfo("Registering " + prefab.Prefab.name);
+                Jotunn.Logger.LogDebug("Registering " + prefab.Prefab.name);
                 if (prefab != null && prefab.IsValid())
                 {
                     prefab.Prefab.FixReferences(true);
@@ -110,6 +110,8 @@ namespace MoreCrossbows
         private void AddOrRemoveFeatures()
         {
             bool areAllFeaturesEnabled = true;
+            int loadCount = 0;
+            int unloadCount = 0;
 
             foreach (Feature f in _features)
             {
@@ -143,13 +145,16 @@ namespace MoreCrossbows
                             }
                         }
                         f.Load();
+                        loadCount++;
                     }
                     else
                     {
                         f.Unload();
+                        unloadCount++;
                     }
                 }
             }
+            Jotunn.Logger.LogInfo($"{loadCount} features loaded" + (unloadCount > 0 ? $", and {unloadCount} features loaded, " : ""));
         }
 
         private void AddLocalizations()
@@ -192,6 +197,8 @@ namespace MoreCrossbows
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 2,
                 Requirements = "Wood:20:5,Stone:8:2,LeatherScraps:8:2",
+                Damages = "Pierce:27",
+                Knockback = 80
             });
 
             _features.Add(new FeatureItem("CrossbowBronze")
@@ -204,6 +211,9 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 1,
                 Requirements = "Wood:10:5,FineWood:4:2,Bronze:10:5,DeerHide:2:1",
+                Damages = "Pierce:42",
+                Knockback = 100
+
             });
 
             _features.Add(new FeatureItem("CrossbowIron")
@@ -216,6 +226,8 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 2,
                 Requirements = "Wood:10:5,ElderBark:4:2,Iron:20:10,Root:1",
+                Damages = "Pierce:57",
+                Knockback = 120
             });
 
             _features.Add(new FeatureItem("CrossbowSilver")
@@ -228,6 +240,8 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 3,
                 Requirements = "Wood:10:4,Silver:10:5,Iron:10:5,WolfHairBundle:6",
+                Damages = "Pierce:72",
+                Knockback = 140
             });
 
             _features.Add(new FeatureItem("CrossbowBlackmetal")
@@ -240,6 +254,8 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 4,
                 Requirements = "FineWood:10:5,BlackMetal:16:8,Iron:8:4,LoxPelt:2:1",
+                Damages = "Pierce:92",
+                Knockback = 160
             });
 
             _features.Add(new FeatureItem("BoltWood")
@@ -253,6 +269,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 2,
                 Requirements = "Wood:8",
+                Damages = "Pierce:22",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_wood.prefab"
@@ -270,6 +287,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 2,
                 Requirements = "Wood:8,Resin:8,Feathers:2",
+                Damages = "Pierce:11,Fire:22",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_fire.prefab"
@@ -288,6 +306,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 3,
                 Requirements = "Wood:8,Silver:1,Feathers:2",
+                Damages = "Pierce:52,Spirit:20",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_wood.prefab"
@@ -305,6 +324,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 3,
                 Requirements = "Wood:8,Obsidian:4,Feathers:2,Ooze:2",
+                Damages = "Pierce:26,Poison:52",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_poison.prefab"
@@ -322,6 +342,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 4,
                 Requirements = "Wood:8,Obsidian:4,Feathers:2,FreezeGland:1",
+                Damages = "Pierce:26,Frost:52",
                 DependencyNames = new List<string>()
                 {
                     "arbalest_projectile_frost.prefab"
@@ -340,6 +361,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Wood:8,Feathers:2,Eitr:1",
+                Damages = "Pierce:36,Lightning:52",
                 DependencyNames = new List<string>()
                 {
                     "sfx_lightning_hit.prefab",
@@ -358,6 +380,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Wood:8,Feathers:2,Eitr:1",
+                Damages = "Pierce:36,Lightning:52",
                 DependencyNames = new List<string>()
                 {
                     "sfx_lightning_hit.prefab",
@@ -415,6 +438,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Wood:5,Feathers:2,Ooze:5,SurtlingCore:5,Coal:5,Eitr:5,Flametal:1",
+                Damages = "Blunt:36,Pierce:36,Lightning:78",
                 Amount = 10,
             });
 
