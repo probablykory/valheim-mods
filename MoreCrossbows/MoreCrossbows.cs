@@ -171,10 +171,10 @@ namespace MoreCrossbows
                     loc = new CustomLocalization();
                     foreach ( var item in localizations )
                     {
-                        Jotunn.Logger.LogDebug($"loc " + item);
+                        //Jotunn.Logger.LogDebug($"loc " + item);
                         if (!string.IsNullOrEmpty(item.Key))
                         {
-                            Jotunn.Logger.LogDebug($"loc2 " + item.Key + " " + string.Join(", ", (item.Value as Dictionary<string, string>).Select(pair => $"{pair.Key} => {pair.Value}")));
+                            //Jotunn.Logger.LogDebug($"loc2 " + item.Key + " " + string.Join(", ", (item.Value as Dictionary<string, string>).Select(pair => $"{pair.Key} => {pair.Value}")));
                             loc.AddTranslation(item.Key, item.Value as Dictionary<string, string>);
                         }
                     }
