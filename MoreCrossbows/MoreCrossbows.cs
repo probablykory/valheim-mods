@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
+using System.IO;
+using System.Linq;
 
 namespace MoreCrossbows
 {
@@ -157,32 +159,90 @@ namespace MoreCrossbows
             Jotunn.Logger.LogInfo($"{loadCount} features loaded" + (unloadCount > 0 ? $", and {unloadCount} features loaded, " : ""));
         }
 
+        private CustomLocalization LoadLocalizationFile(string path)
+        {
+            CustomLocalization loc = null;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    string fileContent = File.ReadAllText(path);
+                    var localizations = SimpleJson.SimpleJson.DeserializeObject<IDictionary<string, IDictionary<string, string>>>(fileContent);
+                    loc = new CustomLocalization();
+                    foreach ( var item in localizations )
+                    {
+                        Jotunn.Logger.LogDebug($"loc " + item);
+                        if (!string.IsNullOrEmpty(item.Key))
+                        {
+                            Jotunn.Logger.LogDebug($"loc2 " + item.Key + " " + string.Join(", ", (item.Value as Dictionary<string, string>).Select(pair => $"{pair.Key} => {pair.Value}")));
+                            loc.AddTranslation(item.Key, item.Value as Dictionary<string, string>);
+                        }
+                    }
+                } catch (Exception ex)
+                {
+                    Jotunn.Logger.LogInfo($"Unable to read localization file {path}.  Using English defaults. \n{ex}");
+                }
+            }
+
+            return loc;
+        }
+
+
+        private void SaveLocalizationFile(string path, string language, Dictionary<string,string> dict) 
+        {
+            // None of the available json serializers can handle Dict<string,Dict<string,string>> properly, and
+            // newtonsoft.json is huge.  Faux-serializing the outer dictionary for now.
+            //System.Runtime.Serialization.Json.
+            //string fileContent = JsonUtility.ToJson(dict);   // Also tried a wrapper to this, which didn't work, from
+            // https://github.com/defuncart/50-unity-tips/tree/master/%2309-JSONSerialization
+            //string fileContent = JsonConvert.SerializeObject(dict);
+            string fileContent = SimpleJson.SimpleJson.SerializeObject(dict);
+            File.WriteAllText(path, "{\"" + language + "\":" + fileContent + "}");
+        }
+
         private void AddLocalizations()
         {
-            CustomLocalization loc = new CustomLocalization();
+            Dictionary<string, string> englishDefaults = new Dictionary<string, string>() {
+                {"$item_crossbow_wood", "Wooden crossbow"}, {"$item_crossbow_wood_description", "A crudely-made but powerful weapon."},
+                {"$item_crossbow_bronze", "Bronze crossbow"}, {"$item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
+                {"$item_crossbow_iron", "Iron crossbow"}, {"$item_crossbow_iron_description", "An accurate, powerful messenger of death."},
+                {"$item_crossbow_silver", "Silver crossbow"}, {"$item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
+                {"$item_crossbow_blackmetal", "Blackmetal crossbow"}, {"$item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
 
-            loc.AddTranslation("English", new Dictionary<string, string>
-            {
-                {"item_crossbow_wood", "Wooden crossbow"}, {"item_crossbow_wood_description", "A crudely-made but powerful weapon."},
-                {"item_crossbow_bronze", "Bronze crossbow"}, {"item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
-                {"item_crossbow_iron", "Iron crossbow"}, {"item_crossbow_iron_description", "An accurate, powerful messenger of death."},
-                {"item_crossbow_silver", "Silver crossbow"}, {"item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
-                {"item_crossbow_blackmetal", "Blackmetal crossbow"}, {"item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
+                {"$item_bolt_wood", "Wood bolt"}, {"$item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
+                {"$item_bolt_fire", "Fire bolt"}, {"$item_bolt_fire_description", "A piercing bolt of fire."},
+                {"$item_bolt_silver", "Silver bolt"}, {"$item_bolt_silver_description", "A bolt to calm restless spirits."},
+                {"$item_bolt_poison", "Poison bolt"}, {"$item_bolt_poison_description", "A bitter dose for your enemies."},
+                {"$item_bolt_frost", "Frost bolt"}, {"$item_bolt_frost_description", "A piercing bolt of ice."},
 
-                {"item_bolt_wood", "Wood bolt"}, {"item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
-                {"item_bolt_fire", "Fire bolt"}, {"item_bolt_fire_description", "A piercing bolt of fire."},
-                {"item_bolt_silver", "Silver bolt"}, {"item_bolt_silver_description", "A bolt to calm restless spirits."},
-                {"item_bolt_poison", "Poison bolt"}, {"item_bolt_poison_description", "A bitter dose for your enemies."},
-                {"item_bolt_frost", "Frost bolt"}, {"item_bolt_frost_description", "A piercing bolt of ice."},
+                {"$item_bolt_lightning", "Lightning bolt"}, {"$item_bolt_lightning_description", "Noone can know when or where it will strike."},
+                {"$item_arrow_lightning", "Lightning arrow"}, {"$item_arrow_lightning_description", "Noone can know when or where it will strike."},
 
-                {"item_bolt_lightning", "Lightning bolt"}, {"item_bolt_lightning_description", "Noone can know when or where it will strike."},
-                {"item_arrow_lightning", "Lightning arrow"}, {"item_arrow_lightning_description", "Noone can know when or where it will strike."},
+                {"$item_bolt_explosive", "Flametal bolt"}, {"$item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
+            };
 
-                {"item_bolt_explosive", "Flametal bolt"}, {"item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
+            string locFile = $"{PluginAuthor}.{PluginName}.localizations.json";
+            string path = Utility.CombinePaths(new string[] {
+                BepInEx.Paths.ConfigPath,
+                locFile
             });
+
+            CustomLocalization loc = LoadLocalizationFile(path);
+            if (loc == null)
+            {
+                loc = new CustomLocalization();
+                loc.AddTranslation("English", englishDefaults);
+                SaveLocalizationFile(path, "English", englishDefaults);
+                Jotunn.Logger.LogDebug($"Default localizations loaded.  Wrote to file " + locFile);
+            }
+            else
+            {
+                Jotunn.Logger.LogDebug($"Localizations loaded from " + locFile);
+            }
 
             LocalizationManager.Instance.AddLocalization(loc);
         }
+
 
         private void InitializeFeatures()
         {
