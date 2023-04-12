@@ -92,6 +92,41 @@ namespace MoreCrossbows
 
     }
 
+    public class AcceptableKeysString : AcceptableValueBase
+    {
+        public virtual string[] AcceptableKeys{ get; }
+
+        public AcceptableKeysString(params string[] acceptableKeys)
+            : base(typeof(string))
+        {
+            if (acceptableKeys == null)
+            {
+                throw new ArgumentNullException("acceptableValues");
+            }
+            if (acceptableKeys.Length == 0)
+            {
+                throw new ArgumentException("At least one acceptable key is needed", "AcceptableKeys");
+            }
+            this.AcceptableKeys = acceptableKeys;
+        }
+
+        public override object Clamp(object value)
+        {
+            return value; // passthrough
+        }
+
+        public override bool IsValid(object value)
+        {
+            // mostly passthrough
+            return (value is string && !string.IsNullOrEmpty((string)value));
+        }
+
+        public override string ToDescriptionString()
+        {
+            return "# Acceptable keys: " + string.Join(", ", this.AcceptableKeys.Select(x => x.ToString()).ToArray<string>());
+        }
+    }
+
     public interface IPlugin
     {
         ConfigFile Config { get; }
@@ -205,6 +240,7 @@ namespace MoreCrossbows
             Requirements.SettingChanged += OnSettingChanged;
         }
 
+
         public void RemoveSettingsChangedHandler()
         {
             Table.SettingChanged -= OnSettingChanged;
@@ -223,17 +259,8 @@ namespace MoreCrossbows
         {
             ItemEntries entries = new ItemEntries();
             entries = (ItemEntries) GetFromFeature(instance, config, entries);
-            //entries.Name = config.Name;
-            //entries.Table = instance.Config(entries.Name, "Table", config.Table,
-            //    new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
-            //entries.MinTableLevel = instance.Config(entries.Name, "Table Level", config.MinTableLevel,
-            //    new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
-            //entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
-            //    new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
-            //entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
-            //     new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
             entries.Damages = instance.Config<string>(entries.Name, "Damages", config.Damages,
-                new ConfigDescription($"The damage done by {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"The damage done by {entries.Name}.", new AcceptableKeysString(DamageTypes.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
 
             return entries;
         }
