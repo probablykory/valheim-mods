@@ -197,8 +197,8 @@ namespace MoreCrossbows
                 pluginFolder = Utility.CombinePaths(new string[] { BepInEx.Paths.PluginPath, PluginName });
             }
 
-            string locPath = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English" });
-            string locFile = Utility.CombinePaths(new string[] { locPath, "localization.json" });
+            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "localization.json" });
+            string locPath = Path.GetDirectoryName(locFile);
 
             if (!(Directory.Exists(locPath) && File.Exists(locFile)))
             {
@@ -206,6 +206,8 @@ namespace MoreCrossbows
                 Directory.CreateDirectory(locPath);
                 string fileContent = SimpleJson.SimpleJson.SerializeObject(DefaultEnglishLanguageStrings);
                 File.WriteAllText(locFile, fileContent);
+
+                Jotunn.Logger.LogInfo("Default localizations written to " + locFile);
             }
 
             LocalizationManager.OnLocalizationAdded -= OnLocalizationAdded;
