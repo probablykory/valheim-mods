@@ -37,13 +37,13 @@ namespace MoreCrossbows
             Config.SaveOnConfigSet = true;
 
             InitializeFeatures();
-            AddLocalizations();
+            AddDefaultLocalizations();
 
             Patches.OnPlayerSpawned += OnPlayerSpawned;
 
-
             SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+            LocalizationManager.OnLocalizationAdded += OnLocalizationAdded;
         }
 
         private void OnPlayerSpawned(Player obj)
@@ -159,90 +159,57 @@ namespace MoreCrossbows
             Jotunn.Logger.LogInfo($"{loadCount} features loaded" + (unloadCount > 0 ? $", and {unloadCount} features loaded, " : ""));
         }
 
-        private CustomLocalization LoadLocalizationFile(string path)
-        {
-            CustomLocalization loc = null;
-            if (File.Exists(path))
-            {
-                try
-                {
-                    string fileContent = File.ReadAllText(path);
-                    var localizations = SimpleJson.SimpleJson.DeserializeObject<IDictionary<string, IDictionary<string, string>>>(fileContent);
-                    loc = new CustomLocalization();
-                    foreach ( var item in localizations )
-                    {
-                        //Jotunn.Logger.LogDebug($"loc " + item);
-                        if (!string.IsNullOrEmpty(item.Key))
-                        {
-                            //Jotunn.Logger.LogDebug($"loc2 " + item.Key + " " + string.Join(", ", (item.Value as Dictionary<string, string>).Select(pair => $"{pair.Key} => {pair.Value}")));
-                            loc.AddTranslation(item.Key, item.Value as Dictionary<string, string>);
-                        }
-                    }
-                } catch (Exception ex)
-                {
-                    Jotunn.Logger.LogInfo($"Unable to read localization file {path}.  Using English defaults. \n{ex}");
-                }
-            }
+        private static Dictionary<string, string> DefaultEnglishLanguageStrings = new Dictionary<string, string>() {
+            {"$item_crossbow_wood", "Wooden crossbow"}, {"$item_crossbow_wood_description", "A crudely-made but powerful weapon."},
+            {"$item_crossbow_bronze", "Bronze crossbow"}, {"$item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
+            {"$item_crossbow_iron", "Iron crossbow"}, {"$item_crossbow_iron_description", "An accurate, powerful messenger of death."},
+            {"$item_crossbow_silver", "Silver crossbow"}, {"$item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
+            {"$item_crossbow_blackmetal", "Blackmetal crossbow"}, {"$item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
 
-            return loc;
+            {"$item_bolt_wood", "Wood bolt"}, {"$item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
+            {"$item_bolt_fire", "Fire bolt"}, {"$item_bolt_fire_description", "A piercing bolt of fire."},
+            {"$item_bolt_silver", "Silver bolt"}, {"$item_bolt_silver_description", "A bolt to calm restless spirits."},
+            {"$item_bolt_poison", "Poison bolt"}, {"$item_bolt_poison_description", "A bitter dose for your enemies."},
+            {"$item_bolt_frost", "Frost bolt"}, {"$item_bolt_frost_description", "A piercing bolt of ice."},
+
+            {"$item_bolt_lightning", "Lightning bolt"}, {"$item_bolt_lightning_description", "Noone can know when or where it will strike."},
+            {"$item_arrow_lightning", "Lightning arrow"}, {"$item_arrow_lightning_description", "Noone can know when or where it will strike."},
+
+            {"$item_bolt_explosive", "Flametal bolt"}, {"$item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
+        };
+
+        private void AddDefaultLocalizations()
+        {
+            Jotunn.Logger.LogDebug("AddLocalizations called.");
+            CustomLocalization loc = LocalizationManager.Instance.GetLocalization();
+            loc.AddTranslation("English", DefaultEnglishLanguageStrings);
         }
 
-
-        private void SaveLocalizationFile(string path, string language, Dictionary<string,string> dict) 
+        private void OnLocalizationAdded()
         {
-            // None of the available json serializers can handle Dict<string,Dict<string,string>> properly, and
-            // newtonsoft.json is huge.  Faux-serializing the outer dictionary for now.
-            //System.Runtime.Serialization.Json.
-            //string fileContent = JsonUtility.ToJson(dict);   // Also tried a wrapper to this, which didn't work, from
-            // https://github.com/defuncart/50-unity-tips/tree/master/%2309-JSONSerialization
-            //string fileContent = JsonConvert.SerializeObject(dict);
-            string fileContent = SimpleJson.SimpleJson.SerializeObject(dict);
-            File.WriteAllText(path, "{\"" + language + "\":" + fileContent + "}");
-        }
+            Jotunn.Logger.LogDebug("Localization Added received.");
 
-        private void AddLocalizations()
-        {
-            Dictionary<string, string> englishDefaults = new Dictionary<string, string>() {
-                {"$item_crossbow_wood", "Wooden crossbow"}, {"$item_crossbow_wood_description", "A crudely-made but powerful weapon."},
-                {"$item_crossbow_bronze", "Bronze crossbow"}, {"$item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
-                {"$item_crossbow_iron", "Iron crossbow"}, {"$item_crossbow_iron_description", "An accurate, powerful messenger of death."},
-                {"$item_crossbow_silver", "Silver crossbow"}, {"$item_crossbow_silver_description", "A sleek weapon, crafted from the mountain top."},
-                {"$item_crossbow_blackmetal", "Blackmetal crossbow"}, {"$item_crossbow_blackmetal_description", "A vicious thing.  Handle with care."},
-
-                {"$item_bolt_wood", "Wood bolt"}, {"$item_bolt_wood_description", "A brittle crossbow bolt of sharpened wood."},
-                {"$item_bolt_fire", "Fire bolt"}, {"$item_bolt_fire_description", "A piercing bolt of fire."},
-                {"$item_bolt_silver", "Silver bolt"}, {"$item_bolt_silver_description", "A bolt to calm restless spirits."},
-                {"$item_bolt_poison", "Poison bolt"}, {"$item_bolt_poison_description", "A bitter dose for your enemies."},
-                {"$item_bolt_frost", "Frost bolt"}, {"$item_bolt_frost_description", "A piercing bolt of ice."},
-
-                {"$item_bolt_lightning", "Lightning bolt"}, {"$item_bolt_lightning_description", "Noone can know when or where it will strike."},
-                {"$item_arrow_lightning", "Lightning arrow"}, {"$item_arrow_lightning_description", "Noone can know when or where it will strike."},
-
-                {"$item_bolt_explosive", "Flametal bolt"}, {"$item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
-            };
-
-            string locFile = $"{PluginAuthor}.{PluginName}.localizations.json";
-            string path = Utility.CombinePaths(new string[] {
-                BepInEx.Paths.ConfigPath,
-                locFile
-            });
-
-            CustomLocalization loc = LoadLocalizationFile(path);
-            if (loc == null)
+            string pluginPath = Instance.GetType().Assembly.Location.Replace(Path.DirectorySeparatorChar + PluginName + ".dll", "");
+            string pluginFolder = pluginPath;
+            if (BepInEx.Paths.PluginPath.Equals(pluginFolder)) 
             {
-                loc = new CustomLocalization();
-                loc.AddTranslation("English", englishDefaults);
-                SaveLocalizationFile(path, "English", englishDefaults);
-                Jotunn.Logger.LogDebug($"Default localizations loaded.  Wrote to file " + locFile);
-            }
-            else
-            {
-                Jotunn.Logger.LogDebug($"Localizations loaded from " + locFile);
+                // If our parent folder and bepinex's plugin folder are the same, use a subdir instead.
+                pluginFolder = Utility.CombinePaths(new string[] { BepInEx.Paths.PluginPath, PluginName });
             }
 
-            LocalizationManager.Instance.AddLocalization(loc);
-        }
+            string locPath = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English" });
+            string locFile = Utility.CombinePaths(new string[] { locPath, "localization.json" });
 
+            if (!(Directory.Exists(locPath) && File.Exists(locFile)))
+            {
+                // Write defaults out to disk for end-users
+                Directory.CreateDirectory(locPath);
+                string fileContent = SimpleJson.SimpleJson.SerializeObject(DefaultEnglishLanguageStrings);
+                File.WriteAllText(locFile, fileContent);
+            }
+
+            LocalizationManager.OnLocalizationAdded -= OnLocalizationAdded;
+        }
 
         private void InitializeFeatures()
         {
