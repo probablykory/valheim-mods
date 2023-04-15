@@ -50,6 +50,7 @@ namespace MoreCrossbows
         public new ItemEntries Entries { get; protected set; }
 
         public FeatureItem(string name) : base(name) { }
+        public string AoePrefabName { get; set; }
         public string AssetPath { get; set; }
         public string Damages { get; set; } = string.Empty;
         public int Knockback { get; set; } = 0;
@@ -96,7 +97,7 @@ namespace MoreCrossbows
             _customItem.Recipe.Update(newRecipe);
 
             Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
-            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value));
+            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value), AoePrefabName);
 
             return true;
         }
@@ -115,8 +116,8 @@ namespace MoreCrossbows
             };
             _customItem = new CustomItem(MoreCrossbows.Instance.assetBundle, AssetPath, true, config);
 
-            Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
-            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value));
+            //Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
+            setDamage(DamagesEntry.Deserialize(Entries != null ? Entries.Damages.Value : Damages), AoePrefabName);
             _customItem.ItemDrop.m_itemData.m_shared.m_attackForce = Knockback;
 
             ItemManager.Instance.AddItem(_customItem);
@@ -136,7 +137,7 @@ namespace MoreCrossbows
             return true;
         }
 
-        private void setDamage(Dictionary<string, int> dmgs)
+        private void setDamage(Dictionary<string, int> dmgs, string aoePrefabName)
         {
             _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_damage = dmgs.ContainsKey(DamageTypes.Damage) ? dmgs[DamageTypes.Damage] : 0;
             _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_blunt = dmgs.ContainsKey(DamageTypes.Blunt) ? dmgs[DamageTypes.Blunt] : 0;
@@ -149,6 +150,32 @@ namespace MoreCrossbows
             _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_lightning = dmgs.ContainsKey(DamageTypes.Lightning) ? dmgs[DamageTypes.Lightning] : 0;
             _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_poison = dmgs.ContainsKey(DamageTypes.Poison) ? dmgs[DamageTypes.Poison] : 0;
             _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_spirit = dmgs.ContainsKey(DamageTypes.Spirit) ? dmgs[DamageTypes.Spirit] : 0;
+
+            if (!string.IsNullOrEmpty(aoePrefabName))
+            {
+                var prefab = PrefabManager.Instance.GetPrefab(aoePrefabName);
+                if (prefab != null)
+                {
+                    //Jotunn.Logger.LogDebug("seting aoe dmg of " + _customItem.ItemDrop.name);
+                    var aoe = prefab.GetComponent<Aoe>();
+                    if (aoe != null)
+                    {
+                        //Jotunn.Logger.LogDebug("aoe ref valid  " + aoe.name);
+
+                        //TODO: patch ItemDrop.ItemData.GetTooltip() to tack on AOE damage.
+
+                        // Aoe frost special case as it scales poorly, 2/3 value goes aoe, 1/3 goes to projectile.
+                        float frostThird = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_frost / 3f;
+                        aoe.m_damage.m_frost = frostThird * 2f;
+                        _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_frost = frostThird;
+
+                        aoe.m_damage.m_fire = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_fire;
+                        aoe.m_damage.m_lightning = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_lightning;
+                        aoe.m_damage.m_poison = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_poison;
+                        aoe.m_damage.m_spirit = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_spirit;
+                    }
+                }
+            }
         }
     }
 

@@ -9,6 +9,7 @@ using UnityEngine;
 using HarmonyLib;
 using System.IO;
 using System.Linq;
+using UnityEngine.Assertions;
 
 namespace MoreCrossbows
 {
@@ -19,7 +20,7 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.1.2.0";
+        public const string PluginVersion = "1.2.0.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static MoreCrossbows Instance;
@@ -39,7 +40,7 @@ namespace MoreCrossbows
             InitializeFeatures();
             AddDefaultLocalizations();
 
-            Patches.OnPlayerSpawned += OnPlayerSpawned;
+            PlayerPatches.OnPlayerSpawned += OnPlayerSpawned;
 
             SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
@@ -75,7 +76,7 @@ namespace MoreCrossbows
 
             SynchronizationManager.OnConfigurationSynchronized -= OnConfigurationSynchronized;
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
-            Patches.OnPlayerSpawned -= OnPlayerSpawned;
+            PlayerPatches.OnPlayerSpawned -= OnPlayerSpawned;
 
             Config.Save();
         }
@@ -160,6 +161,9 @@ namespace MoreCrossbows
         }
 
         private static Dictionary<string, string> DefaultEnglishLanguageStrings = new Dictionary<string, string>() {
+            {"$area_of_effect", "Area effect" },
+            {"$every", "every" }, {"$seconds", "seconds" }, {"$per_second", "per second" },
+
             {"$item_crossbow_wood", "Wooden crossbow"}, {"$item_crossbow_wood_description", "A crudely-made but powerful weapon."},
             {"$item_crossbow_bronze", "Bronze crossbow"}, {"$item_crossbow_bronze_description", "A powerful weapon, forged in bronze."},
             {"$item_crossbow_iron", "Iron crossbow"}, {"$item_crossbow_iron_description", "An accurate, powerful messenger of death."},
@@ -175,7 +179,12 @@ namespace MoreCrossbows
             {"$item_bolt_lightning", "Lightning bolt"}, {"$item_bolt_lightning_description", "Noone can know when or where it will strike."},
             {"$item_arrow_lightning", "Lightning arrow"}, {"$item_arrow_lightning_description", "Noone can know when or where it will strike."},
 
-            {"$item_bolt_explosive", "Flametal bolt"}, {"$item_bolt_explosive_description", "Do not use indoors.  Why should sorcerers have all the fun?"},
+            {"$item_bolt_surtling", "Surtling bolt"}, {"$item_bolt_surtling_description", "Do not use indoors."},
+            {"$item_bolt_ooze", "Ooze bolt"}, {"$item_bolt_ooze_description", "The stench is unbearable..."},
+            {"$item_bolt_bile", "Bile bolt"}, {"$item_bolt_bile_description", "Handle with care."},
+            {"$item_bolt_ice", "Ice bolt"}, {"$item_bolt_ice_description", "Heart of the frozen mountain."},
+
+            {"$item_bolt_flametal", "Flametal bolt"}, {"$item_bolt_flametal_description", "Do not use indoors."},
         };
 
         private void AddDefaultLocalizations()
@@ -289,7 +298,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltWood")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new wood bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltWood.prefab",
@@ -307,7 +316,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFire")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new fire bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFire.prefab",
@@ -326,7 +335,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltSilver")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new silver bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltSilver.prefab",
@@ -344,7 +353,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltPoison")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new poison bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltPoison.prefab",
@@ -362,7 +371,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFrost")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new frost bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFrost.prefab",
@@ -381,7 +390,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltLightning")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Adds new lightning bolts",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltLightning.prefab",
@@ -400,7 +409,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("ArrowLightning")
             {
-                Category = "3 - Arrows",
+                Category = "2 - Arrows",
                 Description = "Adds new lightning arrows",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/ArrowLightning.prefab",
@@ -418,10 +427,107 @@ namespace MoreCrossbows
             });
 
 
+            // New AOE bolts
+            _features.Add(new FeatureItem("BoltOoze")
+            {
+                Category = "4 - AOE Bolts",
+                Description = "Adds new Ooze bomb bolts.  These cause the same Ooze explosions as bombs.",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltOoze.prefab",
+
+                Amount = 10,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 1,
+                Requirements = "Wood:8",
+                Damages = "Pierce:5,Poison:40",
+                AoePrefabName = "oozebomb_explosion",
+
+                DependencyNames = new List<string>()
+                {
+                    "arbalest_projectile_ooze.prefab"
+                }
+            });
+
+            _features.Add(new FeatureItem("BoltSurtling")
+            {
+                Category = "4 - AOE Bolts",
+                Description = "Adds new Surtling bomb bolts",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltSurtling.prefab",
+
+                Amount = 10,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 1,
+                Requirements = "Wood:8",
+                Damages = "Pierce:22,Fire:30",
+                AoePrefabName = "firebolt_explosion",
+                DependencyNames = new List<string>()
+                {
+                    "arbalest_projectile_surtling.prefab",
+                    "firebolt_explosion.prefab"
+                }
+            });
+
+            _features.Add(new FeatureItem("BoltBile")
+            {
+                Category = "4 - AOE Bolts",
+                Description = "Adds new Bile bomb bolts.  These cause the same Bile explosions as bombs.",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltBile.prefab",
+
+                Amount = 10,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 1,
+                Requirements = "Wood:8",
+                Damages = "Pierce:22,Fire:15,Poison:30",
+                AoePrefabName = "bilebomb_explosion",
+
+                DependencyNames = new List<string>()
+                {
+                    "arbalest_projectile_bile.prefab"
+                }
+            });
+
+            _features.Add(new FeatureItem("BoltIce")
+            {
+                Category = "4 - AOE Bolts",
+                Description = "Adds new Ice bomb bolts.  These will strike an area with frost damage.",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltIce.prefab",
+
+                Amount = 10,
+                Table = CraftingTable.Workbench,
+                MinTableLevel = 1,
+                Requirements = "Wood:8",
+                Damages = "Pierce:22,Frost:52",
+                AoePrefabName = "icebolt_explosion",
+
+                DependencyNames = new List<string>()
+                {
+                    "arbalest_projectile_ice.prefab",
+                    "icebolt_explosion.prefab"
+                }
+            });
+
+            _features.Add(new FeatureItem("BoltFlametal")
+            {
+                Category = "4 - AOE Bolts",
+                Description = "Adds new Flametal bolts.  Hits very hard.",
+                EnabledByDefault = true,
+                AssetPath = "Assets/PrefabInstance/BoltFlametal.prefab",
+
+                Amount = 10,
+                Table = CraftingTable.BlackForge,
+                MinTableLevel = 2,
+                Requirements = "Flametal:1,Feathers:1,Eitr:5,SurtlingCore:1",
+                Damages = "Blunt:22,Pierce:22,Fire:102"
+            });
+
+
             // new workbench recipes for existing bolts
             _features.Add(new FeatureRecipe("BoltBone")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Enables bone bolts to be craftable earlier",
                 EnabledByDefault = true,
 
@@ -433,7 +539,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureRecipe("BoltIron")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Enables iron bolts to be craftable earlier",
                 EnabledByDefault = true,
 
@@ -445,7 +551,7 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureRecipe("BoltBlackmetal")
             {
-                Category = "2 - Bolts",
+                Category = "3 - Bolts",
                 Description = "Enables blackmetal bolts to be craftable earlier",
                 EnabledByDefault = true,
 
@@ -455,21 +561,23 @@ namespace MoreCrossbows
                 Amount = 20,
             });
 
-            // Must be last - easter egg
-            _features.Add(new FeatureItem("BoltExplosive")
-            {
-                AssetPath = "Assets/PrefabInstance/BoltExplosive.prefab",
-                // no enabled setting
-                //Category = "2 - Bolts",
-                //Description = "",
-                //EnabledByDefault = false,
 
-                Table = CraftingTable.BlackForge,
-                MinTableLevel = 2,
-                Requirements = "Wood:5,Feathers:2,Ooze:5,SurtlingCore:5,Coal:5,Eitr:5,Flametal:1",
-                Damages = "Blunt:36,Pierce:36,Lightning:78",
-                Amount = 10,
-            });
+            // Must be last - easter egg
+            //_features.Add(new FeatureItem("BoltExplosive")
+            //{
+            //    AssetPath = "Assets/PrefabInstance/BoltExplosive.prefab",
+            //    // no enabled setting
+            //    //Category = "3 - Bolts",
+            //    //Description = "",
+            //    //EnabledByDefault = false,
+
+            //    Table = CraftingTable.BlackForge,
+            //    MinTableLevel = 2,
+            //    Requirements = "Wood:5,Feathers:2,Ooze:5,SurtlingCore:5,Coal:5,Eitr:5,Flametal:1",
+            //    Damages = "Blunt:5,Pierce:5,Fire:120",
+            //    Amount = 10,
+            //});
+
 
             foreach (var f in _features)
             {

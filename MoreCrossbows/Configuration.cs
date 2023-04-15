@@ -92,6 +92,29 @@ namespace MoreCrossbows
 
     }
 
+    public class AcceptableValueConfigNote : AcceptableValueBase
+    {
+        public virtual string Note { get; }
+
+        public AcceptableValueConfigNote(string note) : base(typeof(string))
+        {
+            if (string.IsNullOrEmpty(note))
+            {
+                throw new ArgumentException("A string with atleast 1 character is needed", "Note");
+            }
+            this.Note = note;
+        }
+
+        // passthrough overrides
+        public override object Clamp(object value){return value;}
+        public override bool IsValid(object value) { return !string.IsNullOrEmpty(value as string);  }
+
+        public override string ToDescriptionString()
+        {
+            return "# Note: " + Note;
+        }
+    }
+
     public class AcceptableKeysString : AcceptableValueBase
     {
         public virtual string[] AcceptableKeys{ get; }
@@ -218,7 +241,7 @@ namespace MoreCrossbows
             entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
                 new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
             entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
-                 new ConfigDescription($"The required items to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+                 new ConfigDescription($"The required items to craft {entries.Name}.", new AcceptableValueConfigNote("You must use valid spawn item codes or this will not work."), ConfigHelper.GetAdminOnlyFlag()));
 
             return entries;
         }
