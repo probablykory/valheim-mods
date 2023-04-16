@@ -6,29 +6,38 @@ A Valheim mod which adds several crossbows and bolts.
 ![Showcase](https://raw.githubusercontent.com/probablykory/valheim-mods/main/MoreCrossbows/showcase.jpg)
 
 Progression-appropriate crossbow options for every 'age'.  
-New bolts to provide elemental damage.  
+New bolts to provide direct elemental damage.  
 New recipes for crafting the existing bolts from Workbench or Forge.  
+Brand new Area Effect bolts, based on the ooze & bile bombs, but includes fire and ice as well.  
 
+![Showcase AoE](https://raw.githubusercontent.com/probablykory/valheim-mods/main/MoreCrossbows/showcase-aoe.jpg)
 
 ### Detailed list of new items
-Wooden Crossbow  
-Bronze Crossbow  
-Iron Crossbow  
-Silver Crossbow  
-Blackmetal Crossbow  
-Wood Bolt  
-Fire Bolt  
-Poison Bolt  
-Silver Bolt  
-Frost Bolt  
-Lightning Bolt (change config to enable)  
-Lightning Arrow (change config to enable)  
+Wooden crossbow  
+Bronze crossbow  
+Iron crossbow  
+Silver crossbow  
+Blackmetal crossbow  
+Wood bolt  
+Fire bolt  
+Ooze bolt (change config to enable)  
+Surtling bolt (change config to enable)  
+Poison bolt  
+Silver bolt  
+Frost bolt  
+Ice bolt (change config to enable)  
+Lightning bolt (change config to enable)  
+Lightning arrow (change config to enable)  
+Bile bolt (change config to enable)  
+Flametal bolt (change config to enable)  
 
 ## Rationale 
 
 During my first playthrough of Mistlands, the Arbalest fundamentally changed my experience of the game.  I *love* that thing.  On subsequent playthroughs I found myself wanting progression-appropriate crossbows to compliment the bows.  So I made some 🙂  
 
 The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way to have some fun with Eitr that didn't demand I change armor and weapons.  
+
+Lastly, I added the Area Effect bolts to spice things up a bit, give the mod something fun outside the vanilla experience.
 
 ## Installation
 
@@ -44,6 +53,12 @@ The reasoning behind the Lighting Bolts and Arrows is similar.  I wanted a way t
   * Click "OK/Import local mod" on the pop-up for information.
 
 ## Changelog
+
+### v1.2.0
+ * Added new AOE bolts
+ * General configuration overhaul.
+ * Damage is now configurable.  Defaults are balanced well for vanilla, but those who play on higher-difficulty servers or in radically different environments can now tweak the damage to suit their needs.
+ * Localization updates.  Plugin now writes default translations to disk, allowing users to modify/add languages.
 
 ### v1.1.2
  * Fixed minimum table level requirement defaults for the later crossbows.

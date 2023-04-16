@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3468168465
+CRC: 2714932799
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e1dc0d791be8bc0111c2af1d4eb4aa3b
+    Hash: 1188d699508761d24d0498cf62e61c19
   TypeTreeHash:
     serializedVersion: 2
     Hash: e5c07dade516d3d18cba89ea20474fe8
@@ -94,6 +94,7 @@ Assets:
 - Assets/Material/JVLmock_flame.mat
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_01.ogg
 - Assets/Material/JVLmock_flame_large.mat
+- Assets/Sprite/ice_bolt.png
 - Assets/PrefabInstance/JVLmock_sfx_bomb_throw.prefab
 - Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_01.ogg
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_06.ogg
@@ -134,6 +135,7 @@ Assets:
 - Assets/Shader/JVLmock_Custom_Creature.shader
 - Assets/Shader/JVLmock_Lux Lit Particles_ Bumped.shader
 - Assets/Mesh/JVLmock_polySurface20.mesh
+- Assets/Sprite/ooze_bolt.png
 - Assets/Sprite/lightning_bolt.png
 - Assets/Material/JVLmock_lightning_sparcs.mat
 - Assets/PrefabInstance/sfx_bronze_crossbow_fire.prefab
@@ -220,6 +222,7 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Impact_06.ogg
 - Assets/PrefabInstance/sfx_wood_crossbow_fire.prefab
 - Assets/PrefabInstance/CrossbowSilver.prefab
+- Assets/Sprite/bile_bolt.png
 - Assets/PrefabInstance/firebolt_explosion.prefab
 - Assets/Sprite/wood_bolt.png
 - Assets/Shader/JVLmock_Standard TwoSided.shader
@@ -234,6 +237,7 @@ Assets:
 - Assets/PrefabInstance/arbalest_projectile_flametal.prefab
 - Assets/AudioClip/JVLmock_Eiter_Projectile_15.ogg
 - Assets/Texture2D/bolts_m.png
+- Assets/Material/JVLmock_snowlump.mat
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_10.ogg
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_12.ogg
 - Assets/Material/CrossbowSilver_mat.mat
@@ -246,6 +250,7 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Projectile_04.ogg
 - Assets/Material/JVLmock_arrow_poison.mat
 - Assets/PrefabInstance/BoltSurtling.prefab
+- Assets/Sprite/flametal_bolt.png
 - Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_02.ogg
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_03.ogg
 - Assets/Texture2D/JVLmock_arrow_white.png
@@ -258,6 +263,7 @@ Assets:
 - Assets/Sprite/fire_bolt.png
 - Assets/Material/bolt_bile.mat
 - Assets/Texture2D/CrossbowIron_d.png
+- Assets/Sprite/surtling_bolt.png
 - Assets/PrefabInstance/CrossbowWood.prefab
 - Assets/PrefabInstance/BoltBile.prefab
 - Assets/Material/bolt_ooze.mat

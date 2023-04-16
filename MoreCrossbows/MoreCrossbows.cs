@@ -432,7 +432,7 @@ namespace MoreCrossbows
             {
                 Category = "4 - Area Effect Bolts",
                 Description = "Adds new Ooze bomb bolts.  These cause the same Ooze explosions as bombs. Damage set here is applied to both projectile & explosion.",
-                EnabledByDefault = true,
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltOoze.prefab",
 
                 Amount = 10,
@@ -452,7 +452,7 @@ namespace MoreCrossbows
             {
                 Category = "4 - Area Effect Bolts",
                 Description = "Adds new Surtling bolts.  Damage set here is applied to both projectile & explosion.",
-                EnabledByDefault = true,
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltSurtling.prefab",
 
                 Amount = 10,
@@ -472,7 +472,7 @@ namespace MoreCrossbows
             {
                 Category = "4 - Area Effect Bolts",
                 Description = "Adds new Bile bomb bolts.  These cause the same Bile explosions as bombs. Damage set here is applied to both projectile & explosion.",
-                EnabledByDefault = true,
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltBile.prefab",
 
                 Amount = 10,
@@ -492,7 +492,7 @@ namespace MoreCrossbows
             {
                 Category = "4 - Area Effect Bolts",
                 Description = "Adds new Ice bolts which strike an area with frost damage.  Damage set here is SPLIT between projectile & explosion.",
-                EnabledByDefault = true,
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltIce.prefab",
 
                 Amount = 10,
@@ -513,14 +513,20 @@ namespace MoreCrossbows
             {
                 Category = "4 - Area Effect Bolts",
                 Description = "Adds new Flametal bolts.  Hits all targets very hard.  Damage set here is applied ONLY to projectile.",
-                EnabledByDefault = true,
+                EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltFlametal.prefab",
 
                 Amount = 10,
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Flametal:1,Feathers:1,Eitr:3,SurtlingCore:3",
-                Damages = "Blunt:22,Pierce:22,Fire:102"
+                Damages = "Blunt:22,Pierce:22,Fire:102",
+                DependencyNames = new List<string>()
+                {
+                    "arbalest_projectile_flametal.prefab",
+                    "firebolt_explosion.prefab"
+                }
+
             });
 
 
