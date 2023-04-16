@@ -567,24 +567,6 @@ namespace MoreCrossbows
                 Amount = 20,
             });
 
-
-            // Must be last - easter egg
-            //_features.Add(new FeatureItem("BoltExplosive")
-            //{
-            //    AssetPath = "Assets/PrefabInstance/BoltExplosive.prefab",
-            //    // no enabled setting
-            //    //Category = "3 - Bolts",
-            //    //Description = "",
-            //    //EnabledByDefault = false,
-
-            //    Table = CraftingTable.BlackForge,
-            //    MinTableLevel = 2,
-            //    Requirements = "Wood:5,Feathers:2,Ooze:5,SurtlingCore:5,Coal:5,Eitr:5,Flametal:1",
-            //    Damages = "Blunt:5,Pierce:5,Fire:120",
-            //    Amount = 10,
-            //});
-
-
             foreach (var f in _features)
             {
                 f.Initialize();
