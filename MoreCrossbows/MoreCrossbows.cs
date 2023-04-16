@@ -206,7 +206,7 @@ namespace MoreCrossbows
                 pluginFolder = Utility.CombinePaths(new string[] { BepInEx.Paths.PluginPath, PluginName });
             }
 
-            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "localization.json" });
+            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "localization" + PluginVersion + ".json" });
             string locPath = Path.GetDirectoryName(locFile);
 
             if (!(Directory.Exists(locPath) && File.Exists(locFile)))
@@ -399,7 +399,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Wood:8,Feathers:2,Eitr:1",
-                Damages = "Pierce:36,Lightning:52",
+                Damages = "Pierce:36,Lightning:62",
                 DependencyNames = new List<string>()
                 {
                     "sfx_lightning_hit.prefab",
@@ -418,7 +418,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
                 Requirements = "Wood:8,Feathers:2,Eitr:1",
-                Damages = "Pierce:36,Lightning:52",
+                Damages = "Pierce:36,Lightning:62",
                 DependencyNames = new List<string>()
                 {
                     "sfx_lightning_hit.prefab",
@@ -427,18 +427,18 @@ namespace MoreCrossbows
             });
 
 
-            // New AOE bolts
+            // New AOE Bolts
             _features.Add(new FeatureItem("BoltOoze")
             {
-                Category = "4 - AOE Bolts",
-                Description = "Adds new Ooze bomb bolts.  These cause the same Ooze explosions as bombs.",
+                Category = "4 - Area Effect Bolts",
+                Description = "Adds new Ooze bomb bolts.  These cause the same Ooze explosions as bombs. Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltOoze.prefab",
 
                 Amount = 10,
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 1,
-                Requirements = "Wood:8",
+                Requirements = "Wood:4,Feathers:1,LeatherScraps:5,Ooze:5",
                 Damages = "Pierce:5,Poison:40",
                 AoePrefabName = "oozebomb_explosion",
 
@@ -450,15 +450,15 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltSurtling")
             {
-                Category = "4 - AOE Bolts",
-                Description = "Adds new Surtling bomb bolts",
+                Category = "4 - Area Effect Bolts",
+                Description = "Adds new Surtling bolts.  Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltSurtling.prefab",
 
                 Amount = 10,
-                Table = CraftingTable.Workbench,
-                MinTableLevel = 1,
-                Requirements = "Wood:8",
+                Table = CraftingTable.Forge,
+                MinTableLevel = 4,
+                Requirements = "Wood:4,Feathers:1,SurtlingCore:3,Iron:1",
                 Damages = "Pierce:22,Fire:30",
                 AoePrefabName = "firebolt_explosion",
                 DependencyNames = new List<string>()
@@ -470,15 +470,15 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltBile")
             {
-                Category = "4 - AOE Bolts",
-                Description = "Adds new Bile bomb bolts.  These cause the same Bile explosions as bombs.",
+                Category = "4 - Area Effect Bolts",
+                Description = "Adds new Bile bomb bolts.  These cause the same Bile explosions as bombs. Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltBile.prefab",
 
                 Amount = 10,
                 Table = CraftingTable.Workbench,
                 MinTableLevel = 1,
-                Requirements = "Wood:8",
+                Requirements = "Wood:4,Feathers:1,Sap:3,Bilebag:3",
                 Damages = "Pierce:22,Fire:15,Poison:30",
                 AoePrefabName = "bilebomb_explosion",
 
@@ -490,16 +490,16 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltIce")
             {
-                Category = "4 - AOE Bolts",
-                Description = "Adds new Ice bomb bolts.  These will strike an area with frost damage.",
+                Category = "4 - Area Effect Bolts",
+                Description = "Adds new Ice bolts which strike an area with frost damage.  Damage set here is SPLIT between projectile & explosion.",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltIce.prefab",
 
                 Amount = 10,
-                Table = CraftingTable.Workbench,
-                MinTableLevel = 1,
-                Requirements = "Wood:8",
-                Damages = "Pierce:22,Frost:52",
+                Table = CraftingTable.Forge,
+                MinTableLevel = 4,
+                Requirements = "Wood:4,Feathers:1,FreezeGland:3,BlackMetal:1",
+                Damages = "Pierce:22,Frost:62",
                 AoePrefabName = "icebolt_explosion",
 
                 DependencyNames = new List<string>()
@@ -511,15 +511,15 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFlametal")
             {
-                Category = "4 - AOE Bolts",
-                Description = "Adds new Flametal bolts.  Hits very hard.",
+                Category = "4 - Area Effect Bolts",
+                Description = "Adds new Flametal bolts.  Hits all targets very hard.  Damage set here is applied ONLY to projectile.",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFlametal.prefab",
 
                 Amount = 10,
                 Table = CraftingTable.BlackForge,
                 MinTableLevel = 2,
-                Requirements = "Flametal:1,Feathers:1,Eitr:5,SurtlingCore:1",
+                Requirements = "Flametal:1,Feathers:1,Eitr:3,SurtlingCore:3",
                 Damages = "Blunt:22,Pierce:22,Fire:102"
             });
 

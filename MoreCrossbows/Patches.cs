@@ -33,7 +33,7 @@ namespace MoreCrossbows
         public static string GetAoeTooltipForItem(ItemDrop.ItemData item, Aoe aoe)
         {
             StringBuilder stringBuilder = new StringBuilder(256);
-            stringBuilder.Append("\n\n$area_of_effect");
+            stringBuilder.Append( Environment.NewLine + Environment.NewLine + "$area_of_effect ");
 
             int intInterval = Mathf.RoundToInt(aoe.m_hitInterval);
 
@@ -41,64 +41,59 @@ namespace MoreCrossbows
             {
                 if (intInterval == 1)
                 {
-                    stringBuilder.Append(" ($per_second)");
+                    stringBuilder.Append("($per_second) ");
                 }
                 else if (intInterval >= 2)
                 {
                     // TODO: remake this into a format call and stick the format into localization
-                    stringBuilder.Append(" ($every " + intInterval.ToString() + " $seconds) ");
+                    stringBuilder.Append("($every " + intInterval.ToString() + " $seconds) ");
                 }
             }
 
-            // Lifted straight from HitData.GetTooltipString
             if (aoe.m_damage.m_damage != 0f)
             {
-                stringBuilder.Append("\n$inventory_damage: " + Damage(aoe.m_damage.m_damage));
+                stringBuilder.Append(Environment.NewLine + "$inventory_damage: " + Damage(aoe.m_damage.m_damage));
             }
             if (aoe.m_damage.m_blunt != 0f)
             {
-                stringBuilder.Append("\n$inventory_blunt: " + Damage(aoe.m_damage.m_blunt));
+                stringBuilder.Append(Environment.NewLine + "$inventory_blunt: " + Damage(aoe.m_damage.m_blunt));
             }
             if (aoe.m_damage.m_slash != 0f)
             {
-                stringBuilder.Append("\n$inventory_slash: " + Damage(aoe.m_damage.m_slash));
+                stringBuilder.Append(Environment.NewLine + "$inventory_slash: " + Damage(aoe.m_damage.m_slash));
             }
             if (aoe.m_damage.m_pierce != 0f)
             {
-                stringBuilder.Append("\n$inventory_pierce: " + Damage(aoe.m_damage.m_pierce));
+                stringBuilder.Append(Environment.NewLine + "$inventory_pierce: " + Damage(aoe.m_damage.m_pierce));
             }
             if (aoe.m_damage.m_fire != 0f)
             {
-                stringBuilder.Append("\n$inventory_fire: " + Damage(aoe.m_damage.m_fire));
+                stringBuilder.Append(Environment.NewLine + "$inventory_fire: " + Damage(aoe.m_damage.m_fire));
             }
             if (aoe.m_damage.m_frost != 0f)
             {
-                stringBuilder.Append("\n$inventory_frost: " + Damage(aoe.m_damage.m_frost));
+                stringBuilder.Append(Environment.NewLine + "$inventory_frost: " + Damage(aoe.m_damage.m_frost));
             }
             if (aoe.m_damage.m_lightning != 0f)
             {
-                stringBuilder.Append("\n$inventory_lightning: " + Damage(aoe.m_damage.m_lightning));
+                stringBuilder.Append(Environment.NewLine + "$inventory_lightning: " + Damage(aoe.m_damage.m_lightning));
             }
             if (aoe.m_damage.m_poison != 0f)
             {
-                stringBuilder.Append("\n$inventory_poison: " + Damage(aoe.m_damage.m_poison));
+                stringBuilder.Append(Environment.NewLine + "$inventory_poison: " + Damage(aoe.m_damage.m_poison));
             }
             if (aoe.m_damage.m_spirit != 0f)
             {
-                stringBuilder.Append("\n$inventory_spirit: " + Damage(aoe.m_damage.m_spirit));
+                stringBuilder.Append(Environment.NewLine + "$inventory_spirit: " + Damage(aoe.m_damage.m_spirit));
             }
+
             return stringBuilder.ToString();
         }
     }
 
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), typeof(ItemDrop.ItemData), typeof(int), typeof(bool))]
     public static class GetTooltipPatch
     {
-        public static MethodBase TargetMethod()
-        {
-            return typeof(ItemDrop.ItemData).GetMethod("GetTooltip", BindingFlags.Public | BindingFlags.Static);
-        }
-
         public static string Postfix(string __result, ItemDrop.ItemData item)
         {
             StringBuilder stringBuilder = new StringBuilder(256);
