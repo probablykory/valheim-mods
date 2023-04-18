@@ -4,6 +4,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace BronzeAgeChest
@@ -15,7 +16,7 @@ namespace BronzeAgeChest
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
-        public const string PluginVersion = "1.0.0.0";  
+        public const string PluginVersion = "1.0.1.0";  
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static BronzeAgeChest Instance;
@@ -28,8 +29,9 @@ namespace BronzeAgeChest
             Instance = this;
 
             InitializeFeatures();
-            AddLocalizations();
+            AddDefaultLocalizations();
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+            LocalizationManager.OnLocalizationAdded += OnLocalizationAdded;
         }
 
         private void InitializeFeatures()
@@ -53,16 +55,43 @@ namespace BronzeAgeChest
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }
 
-        private void AddLocalizations()
+        private static Dictionary<string, string> DefaultEnglishLanguageStrings = new Dictionary<string, string>() {
+            {"$piece_chest_bronze", "Rugged Chest"}
+        };
+
+        private void AddDefaultLocalizations()
         {
-            CustomLocalization loc = new CustomLocalization();
+            Jotunn.Logger.LogDebug("AddLocalizations called.");
+            CustomLocalization loc = LocalizationManager.Instance.GetLocalization();
+            loc.AddTranslation("English", DefaultEnglishLanguageStrings);
+        }
 
-            loc.AddTranslation("English", new Dictionary<string, string>
+        private void OnLocalizationAdded()
+        {
+            Jotunn.Logger.LogDebug("Localization Added received.");
+
+            string pluginPath = Instance.GetType().Assembly.Location.Replace(Path.DirectorySeparatorChar + PluginName + ".dll", "");
+            string pluginFolder = pluginPath;
+            if (BepInEx.Paths.PluginPath.Equals(pluginFolder))
             {
-                {"$piece_chest_bronze", "Rugged Chest"}
-            });
+                // If our parent folder and bepinex's plugin folder are the same, use a subdir instead.
+                pluginFolder = Utility.CombinePaths(new string[] { BepInEx.Paths.PluginPath, PluginName });
+            }
 
-            LocalizationManager.Instance.AddLocalization(loc);
+            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "localization" + PluginVersion + ".json" });
+            string locPath = Path.GetDirectoryName(locFile);
+
+            if (!(Directory.Exists(locPath) && File.Exists(locFile)))
+            {
+                // Write defaults out to disk for end-users
+                Directory.CreateDirectory(locPath);
+                string fileContent = SimpleJson.SimpleJson.SerializeObject(DefaultEnglishLanguageStrings);
+                File.WriteAllText(locFile, fileContent);
+
+                Jotunn.Logger.LogInfo("Default localizations written to " + locFile);
+            }
+
+            LocalizationManager.OnLocalizationAdded -= OnLocalizationAdded;
         }
     }
 }

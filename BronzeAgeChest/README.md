@@ -25,6 +25,9 @@ If you're looking for bigger options, or configurable looks, there are a bunch o
 
 ## Changelog
 
+### 1.0.1
+ * Localization revisions.  Plugin now writes default translation to disk, allowing users to modify/add languages.
+
 ### 1.0.0
  * Initial Version
 

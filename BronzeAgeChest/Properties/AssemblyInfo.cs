@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle(BronzeAgeChest.BronzeAgeChest.PluginName)]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("https://valheim.thunderstore.io/package/probablykory/BronzeAgeChest/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(BronzeAgeChest.BronzeAgeChest.PluginAuthor)]
 [assembly: AssemblyProduct(BronzeAgeChest.BronzeAgeChest.PluginName)]
-[assembly: AssemblyCopyright("Copyright © 2023")]
+[assembly: AssemblyCopyright("Copyright probablykory © 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
