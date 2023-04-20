@@ -459,7 +459,7 @@ namespace MoreCrossbows
                 Table = CraftingTable.Forge,
                 MinTableLevel = 4,
                 Requirements = "Wood:4,Feathers:1,SurtlingCore:3,Iron:1",
-                Damages = "Pierce:22,Fire:30",
+                Damages = "Pierce:22,Fire:18",
                 AoePrefabName = "firebolt_explosion",
                 DependencyNames = new List<string>()
                 {
