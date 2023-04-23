@@ -54,6 +54,9 @@ Lastly, I added the Area Effect bolts to spice things up a bit, give the mod som
 
 ## Changelog
 
+### v1.2.1
+ * Minor bugfix for Surtling bolt.
+
 ### v1.2.0
  * Added new AOE bolts
  * General configuration overhaul.
