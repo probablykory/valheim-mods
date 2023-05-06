@@ -97,10 +97,13 @@ StyleCopReport.xml
 *.scc
 
 *.zip
+# Top level assetbundle output of unity project
 /bronzechest
 /bronzechest.manifest
 /crossbows
 /crossbows.manifest
+/loxset
+/loxset.manifest
 /valheim-mods
 /valheim-mods.manifest
 
@@ -380,7 +383,7 @@ FodyWeavers.xsd
 Environment.props
 
 # not the generated dll for thunderstore
-*/Package/plugins/*
+*/Package/plugins/*.dll
 
 # unity project, ignore the huge library files and logs, only want to save assets.
 MoreCrossbowsUnity/Library/*

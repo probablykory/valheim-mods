@@ -355,7 +355,7 @@ namespace MoreCrossbows
                 pluginFolder = Utility.CombinePaths(new string[] { BepInEx.Paths.PluginPath, PluginName });
             }
 
-            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "localization" + PluginVersion + ".json" });
+            string locFile = Utility.CombinePaths(new string[] { pluginFolder, "Translations", "English", "english.json" });
             string locPath = Path.GetDirectoryName(locFile);
 
             if (!(Directory.Exists(locPath) && File.Exists(locFile)))

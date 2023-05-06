@@ -54,18 +54,22 @@ Lastly, I added the Area Effect bolts to spice things up a bit, give the mod som
 
 ## Translations
 
-This mod has full support for translations, but at the moment only has values for English.  If you wish to add a translation, please do the following:  
- 1.  Copy the json file located at `$your_valheim_folder/BepInEx/plugins/MoreCrossbows/Translations/English/localization*.json` into a new directory within `Translations`
+This mod has full support for translations, but at the moment only has values for English & Russian.  If you wish to add a translation, please do the following:  
+ 1.  Copy the json file located at `$your_valheim_folder/BepInEx/plugins/MoreCrossbows/Translations/English/english.json` into a new directory within `Translations`
  2.  Name that directory the same as the language you wish to translate (refer to this [list](https://valheim-modding.github.io/Jotunn/data/localization/language-list.html) of languages; the name must be exact).
  3.  Change the values for all the json keys to what they should be.
  
- Now when you run Valheim, it should see the translations automatically.  Lastly, consider sending me the json file (via [github](https://github.com/probablykory/valheim-mods) or discord).  I'd like to add as many translations as I can. 🙂
+ Now when you run Valheim, it should see the translations automatically.  Lastly, consider sending me the json file (via an issue on [github](https://github.com/probablykory/valheim-mods) or on discord).  I'd like to add as many translations as I can. 🙂
 
 ## Support me
 
 I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://www.paypal.com/paypalme/probablyk) is greatly appreciated!
 
 ## Changelog
+
+### v1.2.3 (pending)
+ * Slight adjustment to translation naming.
+ * Russian translation added, thanks to Migilian!
 
 ### v1.2.2
  * Minor fixes to config, enabled reloading when file changes or when config manager is used.
