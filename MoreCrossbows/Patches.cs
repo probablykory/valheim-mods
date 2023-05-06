@@ -13,10 +13,18 @@ namespace MoreCrossbows
     {
         public static event Action<Player> OnPlayerSpawned;
 
+        public static event Action<Player> OnPlayerDestroyed;
+
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned)), HarmonyPostfix]
         private static void PlayerOnSpawn(Player __instance)
         {
             OnPlayerSpawned?.Invoke(__instance);
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.OnDestroy)), HarmonyPostfix]
+        private static void PlayerOnDestroy(Player __instance)
+        {
+            OnPlayerDestroyed?.Invoke(__instance);
         }
     }
 

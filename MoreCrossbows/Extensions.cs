@@ -14,7 +14,6 @@ namespace MoreCrossbows
     public static class Extensions
     {
         // A workaround until ItemManager.i.RemoveItem gets fixed.
-        private static Dictionary<int, GameObject> itemsByHash = null;
         public static bool Remove(this ObjectDB instance, string prefabName)
         {
             if (string.IsNullOrEmpty(prefabName))
@@ -25,26 +24,9 @@ namespace MoreCrossbows
             GameObject prefab = instance.GetItemPrefab(prefabName);
             if (prefab != null)
             {
-                // cache refernce to ObjectDB.instance.m_itemByHash
-                if (itemsByHash == null)
-                {
-                    var ibhMember = ObjectDB.instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "m_itemByHash");
-                    var ibhField = ibhMember as FieldInfo;
-                    if (ibhField != null)
-                    {
-                        var dict = ibhField.GetValue(ObjectDB.instance) as Dictionary<int, GameObject>;
-                        if (dict != null)
-                        {
-                            itemsByHash = dict;
-                        }
-                    }
-                }
-
                 instance.m_items.Remove(prefab);
-                if (itemsByHash != null)
-                {
-                    itemsByHash.Remove(prefab.name.GetStableHashCode());
-                }
+                instance.m_itemByHash.Remove(prefab.name.GetStableHashCode());
+
                 return true;
             }
 

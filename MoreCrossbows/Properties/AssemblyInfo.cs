@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MoreCrossbows.MoreCrossbows.PluginAuthor)]
 [assembly: AssemblyProduct(MoreCrossbows.MoreCrossbows.PluginName)]
-[assembly: AssemblyCopyright("Copyright probablykory © 2023")]
+[assembly: AssemblyCopyright("Copyright " + MoreCrossbows.MoreCrossbows.PluginAuthor + " © 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -10,23 +10,38 @@ using HarmonyLib;
 using System.IO;
 using System.Linq;
 using UnityEngine.Assertions;
+using System.Reflection;
+using BepInEx.Bootstrap;
 
 namespace MoreCrossbows
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
     internal class MoreCrossbows : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.1.0";
+        public const string PluginVersion = "1.2.2.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
+
+        public static string ConfigFileName
+        {
+            get
+            {
+                return PluginAuthor + "." + PluginName + ".cfg";
+            }
+        }
 
         internal static MoreCrossbows Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
         private Harmony harmony = null;
         private bool _vanillaPrefabsAvailable = false;
+        private bool _sessionActive = false;
+        private bool _configManActive = false;
+        private BaseUnityPlugin _configurationManager;
+
         private List<Feature> _features = new List<Feature>();
 
         private void Awake()
@@ -34,33 +49,145 @@ namespace MoreCrossbows
             harmony = new Harmony(PluginGUID);
             harmony.PatchAll();
 
-            MoreCrossbows.Instance = this;
+            Instance = this;
             Config.SaveOnConfigSet = true;
 
+            InitConfigManagement();
             InitializeFeatures();
             AddDefaultLocalizations();
 
             PlayerPatches.OnPlayerSpawned += OnPlayerSpawned;
+            PlayerPatches.OnPlayerDestroyed += OnPlayerDestroyed;
 
             SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
             LocalizationManager.OnLocalizationAdded += OnLocalizationAdded;
+
+            Config.ConfigReloaded += OnConfigReloaded;
+        }
+
+        private void InitializeConfigWatcher()
+        {
+            FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(BepInEx.Paths.ConfigPath, ConfigFileName);
+            fileSystemWatcher.Changed += this.onConfigFileChangedCreatedOrRenamed;
+            fileSystemWatcher.Created += this.onConfigFileChangedCreatedOrRenamed;
+            fileSystemWatcher.Renamed += new RenamedEventHandler(this.onConfigFileChangedCreatedOrRenamed);
+            fileSystemWatcher.IncludeSubdirectories = true;
+            fileSystemWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            fileSystemWatcher.EnableRaisingEvents = true;
+
+            Jotunn.Logger.LogDebug("Config watcher initialized.");
+        }
+
+        private void InitConfigManagement()
+        {
+            if (GUIManager.IsHeadless())
+            {
+                InitializeConfigWatcher();
+            }
+            else
+            {
+                PluginInfo configManagerInfo;
+                if (Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.configurationmanager", out configManagerInfo) && configManagerInfo.Instance)
+                {
+                    this._configurationManager = configManagerInfo.Instance;
+                    Logger.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
+                    EventInfo eventinfo = this._configurationManager.GetType().GetEvent("DisplayingWindowChanged");
+                    if (eventinfo != null)
+                    {
+                        Action<object, object> local = new Action<object, object>(this.OnConfigManagerDisplayingWindowChanged);
+                        Delegate converted = Delegate.CreateDelegate(eventinfo.EventHandlerType, local.Target, local.Method);
+                        eventinfo.AddEventHandler(this._configurationManager, converted);
+                    }
+                }
+                else
+                {
+                    InitializeConfigWatcher();
+                }
+            }
+        }
+
+        private void OnConfigManagerDisplayingWindowChanged(object sender, object e)
+        {
+            Jotunn.Logger.LogDebug("OnConfigManagerDisplayingWindowChanged recieved.");
+            PropertyInfo pi = this._configurationManager.GetType().GetProperty("DisplayingWindow");
+            _configManActive = (bool)pi.GetValue(this._configurationManager, null);
+
+            if (!_configManActive)
+            {
+                Config.Reload();
+            }
+        }
+
+        private void OnConfigReloaded(object sender, EventArgs e)
+        {
+            Jotunn.Logger.LogDebug("Config reloaded received.");
+
+            if (_sessionActive)
+            {
+                Jotunn.Logger.LogWarning("Configuration reloaded, please logout and back in to see changes.");
+            }
+            else
+            {
+                if (!_configManActive && _vanillaPrefabsAvailable)
+                {
+                    AddOrRemoveFeatures();
+                }
+            }
+
         }
 
         private void OnPlayerSpawned(Player obj)
         {
             Jotunn.Logger.LogDebug("Player spawned received.");
+            _sessionActive = true;
             EnsureFeaturesUpdates();
+        }
+
+        private void OnPlayerDestroyed(Player obj)
+        {
+            Jotunn.Logger.LogDebug("Player destroyed received.");
+            _sessionActive = false;
+        }
+
+        private void onConfigFileChangedCreatedOrRenamed(object sender, FileSystemEventArgs e)
+        {
+            string path = Utility.CombinePaths(new string[] { BepInEx.Paths.ConfigPath, ConfigFileName });
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            try
+            {
+                Config.Reload();
+            }
+            catch
+            {
+                Jotunn.Logger.LogError("There was an issue with your " + ConfigFileName + " file.");
+                Jotunn.Logger.LogError("Please check the format and spelling.");
+                return;
+            }
         }
 
         private void OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)
         {
             Jotunn.Logger.LogDebug("Configuration Sync received.");
 
-            if (_vanillaPrefabsAvailable)
+
+            if (_sessionActive)
             {
-                AddOrRemoveFeatures();
+                Jotunn.Logger.LogWarning("Configuration sync recieved from server, please logout and back in to see changes.");
             }
+            else
+            {
+                if (_vanillaPrefabsAvailable)
+                {
+                    AddOrRemoveFeatures();
+                }
+            }
+
+
         }
 
         private void OnVanillaPrefabsAvailable()
@@ -157,7 +284,29 @@ namespace MoreCrossbows
                     }
                 }
             }
-            Jotunn.Logger.LogInfo($"{loadCount} features loaded" + (unloadCount > 0 ? $", and {unloadCount} features loaded, " : ""));
+
+            string featureComment = "";
+            if (loadCount > 0)
+            {
+                featureComment = $"{loadCount} feature{(loadCount>1?"s":"")} loaded";
+
+                if (unloadCount > 0)
+                {
+                    featureComment += " and ";
+                } else
+                {
+                    featureComment += ".";
+                }
+            } 
+            if (unloadCount > 0)
+            {
+                featureComment += $"{unloadCount} feature{(unloadCount > 1 ? "s" : "")} unloaded.";
+            }
+
+            if (featureComment.Length > 0)
+            {
+                Jotunn.Logger.LogInfo(featureComment);
+            }
         }
 
         private static Dictionary<string, string> DefaultEnglishLanguageStrings = new Dictionary<string, string>() {
