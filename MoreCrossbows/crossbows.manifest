@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2714932799
+CRC: 774339704
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1188d699508761d24d0498cf62e61c19
+    Hash: 098b479414d4635d374033e00f2362b1
   TypeTreeHash:
     serializedVersion: 2
     Hash: e5c07dade516d3d18cba89ea20474fe8
@@ -101,9 +101,11 @@ Assets:
 - Assets/Texture2D/CrossbowBlackmetal_n.png
 - Assets/AudioClip/JVLmock_Weapons_ArbalestCrossbow_Shot_01.ogg
 - Assets/Texture2D/bolts_d.png
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_echo_ironxbow.prefab
 - Assets/Sprite/poison_bolt.png
 - Assets/AudioClip/JVLmock_Eiter_Projectile_09.ogg
 - Assets/PrefabInstance/JVLmock_sfx_bow_draw.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_silverxbow.prefab
 - Assets/AudioClip/JVLmock_Eiter_Impact_08.ogg
 - Assets/Texture2D/CrossbowIron_n.png
 - Assets/PrefabInstance/JVLmock_sfx_Frost_Start.prefab
@@ -120,6 +122,7 @@ Assets:
 - Assets/Texture2D/CrossbowBlackmetal_m.png
 - Assets/Material/JVLmock_oozebomb.mat
 - Assets/Sprite/lightning_arrow.png
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_masterarcher_ironxbow.prefab
 - Assets/Mesh/CrossbowBlackmetalUnloaded.mesh
 - Assets/Sprite/crossbow_silver.png
 - Assets/Mesh/CrossbowIronUnloaded.mesh
@@ -127,12 +130,12 @@ Assets:
 - Assets/Material/CrossbowBlackmetal_mat.mat
 - Assets/PrefabInstance/JVLmock_vfx_blocked.prefab
 - Assets/Material/JVLmock_arrow_frost.mat
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_masterarcher_blackmetalxbow.prefab
 - Assets/Texture2D/bolts_n.png
 - Assets/PrefabInstance/CrossbowBlackmetal.prefab
 - Assets/Texture2D/WoodCrossbow_d.png
 - Assets/Material/JVLmock_pixel_unlit_red.mat
 - Assets/PrefabInstance/JVLmock_sfx_arbalest_fire.prefab
-- Assets/Shader/JVLmock_Custom_Creature.shader
 - Assets/Shader/JVLmock_Lux Lit Particles_ Bumped.shader
 - Assets/Mesh/JVLmock_polySurface20.mesh
 - Assets/Sprite/ooze_bolt.png
@@ -140,6 +143,7 @@ Assets:
 - Assets/Material/JVLmock_lightning_sparcs.mat
 - Assets/PrefabInstance/sfx_bronze_crossbow_fire.prefab
 - Assets/AudioClip/JVLmock_Eiter_Impact_04.ogg
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_blackmetalxbow.prefab
 - Assets/Shader/JVLmock_Particles_Standard Unlit2.shader
 - Assets/AudioClip/JVLmock_Eiter_Projectile_08.ogg
 - Assets/Mesh/CrossbowSilverUnloaded.mesh
@@ -153,6 +157,7 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_05.ogg
 - Assets/Texture2D/Crossbow_m.png
 - Assets/AudioClip/JVLmock_Eiter_Impact_01.ogg
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_masterarcher_silverxbow.prefab
 - Assets/PrefabInstance/CrossbowBronze.prefab
 - Assets/Mesh/CrossbowIronLoaded.mesh
 - Assets/PrefabInstance/JVLmock_sfx_oozebomb_explode.prefab
@@ -174,8 +179,8 @@ Assets:
 - Assets/PrefabInstance/JVLmock_empty.prefab
 - Assets/PrefabInstance/ArrowLightning.prefab
 - Assets/PrefabInstance/BoltFire.prefab
-- Assets/Sprite/explosive_bolt.png
 - Assets/PrefabInstance/arbalest_projectile_wood.prefab
+- Assets/Sprite/explosive_bolt.png
 - Assets/PrefabInstance/sfx_lightning_hit.prefab
 - Assets/Material/JVLmock_cold_sparcs.mat
 - Assets/PrefabInstance/JVLmock_fx_block_camshake.prefab
@@ -191,6 +196,7 @@ Assets:
 - Assets/Material/CrossbowBronze_mat.mat
 - Assets/AudioClip/JVLmock_Eiter_Impact_02.ogg
 - Assets/PrefabInstance/BoltFrost.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_ironxbow.prefab
 - Assets/AudioClip/JVLmock_Eiter_Projectile_10.ogg
 - Assets/Texture2D/CrossbowBlackmetal_d.png
 - Assets/AudioClip/JVLmock_Eiter_Projectile_02.ogg
@@ -232,6 +238,7 @@ Assets:
 - Assets/PrefabInstance/arbalest_projectile_ice.prefab
 - Assets/PrefabInstance/JVLmock_vfx_arbalest_fire.prefab
 - Assets/Material/JVLmock_light_glow.mat
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_echo_silverxbow.prefab
 - Assets/PrefabInstance/JVLmock_fx_radiation_hit.prefab
 - Assets/PrefabInstance/arbalest_projectile_ooze.prefab
 - Assets/PrefabInstance/arbalest_projectile_flametal.prefab
@@ -247,6 +254,7 @@ Assets:
 - Assets/AudioClip/Weapons_MechanicalCrossbow_Shot_03.ogg
 - Assets/PrefabInstance/JVLmock_vfx_frostarrow_hit.prefab
 - Assets/Texture2D/CrossbowSilver_m.png
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_endlessarrows_blackmetalxbow.prefab
 - Assets/AudioClip/JVLmock_Eiter_Projectile_04.ogg
 - Assets/Material/JVLmock_arrow_poison.mat
 - Assets/PrefabInstance/BoltSurtling.prefab
@@ -266,10 +274,13 @@ Assets:
 - Assets/Sprite/surtling_bolt.png
 - Assets/PrefabInstance/CrossbowWood.prefab
 - Assets/PrefabInstance/BoltBile.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_echo_blackmetalxbow.prefab
 - Assets/Material/bolt_ooze.mat
-- Assets/Material/JVLmock_aoe_smoke.mat
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_endlessarrows_ironxbow.prefab
 - Assets/Material/Bolts_mat.mat
 - Assets/PrefabInstance/icebolt_explosion.prefab
+- Assets/Material/JVLmock_aoe_smoke.mat
 - Assets/Mesh/default_405.asset
 - Assets/PrefabInstance/BoltSilver.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_endlessarrows_silverxbow.prefab
 Dependencies: []

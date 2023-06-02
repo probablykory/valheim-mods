@@ -12,6 +12,9 @@ using System.Linq;
 using UnityEngine.Assertions;
 using System.Reflection;
 using BepInEx.Bootstrap;
+using UnityEngine.VFX;
+using System.Net.NetworkInformation;
+using System.Collections;
 
 namespace MoreCrossbows
 {
@@ -19,11 +22,12 @@ namespace MoreCrossbows
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("org.bepinex.plugins.jewelcrafting", BepInDependency.DependencyFlags.SoftDependency)]
     internal class MoreCrossbows : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.2.0";
+        public const string PluginVersion = "1.2.3.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         public static string ConfigFileName
@@ -36,23 +40,28 @@ namespace MoreCrossbows
 
         internal static MoreCrossbows Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
-        private Harmony harmony = null;
+        internal Harmony harmony = null;
+        internal BaseUnityPlugin configurationManager;
+        internal BaseUnityPlugin jewelcrafting;
+
         private bool _vanillaPrefabsAvailable = false;
         private bool _sessionActive = false;
         private bool _configManActive = false;
-        private BaseUnityPlugin _configurationManager;
 
         private List<Feature> _features = new List<Feature>();
+
 
         private void Awake()
         {
             harmony = new Harmony(PluginGUID);
-            harmony.PatchAll();
+            harmony.PatchAll(typeof(PlayerPatches));
+            harmony.PatchAll(typeof(GetTooltipPatch));
 
             Instance = this;
             Config.SaveOnConfigSet = true;
 
-            InitConfigManagement();
+            CheckForJewelcrafting();
+            CheckForConfigManager();
             InitializeFeatures();
             AddDefaultLocalizations();
 
@@ -79,7 +88,18 @@ namespace MoreCrossbows
             Jotunn.Logger.LogDebug("Config watcher initialized.");
         }
 
-        private void InitConfigManagement()
+        private void CheckForJewelcrafting()
+        {
+            BepInEx.PluginInfo jewelcraftingInfo;
+            if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("org.bepinex.plugins.jewelcrafting", out jewelcraftingInfo) && jewelcraftingInfo.Instance)
+            {
+                this.jewelcrafting = jewelcraftingInfo.Instance;
+                Jotunn.Logger.LogInfo("Jewelcrafting found, patching customized crossbow gem effects.");
+                JewelcraftingPatches.Initialize();
+            }
+        }
+
+        private void CheckForConfigManager()
         {
             if (GUIManager.IsHeadless())
             {
@@ -90,14 +110,14 @@ namespace MoreCrossbows
                 PluginInfo configManagerInfo;
                 if (Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.configurationmanager", out configManagerInfo) && configManagerInfo.Instance)
                 {
-                    this._configurationManager = configManagerInfo.Instance;
+                    this.configurationManager = configManagerInfo.Instance;
                     Logger.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
-                    EventInfo eventinfo = this._configurationManager.GetType().GetEvent("DisplayingWindowChanged");
+                    EventInfo eventinfo = this.configurationManager.GetType().GetEvent("DisplayingWindowChanged");
                     if (eventinfo != null)
                     {
                         Action<object, object> local = new Action<object, object>(this.OnConfigManagerDisplayingWindowChanged);
                         Delegate converted = Delegate.CreateDelegate(eventinfo.EventHandlerType, local.Target, local.Method);
-                        eventinfo.AddEventHandler(this._configurationManager, converted);
+                        eventinfo.AddEventHandler(this.configurationManager, converted);
                     }
                 }
                 else
@@ -110,8 +130,8 @@ namespace MoreCrossbows
         private void OnConfigManagerDisplayingWindowChanged(object sender, object e)
         {
             Jotunn.Logger.LogDebug("OnConfigManagerDisplayingWindowChanged recieved.");
-            PropertyInfo pi = this._configurationManager.GetType().GetProperty("DisplayingWindow");
-            _configManActive = (bool)pi.GetValue(this._configurationManager, null);
+            PropertyInfo pi = this.configurationManager.GetType().GetProperty("DisplayingWindow");
+            _configManActive = (bool)pi.GetValue(this.configurationManager, null);
 
             if (!_configManActive)
             {
