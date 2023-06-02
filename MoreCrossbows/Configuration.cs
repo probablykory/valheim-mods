@@ -9,14 +9,14 @@ namespace MoreCrossbows
 
     public static class CraftingTable
     {
-        public static string Inventory { get { return "Inventory"; } }
-        public static string Workbench { get { return "Workbench"; } }
-        public static string Cauldron { get { return "Cauldron"; } }
-        public static string Forge { get { return "Forge"; } }
-        public static string ArtisanTable { get { return "ArtisanTable"; } }
-        public static string StoneCutter { get { return "StoneCutter"; } }
-        public static string MageTable { get { return "MageTable"; } }
-        public static string BlackForge { get { return "BlackForge"; } }
+        public static string Inventory { get { return nameof(Inventory); } }
+        public static string Workbench { get { return nameof(Workbench); } }
+        public static string Cauldron { get { return nameof(Cauldron); } }
+        public static string Forge { get { return nameof(Forge); } }
+        public static string ArtisanTable { get { return nameof(ArtisanTable); } }
+        public static string StoneCutter { get { return nameof(StoneCutter); } }
+        public static string MageTable { get { return nameof(MageTable); } }
+        public static string BlackForge { get { return nameof(BlackForge); } }
 
         public static string[] GetValues()
         {
@@ -37,19 +37,19 @@ namespace MoreCrossbows
         {
             switch (name)
             {
-                case "Workbench":
+                case nameof(Workbench):
                     return "piece_workbench";
-                case "Cauldron":
+                case nameof(Cauldron):
                     return "piece_cauldron";
-                case "Forge":
+                case nameof(Forge):
                     return "forge";
-                case "ArtisanTable":
+                case nameof(ArtisanTable):
                     return "piece_artisanstation";
-                case "StoneCutter":
+                case nameof(StoneCutter):
                     return "piece_stonecutter";
-                case "MageTable":
+                case nameof(MageTable):
                     return "piece_magetable";
-                case "BlackForge":
+                case nameof(BlackForge):
                     return "blackforge";
             }
             return string.Empty; // "Inventory" or error
@@ -58,17 +58,17 @@ namespace MoreCrossbows
 
     public static class DamageTypes
     {
-        public static string Damage { get { return "Damage"; } }
-        public static string Blunt { get { return "Blunt"; } }
-        public static string Slash { get { return "Slash"; } }
-        public static string Pierce { get { return "Pierce"; } }
-        public static string Chop { get { return "Chop"; } }
-        public static string Pickaxe { get { return "Pickaxe"; } }
-        public static string Fire { get { return "Fire"; } }
-        public static string Frost { get { return "Frost"; } }
-        public static string Lightning { get { return "Lightning"; } }
-        public static string Poison { get { return "Poison"; } }
-        public static string Spirit { get { return "Spirit"; } }
+        public static string Damage { get { return nameof(Damage); } }
+        public static string Blunt { get { return nameof(Blunt); } }
+        public static string Slash { get { return nameof(Slash); } }
+        public static string Pierce { get { return nameof(Pierce); } }
+        public static string Chop { get { return nameof(Chop); } }
+        public static string Pickaxe { get { return nameof(Pickaxe); } }
+        public static string Fire { get { return nameof(Fire); } }
+        public static string Frost { get { return nameof(Frost); } }
+        public static string Lightning { get { return nameof(Lightning); } }
+        public static string Poison { get { return nameof(Poison); } }
+        public static string Spirit { get { return nameof(Spirit); } }
 
         public static string[] GetValues()
         {
