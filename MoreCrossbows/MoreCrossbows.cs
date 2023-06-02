@@ -95,7 +95,7 @@ namespace MoreCrossbows
             {
                 this.jewelcrafting = jewelcraftingInfo.Instance;
                 Jotunn.Logger.LogInfo("Jewelcrafting found, patching customized crossbow gem effects.");
-                JewelcraftingPatches.Initialize();
+                JewelcraftingPatches.Initialize(harmony, jewelcrafting);
             }
         }
 

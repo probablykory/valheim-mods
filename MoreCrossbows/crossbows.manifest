@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 774339704
+CRC: 1021859843
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 098b479414d4635d374033e00f2362b1
+    Hash: 2142c2c605b2f726ef3212d9f3fc69dd
   TypeTreeHash:
     serializedVersion: 2
     Hash: e5c07dade516d3d18cba89ea20474fe8
@@ -144,6 +144,7 @@ Assets:
 - Assets/PrefabInstance/sfx_bronze_crossbow_fire.prefab
 - Assets/AudioClip/JVLmock_Eiter_Impact_04.ogg
 - Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_blackmetalxbow.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_xbow.prefab
 - Assets/Shader/JVLmock_Particles_Standard Unlit2.shader
 - Assets/AudioClip/JVLmock_Eiter_Projectile_08.ogg
 - Assets/Mesh/CrossbowSilverUnloaded.mesh
@@ -154,6 +155,7 @@ Assets:
 - Assets/Mesh/CrossbowSilverLoaded.mesh
 - Assets/PrefabInstance/JVLmock_vfx_arrowhit.prefab
 - Assets/PrefabInstance/JVLmock_fx_fireball_staff_explosion.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_masterarcher_xbow.prefab
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_05.ogg
 - Assets/Texture2D/Crossbow_m.png
 - Assets/AudioClip/JVLmock_Eiter_Impact_01.ogg
@@ -207,8 +209,8 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_13.ogg
 - Assets/Material/JVLmock_item_particle.mat
 - Assets/Texture2D/CrossbowIron_m.png
-- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_08.ogg
 - Assets/Material/JVLmock_smoke.mat
+- Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_08.ogg
 - Assets/Material/JVLmock_arrow.mat
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_09.ogg
 - Assets/Texture2D/Crossbow_d.png
@@ -228,6 +230,7 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Impact_06.ogg
 - Assets/PrefabInstance/sfx_wood_crossbow_fire.prefab
 - Assets/PrefabInstance/CrossbowSilver.prefab
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_endlessarrows_xbow.prefab
 - Assets/Sprite/bile_bolt.png
 - Assets/PrefabInstance/firebolt_explosion.prefab
 - Assets/Sprite/wood_bolt.png
@@ -245,6 +248,7 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Projectile_15.ogg
 - Assets/Texture2D/bolts_m.png
 - Assets/Material/JVLmock_snowlump.mat
+- Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_echo_xbow.prefab
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_10.ogg
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_12.ogg
 - Assets/Material/CrossbowSilver_mat.mat

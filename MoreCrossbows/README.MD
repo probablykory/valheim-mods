@@ -67,8 +67,8 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
-### v1.2.3 (pending)
- * If Jewelcrafting is installed along side MoreCrossbows, it will now customize gem effects for crossbows.
+### v1.2.3
+ * Added customized gem effects for crossbows, loaded if and only if Jewelcrafting is installed.
    (This change is in tandem with a PR to Jewelcrafting itself, enabling gem effects for the arbalest.)
  * Slight adjustment to translation naming.
  * Russian translation added, thanks to Migilian!

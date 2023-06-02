@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BepInEx;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,19 +62,19 @@ namespace MoreCrossbows
 
     public static class JewelcraftingPatches
     {
-        public static void Initialize() {
+        public static void Initialize(Harmony harmony, BaseUnityPlugin jewelcrafting) {
 
-            if (MoreCrossbows.Instance == null || MoreCrossbows.Instance.harmony == null || MoreCrossbows.Instance.jewelcrafting == null)
+            if (harmony == null || jewelcrafting == null)
             {
                 throw new ArgumentNullException("Attempted to initialize without harmony, jewelcrafting or both.");
             }
 
-            Assembly jc = MoreCrossbows.Instance.jewelcrafting.GetType().Assembly;
+            Assembly jc = jewelcrafting.GetType().Assembly;
             MethodInfo method = jc.GetType("Jewelcrafting.GemEffects.VisualEffects").GetMethod("prefabDict");
             MethodInfo postfix = typeof(JewelcraftingPatches).GetMethod("VisualEffectsPrefabDictPostfix", BindingFlags.Static | BindingFlags.NonPublic);
             if (method != null && postfix != null)
             {
-                MoreCrossbows.Instance.harmony.Patch(method, postfix: new HarmonyMethod(postfix));
+                harmony.Patch(method, postfix: new HarmonyMethod(postfix));
             }
             else
             {
@@ -82,6 +83,12 @@ namespace MoreCrossbows
 
             List<string[]> prefabsToLoad = new List<string[]>()
             {
+                //In case JC is 1.4.8 or older, attempt to load generic Crossbow effects.
+                new string[] { "Perfect_Yellow_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_echo_xbow"},
+                new string[] { "Perfect_Red_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_endlessarrows_xbow"},
+                new string[] { "Perfect_Purple_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_masterarcher_xbow"},
+                new string[] { "Perfect_Green_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_necromancer_xbow"},
+
                 new string[] { "Perfect_Yellow_Socket", VisualEffectCondition.CrossbowIron.ToString(), "jc_echo_ironxbow"},
                 new string[] { "Perfect_Red_Socket", VisualEffectCondition.CrossbowIron.ToString(), "jc_endlessarrows_ironxbow"},
                 new string[] { "Perfect_Purple_Socket", VisualEffectCondition.CrossbowIron.ToString(), "jc_masterarcher_ironxbow"},
@@ -99,43 +106,51 @@ namespace MoreCrossbows
             };
 
             Type vfxType = jc?.GetType("Jewelcrafting.GemEffects.VisualEffects");
-            Type vecType = jc?.GetType("Jewelcrafting.VisualEffectCondition");
+            if (vecType == null) vecType = jc?.GetType("Jewelcrafting.VisualEffectCondition");
+
             FieldInfo attachEffectPrefabInfo = vfxType?.GetField("attachEffectPrefabs", BindingFlags.Static | BindingFlags.Public);
             var attachEffectPrefabs = attachEffectPrefabInfo?.GetValue(null) as IDictionary;
 
             if (attachEffectPrefabs != null)
             {
-                foreach (string[] entry in prefabsToLoad)
-                {
-                    string prefabSocketKey = entry[0];
-                    string prefabName = entry[2];
-                    VisualEffectCondition displayCondition = (VisualEffectCondition)Enum.Parse(typeof(VisualEffectCondition), entry[1]);
-
-
-                    GameObject effect = MoreCrossbows.Instance.assetBundle.LoadAsset<GameObject>(prefabName);
-                    if (effect == null)
-                    {
-                        Jotunn.Logger.LogWarning($"Prefab {prefabName} did not load correctly");
-                    }
-                    if (attachEffectPrefabs.Contains(prefabSocketKey))
-                    {
-                        var innerDict = attachEffectPrefabs[prefabSocketKey] as IDictionary;
-                        if (innerDict != null && !innerDict.Contains(vecType.Cast(displayCondition)))
-                        {
-                            Jotunn.Logger.LogDebug($"Adding: {displayCondition} {effect} to attachEffectPrefabs[{prefabSocketKey}]");
-                            innerDict.Add(vecType.Cast(displayCondition), effect);
-                        }
-                    }
-                    else
-                    {
-                        Jotunn.Logger.LogWarning($"attachEffectPrefabs does not contain {prefabSocketKey} key; Aborting.");
-                        break;
-                    }
-                }
+                LoadPrefabs(attachEffectPrefabs, prefabsToLoad);
             }
             else
             {
                 Jotunn.Logger.LogDebug("Unable to invoke attachEffectPrefabs, not found.");
+            }
+        }
+
+        private static void LoadPrefabs(IDictionary effectPrefabs, List<string[]> toLoad)
+        {
+            foreach (string[] entry in toLoad)
+            {
+                string prefabSocketKey = entry[0];
+                string prefabName = entry[2];
+                VisualEffectCondition displayCondition = (VisualEffectCondition)Enum.Parse(typeof(VisualEffectCondition), entry[1]);
+
+                GameObject effect = MoreCrossbows.Instance.assetBundle.LoadAsset<GameObject>(prefabName);
+                if (effect == null)
+                {
+                    Jotunn.Logger.LogWarning($"Prefab {prefabName} did not load correctly");
+                }
+                if (effectPrefabs.Contains(prefabSocketKey))
+                {
+                    var innerDict = effectPrefabs[prefabSocketKey] as IDictionary;
+                    if (innerDict != null && !innerDict.Contains(vecType.Cast(displayCondition)))
+                    {
+                        Jotunn.Logger.LogDebug($"Adding: {displayCondition} {effect} to effectPrefabs[{prefabSocketKey}]");
+                        innerDict.Add(vecType.Cast(displayCondition), effect);
+                    } else
+                    {
+                        Jotunn.Logger.LogDebug($"effectPrefabs[{prefabSocketKey}] already contains a {displayCondition} key, skipping.");
+                    }
+                }
+                else
+                {
+                    Jotunn.Logger.LogWarning($"attachEffectPrefabs does not contain {prefabSocketKey} key; Aborting.");
+                    break;
+                }
             }
         }
 
