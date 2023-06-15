@@ -14,7 +14,7 @@ namespace CraftedBossDrops
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.1.0";
+        public const string PluginVersion = "1.0.2.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         private Harmony harmony = null;
@@ -39,6 +39,7 @@ namespace CraftedBossDrops
 
         private void InitializeFeatures()
         {
+            // TODO - Enable realtime config reloads
             HardAntlerEntry = Entries.GetFromProps(Instance, "HardAntler", CraftingTable.Workbench, 3, 1, "TrophyDeer:20,Resin:2");
             CryptKeyEntry = Entries.GetFromProps(Instance, "CryptKey", CraftingTable.Forge, 3, 1, "AncientSeed:15,Bronze:2");
             WishboneEntry = Entries.GetFromProps(Instance, "Wishbone", CraftingTable.Forge, 7, 1, "WitheredBone:30,Iron:2");
@@ -56,6 +57,7 @@ namespace CraftedBossDrops
             ItemManager.Instance.AddRecipe(getRecipeFromEntry(DragonTearEntry));
             ItemManager.Instance.AddRecipe(getRecipeFromEntry(YagluthDropEntry));
 
+            PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }
 
         private CustomRecipe getRecipeFromEntry(Entries entry)

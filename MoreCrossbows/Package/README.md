@@ -67,6 +67,10 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.2.4
+ * Bugfixes related to configuration and log warnings.  MC should now properly react when any of its settings is changed.
+ * Updated build to require Jotunn 2.12.1
+
 ### v1.2.3
  * Added customized gem effects for crossbows, loaded if and only if Jewelcrafting is installed.
    (This change is in tandem with a PR to Jewelcrafting itself, enabling gem effects for the arbalest.)

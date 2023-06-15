@@ -7,14 +7,14 @@ namespace CraftedBossDrops
 {
     public static class CraftingTable
     {
-        public static string Inventory { get { return "Inventory"; } }
-        public static string Workbench { get { return "Workbench"; } }
-        public static string Cauldron { get { return "Cauldron"; } }
-        public static string Forge { get { return "Forge"; } }
-        public static string ArtisanTable { get { return "ArtisanTable"; } }
-        public static string StoneCutter { get { return "StoneCutter"; } }
-        public static string MageTable { get { return "MageTable"; } }
-        public static string BlackForge { get { return "BlackForge"; } }
+        public static string Inventory { get { return nameof(Inventory); } }
+        public static string Workbench { get { return nameof(Workbench); } }
+        public static string Cauldron { get { return nameof(Cauldron); } }
+        public static string Forge { get { return nameof(Forge); } }
+        public static string ArtisanTable { get { return nameof(ArtisanTable); } }
+        public static string StoneCutter { get { return nameof(StoneCutter); } }
+        public static string MageTable { get { return nameof(MageTable); } }
+        public static string BlackForge { get { return nameof(BlackForge); } }
 
         public static string[] GetValues()
         {
@@ -35,19 +35,19 @@ namespace CraftedBossDrops
         {
             switch (name)
             {
-                case "Workbench":
+                case nameof(Workbench):
                     return "piece_workbench";
-                case "Cauldron":
+                case nameof(Cauldron):
                     return "piece_cauldron";
-                case "Forge":
+                case nameof(Forge):
                     return "forge";
-                case "ArtisanTable":
+                case nameof(ArtisanTable):
                     return "piece_artisanstation";
-                case "StoneCutter":
+                case nameof(StoneCutter):
                     return "piece_stonecutter";
-                case "MageTable":
+                case nameof(MageTable):
                     return "piece_magetable";
-                case "BlackForge":
+                case nameof(BlackForge):
                     return "blackforge";
             }
             return string.Empty; // "Inventory" or error

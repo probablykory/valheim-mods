@@ -1,10 +1,10 @@
 ﻿{
   "name": "CraftedBossDrops",
   "description": "Adds recipes to craft all boss drops, enabling progression without bosses.",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/probablykory/valheim-mods",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2102",
-    "ValheimModding-Jotunn-2.11.2"
+    "ValheimModding-Jotunn-2.12.1"
   ]
 }

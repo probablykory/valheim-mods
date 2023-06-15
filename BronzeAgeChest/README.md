@@ -38,9 +38,10 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
-### 1.0.3 (pending)
+### 1.0.3
  * Adjustment to localization naming
  * Added Russian translation
+ * Updated build to require Jotunn 2.12.1
 
 ### 1.0.2
  * Minor tweak to the BronzeChest prefab

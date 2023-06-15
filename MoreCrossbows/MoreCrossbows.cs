@@ -27,7 +27,7 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.3.0";
+        public const string PluginVersion = "1.2.4.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         public static string ConfigFileName
@@ -45,8 +45,9 @@ namespace MoreCrossbows
         internal BaseUnityPlugin jewelcrafting;
 
         private bool _vanillaPrefabsAvailable = false;
-        private bool _sessionActive = false;
         private bool _configManActive = false;
+        private bool _sessionActive = false;
+        private Player _localPlayer = null;
 
         private List<Feature> _features = new List<Feature>();
 
@@ -145,7 +146,12 @@ namespace MoreCrossbows
 
             if (_sessionActive)
             {
-                Jotunn.Logger.LogWarning("Configuration reloaded, please logout and back in to see changes.");
+                // _features.ForEach(f => Jotunn.Logger.LogDebug($"Feature {f.Name} RequiresUpdate = {f.RequiresUpdate}"));
+
+                if (_features.Any(f => f.RequiresUpdate == true))
+                {
+                    Jotunn.Logger.LogWarning("Configuration changed, please logout and back in to see changes.");
+                }
             }
             else
             {
@@ -154,20 +160,24 @@ namespace MoreCrossbows
                     AddOrRemoveFeatures();
                 }
             }
-
         }
 
-        private void OnPlayerSpawned(Player obj)
+        private void OnPlayerSpawned(Player p)
         {
             Jotunn.Logger.LogDebug("Player spawned received.");
+            _localPlayer = p;
             _sessionActive = true;
             EnsureFeaturesUpdates();
         }
 
-        private void OnPlayerDestroyed(Player obj)
+        private void OnPlayerDestroyed(Player p)
         {
-            Jotunn.Logger.LogDebug("Player destroyed received.");
-            _sessionActive = false;
+            if (_localPlayer != null && p == _localPlayer)
+            {
+                Jotunn.Logger.LogDebug("Player destroyed received.");
+                _localPlayer = null;
+                _sessionActive = false;
+            }
         }
 
         private void onConfigFileChangedCreatedOrRenamed(object sender, FileSystemEventArgs e)
@@ -206,8 +216,6 @@ namespace MoreCrossbows
                     AddOrRemoveFeatures();
                 }
             }
-
-
         }
 
         private void OnVanillaPrefabsAvailable()

@@ -57,7 +57,7 @@ namespace MoreCrossbows
 
         private CustomItem _customItem = null;
 
-        private void OnRecipeSettingChanged(object sender, EventArgs e)
+        private void OnEntrySettingChanged(object sender, EventArgs e)
         {
             Jotunn.Logger.LogDebug("OnEntrySettingChanged fired on feature " + Name);
 
@@ -69,8 +69,9 @@ namespace MoreCrossbows
             if (!string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(Description))
             {
                 Entries = (ItemEntries) ItemEntries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
-                Entries.AddSettingsChangedHandler(OnRecipeSettingChanged);
+                Entries.AddSettingsChangedHandler(OnEntrySettingChanged);
                 EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
+                EnabledConfigEntry.SettingChanged += OnEntrySettingChanged;
             }
             return true;
         }
@@ -92,7 +93,7 @@ namespace MoreCrossbows
 
 
             // Directly update the recipe
-            Jotunn.Logger.LogDebug("Updating recipe for " + _customItem.ItemDrop.name);
+            Jotunn.Logger.LogDebug("Updating recipe for " + _customItem?.ItemDrop?.name);
             Jotunn.Logger.LogDebug("... reqs: " + Entries != null ? Entries.Requirements.Value : Requirements);
             _customItem.Recipe.Update(newRecipe);
 
@@ -121,6 +122,7 @@ namespace MoreCrossbows
             _customItem.ItemDrop.m_itemData.m_shared.m_attackForce = Knockback;
 
             ItemManager.Instance.AddItem(_customItem);
+            RequiresUpdate = false;
             LoadedInGame = true;
 
             return true;
@@ -185,6 +187,7 @@ namespace MoreCrossbows
         public FeatureRecipe(string name) : base(name) { }
         private void OnEntrySettingChanged(object sender, EventArgs e)
         {
+            Jotunn.Logger.LogDebug("OnEntrySettingChanged fired on feature " + Name);
             RequiresUpdate = true;
         }
 
@@ -193,6 +196,7 @@ namespace MoreCrossbows
             Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
             Entries.AddSettingsChangedHandler(this.OnEntrySettingChanged);
             EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
+            EnabledConfigEntry.SettingChanged += OnEntrySettingChanged;
             return true;
         }
 
@@ -237,6 +241,7 @@ namespace MoreCrossbows
                 Requirements = RequirementsEntry.Deserialize(Entries.Requirements.Value)
             };
             ItemManager.Instance.AddRecipe(new CustomRecipe(config));
+            RequiresUpdate = false;
             LoadedInGame = true;
 
             return true;

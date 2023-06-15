@@ -1,4 +1,4 @@
-﻿![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/CraftedBossDrops/splash.jpg)  
+![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/CraftedBossDrops/splash.jpg)  
 A Valheim mod which adds recipes to craft all boss drops, enabling progression without boss kills.
 
 ## Features
@@ -23,7 +23,15 @@ I was thinking about finding more thematic recipes than what's setup currently, 
   * Go to Settings > Import local mod > Select `CraftedBossDrops.zip`.
   * Click "OK/Import local mod" on the pop-up for information.
 
+## Support me
+
+I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://www.paypal.com/paypalme/probablyk) is greatly appreciated!
+
 ## Changelog
+
+### v1.0.2
+ * Minor fix to recipe initialization, it won't attempt to add duplicate recipes after users logout and login repeatedly.
+ * Updated build to require Jotunn 2.12.1
 
 ### 1.0.1
  * Bugfix for patches to the trader
