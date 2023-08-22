@@ -35,6 +35,22 @@ namespace CraftedBossDrops
             }
             return list;
         }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.AddKnownItem)), HarmonyPrefix]
+        public static void PlayerAddKnownItem(ItemDrop.ItemData item, Player __instance)
+        {
+            var self = __instance;
+
+            if(item.m_dropPrefab.name.Equals("HardAntler"))
+            {
+                if (!self.m_knownMaterial.Contains(item.m_shared.m_name))
+                {
+                    self.SetSeenTutorial("blackforest");
+                }
+            }
+        }
+
+
     }
 }
 

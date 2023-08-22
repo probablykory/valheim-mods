@@ -1,10 +1,7 @@
 ﻿using HarmonyLib;
 using System;
-using System.CodeDom;
-using System.Reflection;
 using System.Text;
 using UnityEngine;
-using static Skills;
 
 namespace MoreCrossbows
 {
@@ -99,7 +96,7 @@ namespace MoreCrossbows
         }
     }
 
-    [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), typeof(ItemDrop.ItemData), typeof(int), typeof(bool))]
+    [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float))]
     public static class GetTooltipPatch
     {
         public static string Postfix(string __result, ItemDrop.ItemData item)

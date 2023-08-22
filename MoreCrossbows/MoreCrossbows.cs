@@ -27,7 +27,7 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.4.0";
+        public const string PluginVersion = "1.2.5.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         public static string ConfigFileName

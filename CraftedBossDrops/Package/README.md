@@ -4,7 +4,9 @@ A Valheim mod which adds recipes to craft all boss drops, enabling progression w
 ## Features
 
 Configurable recipes for Hard Antler, Swamp Key, Wishbone, Dragon Tear, and Torn Spirit.  The default recipes require a large amount of the summon material plus something else from the respective biome.  Modor and Yagluth recipes are intentionally annoying.  🙂  
-Haldor the Trader will recognize your progression as long as you 'know' the gated material.  Ex: Haldor will sell you Ymir Flesh and Thunderstone after you've crafted the Swamp Key.
+In addition to the recipes, this mod patches two small aspects of the game.
+  1) Haldor the Trader will recognize your progression as long as you 'know' the gated material.  Ex: Haldor will sell you Ymir Flesh and Thunderstone after you've crafted the Swamp Key.
+  2) Hugin the Raven will recognize your progression if you've crafted a Hard Antler, and won't pester you about the Black Forest being dangerous.
 
 ## Rationale 
 
@@ -25,9 +27,18 @@ I was thinking about finding more thematic recipes than what's setup currently, 
 
 ## Support me
 
-I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://www.paypal.com/paypalme/probablyk) is greatly appreciated!
+I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://paypal.me/probablyk) is greatly appreciated!
 
 ## Changelog
+
+### v1.0.3
+ * Minor fix for Hildir compat.
+ * Patched the Blackforest tutorial to be marked as seen if you craft HardAntler.  No more Hugin nagging.
+ * Updated build to require Jotunn 2.12.4
+
+<details>
+<summary><i>View changelog history</i></summary>
+<br/>
 
 ### v1.0.2
  * Minor fix to recipe initialization, it won't attempt to add duplicate recipes after users logout and login repeatedly.
@@ -38,6 +49,8 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ### 1.0.0
  * Initial Version
+
+ </details>
 
 ## Known issues
 You can find the github at: https://github.com/probablykory/valheim-mods

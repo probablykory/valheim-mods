@@ -16,7 +16,7 @@ namespace BronzeAgeChest
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
-        public const string PluginVersion = "1.0.3.0";  
+        public const string PluginVersion = "1.0.4.0";  
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static BronzeAgeChest Instance;

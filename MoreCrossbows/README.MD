@@ -63,9 +63,17 @@ This mod has full support for translations, but at the moment only has values fo
 
 ## Support me
 
-I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://www.paypal.com/paypalme/probablyk) is greatly appreciated!
+I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://paypal.me/probablyk) is greatly appreciated!
 
 ## Changelog
+
+### v1.2.5
+ * Updates to tooltip patches, minor fix for Hildir compat.
+ * Updated build to require Jotunn 2.12.4
+
+<details>
+<summary><i>View changelog history</i></summary>
+<br/>
 
 ### v1.2.4
  * Bugfixes related to configuration and log warnings.  MC should now properly react when any of its settings is changed.
@@ -107,6 +115,8 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ### 1.0.0
  * Initial Version
+
+</details>
 
 ## Known issues
 If you find a problem, please visit my [github](https://github.com/probablykory/valheim-mods)
