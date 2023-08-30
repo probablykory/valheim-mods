@@ -27,7 +27,7 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.5.0";
+        public const string PluginVersion = "1.2.6.0";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         public static string ConfigFileName
@@ -413,7 +413,11 @@ namespace MoreCrossbows
                 MinTableLevel = 2,
                 Requirements = "Wood:20:5,Stone:8:2,LeatherScraps:8:2",
                 Damages = "Pierce:27",
-                Knockback = 80
+                Knockback = 80,
+                DependencyNames = new List<string>()
+                {
+                    "sfx_wood_crossbow_fire.prefab"
+                }
             });
 
             _features.Add(new FeatureItem("CrossbowBronze")
@@ -427,8 +431,11 @@ namespace MoreCrossbows
                 MinTableLevel = 1,
                 Requirements = "Wood:10:5,FineWood:4:2,Bronze:10:5,DeerHide:2:1",
                 Damages = "Pierce:42",
-                Knockback = 100
-
+                Knockback = 100,
+                DependencyNames = new List<string>()
+                {
+                    "sfx_bronze_crossbow_fire.prefab"
+                }
             });
 
             _features.Add(new FeatureItem("CrossbowIron")

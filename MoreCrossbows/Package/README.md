@@ -67,6 +67,9 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.2.6
+ * Small bugfix to ensure crossbow sfx are properly registered to znetview.
+
 ### v1.2.5
  * Updates to tooltip patches, minor fix for Hildir compat.
  * Updated build to require Jotunn 2.12.4
