@@ -23,17 +23,27 @@ namespace CraftedBossDrops
         [HarmonyPatch(typeof(Trader), nameof(Trader.GetAvailableItems)), HarmonyPostfix]
         public static List<Trader.TradeItem> TraderGetAvailableItems(List<Trader.TradeItem> values, Trader __instance)
         {
-            List<Trader.TradeItem> list = new List<Trader.TradeItem>();
-            foreach (Trader.TradeItem tradeItem in __instance.m_items)
+            Trader trader = __instance;
+            if (trader == null)
             {
-                if (string.IsNullOrEmpty(tradeItem.m_requiredGlobalKey) ||
-                    ZoneSystem.instance.GetGlobalKey(tradeItem.m_requiredGlobalKey) ||
-                    Player.m_localPlayer.IsKnownMaterial(GlobalKeyTokenMap[tradeItem.m_requiredGlobalKey]))
-                {
-                    list.Add(tradeItem);
-                }
+                return values;
             }
-            return list;
+
+            if (trader?.m_name == "$npc_haldor")
+            {
+                List<Trader.TradeItem> list = new List<Trader.TradeItem>();
+                foreach (Trader.TradeItem tradeItem in trader.m_items)
+                {
+                    if (string.IsNullOrEmpty(tradeItem.m_requiredGlobalKey) ||
+                        ZoneSystem.instance.GetGlobalKey(tradeItem.m_requiredGlobalKey) ||
+                        Player.m_localPlayer.IsKnownMaterial(GlobalKeyTokenMap[tradeItem.m_requiredGlobalKey]))
+                    {
+                        list.Add(tradeItem);
+                    }
+                }
+                return list;
+            }
+            return values;
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.AddKnownItem)), HarmonyPrefix]

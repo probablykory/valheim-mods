@@ -14,7 +14,7 @@ namespace CraftedBossDrops
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.3.0";
+        public const string PluginVersion = "1.0.4";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         private Harmony harmony = null;

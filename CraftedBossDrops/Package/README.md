@@ -31,14 +31,17 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
-### v1.0.3
- * Minor fix for Hildir compat.
- * Patched the Blackforest tutorial to be marked as seen if you craft HardAntler.  No more Hugin nagging.
- * Updated build to require Jotunn 2.12.4
+### v1.0.4
+ * Fix for Haldor patch - ensure Hildir never sells Haldor's stuff.
 
 <details>
 <summary><i>View changelog history</i></summary>
 <br/>
+
+### v1.0.3
+ * Minor fix for Hildir compat.
+ * Patched the Blackforest tutorial to be marked as seen if you craft HardAntler.  No more Hugin nagging.
+ * Updated build to require Jotunn 2.12.4
 
 ### v1.0.2
  * Minor fix to recipe initialization, it won't attempt to add duplicate recipes after users logout and login repeatedly.
