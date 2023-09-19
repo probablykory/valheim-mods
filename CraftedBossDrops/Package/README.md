@@ -3,7 +3,7 @@ A Valheim mod which adds recipes to craft all boss drops, enabling progression w
 
 ## Features
 
-Configurable recipes for Hard Antler, Swamp Key, Wishbone, Dragon Tear, and Torn Spirit.  The default recipes require a large amount of the summon material plus something else from the respective biome.  Modor and Yagluth recipes are intentionally annoying.  🙂  
+Configurable recipes for Hard Antler, Swamp Key, Wishbone, Dragon Tear, Torn Spirit, and "Queen Drop".  The default recipes require a large amount of the summon material plus something else from the respective biome.  Modor, Yagluth and Queen recipes are intentionally annoying.  🙂  
 In addition to the recipes, this mod patches two small aspects of the game.
   1) Haldor the Trader will recognize your progression as long as you 'know' the gated material.  Ex: Haldor will sell you Ymir Flesh and Thunderstone after you've crafted the Swamp Key.
   2) Hugin the Raven will recognize your progression if you've crafted a Hard Antler, and won't pester you about the Black Forest being dangerous.
@@ -31,12 +31,20 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
-### v1.0.4
- * Fix for Haldor patch - ensure Hildir never sells Haldor's stuff.
+### v1.0.5
+ * Added a new recipe for QueenDrop, to better support progression into ashlands/deepnorth in mods like Warfare/Monstrum.
+ * Configuration changes will now immediately take effect.
+   - Mod now responds to Configuration Manager if available, or a config file watcher if not.
+   - Synced configurations now have proper support.
+ * When using Configuration Manager, the requirements field is now drawn as table with multiple inputs. Better usability.
+ * Adjustments to the default requirements for all other recipes, in many cases reining in the costs of the summon item
 
 <details>
 <summary><i>View changelog history</i></summary>
 <br/>
+
+### v1.0.4
+ * Fix for Haldor patch - ensure Hildir never sells Haldor's stuff.
 
 ### v1.0.3
  * Minor fix for Hildir compat.
