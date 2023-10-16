@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Common;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -12,17 +13,23 @@ namespace BronzeAgeChest
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
     internal class BronzeAgeChest : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
-        public const string PluginVersion = "1.0.4.0";  
+        public const string PluginVersion = "1.0.5";  
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static BronzeAgeChest Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("bronzechest");
 
-        public Entries Entries { get; protected set; }
+        public Entries Entry { get; protected set; }
+        private CustomPiece bronzeChest;
+
+        private const string Name = "$piece_chest_bronze";
+        private const string PieceTable = "Hammer";
+        private const string Category = "Furniture";
 
         private void Awake()
         {
@@ -32,28 +39,56 @@ namespace BronzeAgeChest
             AddDefaultLocalizations();
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
             LocalizationManager.OnLocalizationAdded += OnLocalizationAdded;
+            SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
+            Config.ConfigReloaded += OnConfigReloaded;
+
+            var _ = new ConfigWatcher(this);
         }
 
         private void InitializeFeatures()
         {
-            Entries = Entries.GetFromProps(Instance, "BronzeChest", CraftingTable.Workbench, "Wood:15,Bronze:1,BronzeNails:10");
+            Entry = Entries.GetFromProps(Instance, "BronzeChest", nameof(CraftingStations.Workbench), "Wood:15,Bronze:1,BronzeNails:10");
+        }
+
+        private void UpdateFeatures()
+        {
+            bronzeChest.Update(getPieceFromEntry(Entry));
         }
 
         private void OnVanillaPrefabsAvailable()
         {
             Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
-
-            PieceConfig bronzeChest = new PieceConfig() {
-                Name = "$piece_chest_bronze",
-                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : CraftingTable.Workbench),
-                PieceTable = "Hammer",
-                Category = "Furniture",
-                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : "Wood:15,Bronze:1,BronzeNails:10")
-            };
-            PieceManager.Instance.AddPiece(new CustomPiece(assetBundle, "piece_chest_bronze", true, bronzeChest));
+            bronzeChest = new CustomPiece(assetBundle, "piece_chest_bronze", true, getPieceFromEntry(Entry));
+            PieceManager.Instance.AddPiece(bronzeChest);
 
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }
+
+
+        private void OnConfigReloaded(object sender, System.EventArgs e)
+        {
+            UpdateFeatures();
+        }
+
+        private void OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)
+        {
+            UpdateFeatures();
+        }
+
+        private PieceConfig getPieceFromEntry(Entries entry)
+        {
+            PieceConfig piece = new PieceConfig()
+            {
+                Name = Name,
+                CraftingStation = CraftingStations.GetInternalName(entry.Table.Value),
+                PieceTable = PieceTable,
+                Category = Category,
+                Requirements = RequirementsEntry.Deserialize(entry.Requirements.Value)
+            };
+
+            return piece;
+        }
+
 
         private static Dictionary<string, string> DefaultEnglishLanguageStrings = new Dictionary<string, string>() {
             {"$piece_chest_bronze", "Rugged Chest"}

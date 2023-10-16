@@ -3,59 +3,11 @@ using Jotunn.Configs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
+using UnityEngine;
 
 namespace MoreCrossbows
 {
-
-    public static class CraftingTable
-    {
-        public static string Inventory { get { return nameof(Inventory); } }
-        public static string Workbench { get { return nameof(Workbench); } }
-        public static string Cauldron { get { return nameof(Cauldron); } }
-        public static string Forge { get { return nameof(Forge); } }
-        public static string ArtisanTable { get { return nameof(ArtisanTable); } }
-        public static string StoneCutter { get { return nameof(StoneCutter); } }
-        public static string MageTable { get { return nameof(MageTable); } }
-        public static string BlackForge { get { return nameof(BlackForge); } }
-
-        public static string[] GetValues()
-        {
-            return new string[]
-            {
-                Inventory,
-                Workbench,
-                Cauldron,
-                Forge,
-                ArtisanTable,
-                StoneCutter,
-                MageTable,
-                BlackForge
-            };
-        }
-
-        public static string GetInternalName(string name)
-        {
-            switch (name)
-            {
-                case nameof(Workbench):
-                    return "piece_workbench";
-                case nameof(Cauldron):
-                    return "piece_cauldron";
-                case nameof(Forge):
-                    return "forge";
-                case nameof(ArtisanTable):
-                    return "piece_artisanstation";
-                case nameof(StoneCutter):
-                    return "piece_stonecutter";
-                case nameof(MageTable):
-                    return "piece_magetable";
-                case nameof(BlackForge):
-                    return "blackforge";
-            }
-            return string.Empty; // "Inventory" or error
-        }
-    }
-
     public static class DamageTypes
     {
         public static string Damage { get { return nameof(Damage); } }
@@ -86,30 +38,6 @@ namespace MoreCrossbows
                 Poison,
                 Spirit
             };
-        }
-
-    }
-
-    public class AcceptableValueConfigNote : AcceptableValueBase
-    {
-        public virtual string Note { get; }
-
-        public AcceptableValueConfigNote(string note) : base(typeof(string))
-        {
-            if (string.IsNullOrEmpty(note))
-            {
-                throw new ArgumentException("A string with atleast 1 character is needed", "Note");
-            }
-            this.Note = note;
-        }
-
-        // passthrough overrides
-        public override object Clamp(object value){return value;}
-        public override bool IsValid(object value) { return !string.IsNullOrEmpty(value as string);  }
-
-        public override string ToDescriptionString()
-        {
-            return "# Note: " + Note;
         }
     }
 
@@ -148,28 +76,7 @@ namespace MoreCrossbows
         }
     }
 
-    public interface IPlugin
-    {
-        ConfigFile Config { get; }
-    }
-
-    // use bepinex ConfigEntry settings
-    internal static class ConfigHelper
-    {
-        public static ConfigurationManagerAttributes GetAdminOnlyFlag()
-        {
-            return new ConfigurationManagerAttributes { IsAdminOnly = true };
-        }
-
-        public static ConfigEntry<T> Config<T>(this IPlugin instance, string group, string name, T value, ConfigDescription description)
-        {
-            return instance.Config.Bind(group, name, value, description);
-        }
-
-        public static ConfigEntry<T> Config<T>(this IPlugin instance, string group, string name, T value, string description) => Config(instance, group, name, value, new ConfigDescription(description, null, GetAdminOnlyFlag()));
-    }
-
-    public static class DamagesEntry
+    public static class DamagesDict
     {
         public static Dictionary<string, int> Deserialize(string dmgs)
         {
@@ -191,68 +98,71 @@ namespace MoreCrossbows
         }
     }
 
-    public static class RequirementsEntry
-    {
-        public static RequirementConfig[] Deserialize(string reqs)
-        {
-            return reqs.Split(',').Select(r =>
-            {
-                string[] parts = r.Split(':');
-                return new RequirementConfig
-                {
-                    Item = parts[0],
-                    Amount = parts.Length > 1 && int.TryParse(parts[1], out int amount) ? amount : 1,
-                    AmountPerLevel = parts.Length > 2 && int.TryParse(parts[2], out int apl) ? apl : 0
-                };
-            }).ToArray();
-        }
-
-        public static string Serialize(RequirementConfig[] reqs)
-        {
-            return string.Join(",", reqs.Select(r =>
-                r.AmountPerLevel > 0 ?
-                    $"{r.Item}:{r.Amount}:{r.AmountPerLevel}":
-                    $"{r.Item}:{r.Amount}"));
-        }
-    }
-
-
     internal class Entries
     {
+        public static Dictionary<ConfigurationManagerAttributes, Entries> SavedAttributes = new Dictionary<ConfigurationManagerAttributes, Entries>();
+
+        protected bool visible = true;
+
         public string Name { get; set; } = string.Empty;
         public ConfigEntry<string> Table { get; set; } = null;
         public ConfigEntry<int> MinTableLevel { get; set; } = null;
         public ConfigEntry<int> Amount { get; set; } = null;
         public ConfigEntry<string> Requirements { get; set; } = null;
 
-        public static Entries GetFromFeature(IPlugin instance, Feature config, Entries entries = null)
+        public static ConfigurationManagerAttributes GetAttribute(Entries entries, bool isAdminOnly = true, bool isBrowsable = true, Action<ConfigEntryBase> customDrawer = null)
         {
+            var cma = new ConfigurationManagerAttributes() { Browsable = isBrowsable, IsAdminOnly = isAdminOnly, CustomDrawer = customDrawer };
+            SavedAttributes.Add(cma, entries);
+            return cma;
+        }
+
+        public static void UpdateBrowsable()
+        {
+            foreach(KeyValuePair<ConfigurationManagerAttributes, Entries> kvp in SavedAttributes)
+            {
+                kvp.Key.Browsable = kvp.Value.visible;
+            }
+        }
+
+        public static Entries GetFromFeature(IPlugin instance, Feature config, Entries entries = null, bool visible = true)
+        {
+            var hasUpgrades = (config.Type == Feature.FeatureType.Crossbow);
+
             if (entries == null)
             {
                 entries = new Entries();
             }
+            entries.visible = visible;
             entries.Name = config.Name;
             entries.Table = instance.Config(entries.Name, "Table", config.Table,
-                new ConfigDescription($"Crafting station where {entries.Name} is available.", new AcceptableValueList<string>(CraftingTable.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"Crafting station where {entries.Name} is available.", CraftingStations.GetAcceptableValueList(), GetAttribute(entries, true, visible)));
             entries.MinTableLevel = instance.Config(entries.Name, "Table Level", config.MinTableLevel,
-                new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, GetAttribute(entries, entries.visible, true)));
             entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
-                new ConfigDescription($"The amount of {entries.Name} created.", null, ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"The amount of {entries.Name} created.", null, GetAttribute(entries, entries.visible, true)));
             entries.Requirements = instance.Config<string>(entries.Name, "Requirements", config.Requirements,
-                 new ConfigDescription($"The required items to craft {entries.Name}.", new AcceptableValueConfigNote("You must use valid spawn item codes or this will not work."), ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"The required items to craft {entries.Name}.", new AcceptableValueConfigNote("You must use valid spawn item codes."),
+                GetAttribute(entries, entries.visible, true, SharedDrawers.DrawReqConfigTable(hasUpgrades))));
 
             return entries;
         }
 
+        public void SetVisibility(bool visible)
+        {
+            this.visible = visible;
+            UpdateBrowsable();
+        }
+
         private Action<object, EventArgs> _action = null;
-        private void OnSettingChanged(object sender, EventArgs e)
+        protected void OnSettingChanged(object sender, EventArgs e)
         {
             if (_action != null)
             {
                 _action(sender, e);
             }
         }
-        public void AddSettingsChangedHandler(Action<object,EventArgs> action)
+        public virtual void AddSettingsChangedHandler(Action<object,EventArgs> action)
         {
             _action = action;
             Table.SettingChanged += OnSettingChanged;
@@ -261,8 +171,7 @@ namespace MoreCrossbows
             Requirements.SettingChanged += OnSettingChanged;
         }
 
-
-        public void RemoveSettingsChangedHandler()
+        public virtual void RemoveSettingsChangedHandler()
         {
             Table.SettingChanged -= OnSettingChanged;
             MinTableLevel.SettingChanged -= OnSettingChanged;
@@ -276,15 +185,114 @@ namespace MoreCrossbows
     {
         public ConfigEntry<string> Damages { get; set; } = null;
 
-        public static Entries GetFromFeature(IPlugin instance, FeatureItem config)
+        public override void AddSettingsChangedHandler(Action<object, EventArgs> action)
+        {
+            base.AddSettingsChangedHandler(action);
+
+            Damages.SettingChanged += OnSettingChanged;
+        }
+
+        public override void RemoveSettingsChangedHandler()
+        {
+            base.RemoveSettingsChangedHandler();
+
+            Damages.SettingChanged -= OnSettingChanged;
+        }
+
+        public static ItemEntries GetFromFeature(IPlugin instance, FeatureItem config, bool visible = true)
         {
             ItemEntries entries = new ItemEntries();
-            entries = (ItemEntries) GetFromFeature(instance, config, entries);
+            entries = (ItemEntries) GetFromFeature(instance, config, entries, visible);
             entries.Damages = instance.Config<string>(entries.Name, "Damages", config.Damages,
-                new ConfigDescription($"The damage done by {entries.Name}.", new AcceptableKeysString(DamageTypes.GetValues()), ConfigHelper.GetAdminOnlyFlag()));
+                new ConfigDescription($"The damage done by {entries.Name}.", new AcceptableKeysString(DamageTypes.GetValues()),
+                GetAttribute(entries, true, entries.visible, DamagesEntry.DrawDamagesConfigTable())));
 
             return entries;
         }
 
+    }
+
+    public class DamagesConfig
+    {
+        public string Prefab;
+        public int Duration = 0;
+    }
+
+    public static class DamagesEntry
+    {
+        public static DamagesConfig[] Deserialize(string dmgs)
+        {
+            return dmgs.Split(',').Select(r =>
+            {
+                string[] parts = r.Split(':');
+                return new DamagesConfig
+                {
+                    Prefab = parts[0],
+                    Duration = parts.Length > 1 && int.TryParse(parts[1], out int duration) ? duration : 1
+                };
+            }).ToArray();
+        }
+
+        public static string Serialize(DamagesConfig[] dmgs)
+        {
+            return string.Join(",", dmgs.Select(r =>
+                    $"{r.Prefab}:{r.Duration}"));
+        }
+
+        public static Action<ConfigEntryBase> DrawDamagesConfigTable()
+        {
+            return cfg =>
+            {
+                List<DamagesConfig> newDamages = new List<DamagesConfig>();
+                bool wasUpdated = false;
+
+                int RightColumnWidth = SharedDrawers.GetRightColumnWidth();
+
+                GUILayout.BeginVertical();
+
+                List<DamagesConfig> damages = Deserialize((string)cfg.BoxedValue).ToList();
+
+                foreach (var bossPower in damages)
+                {
+                    GUILayout.BeginHorizontal();
+
+                    string newPrefab = GUILayout.TextField(bossPower.Prefab, new GUIStyle(GUI.skin.textField) { fixedWidth = RightColumnWidth - 56 - 21 - 21 - 9 });
+                    string prefabName = string.IsNullOrEmpty(newPrefab) ? bossPower.Prefab : newPrefab;
+                    wasUpdated = wasUpdated || prefabName != bossPower.Prefab;
+
+
+                    int duration = bossPower.Duration;
+                    if (int.TryParse(GUILayout.TextField(duration.ToString(), new GUIStyle(GUI.skin.textField) { fixedWidth = 56 }), out int mewDuration) && mewDuration != duration)
+                    {
+                        duration = mewDuration;
+                        wasUpdated = true;
+                    }
+
+                    if (GUILayout.Button("x", new GUIStyle(GUI.skin.button) { fixedWidth = 21 }))
+                    {
+                        wasUpdated = true;
+                    }
+                    else
+                    {
+                        newDamages.Add(new DamagesConfig { Prefab = prefabName, Duration = duration });
+                    }
+
+                    if (GUILayout.Button("+", new GUIStyle(GUI.skin.button) { fixedWidth = 21 }))
+                    {
+                        wasUpdated = true;
+                        newDamages.Add(new DamagesConfig { Prefab = "<Damage Type>", Duration = 120 });
+                    }
+
+                    GUILayout.EndHorizontal();
+                }
+
+                GUILayout.EndVertical();
+
+                if (wasUpdated)
+                {
+                    cfg.BoxedValue = Serialize(newDamages.ToArray());
+                }
+            };
+        }
     }
 }

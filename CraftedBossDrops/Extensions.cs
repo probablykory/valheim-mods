@@ -27,60 +27,60 @@ namespace CraftedBossDrops
         private static HashSet<CustomRecipe> hashsetRecipes = null;
         public static bool Update(this CustomRecipe recipe, RecipeConfig newRecipe)
         {
-            if (ZNetScene.instance != null)
+            // cache refernce to ItemManager.Instance.Recipes
+            if (hashsetRecipes == null)
             {
-                global::Recipe r = ObjectDB.instance.m_recipes.GetRecipe(recipe.Recipe);
-                if (r == null)
+                var imMember = ItemManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Recipes");
+                var imField = imMember as FieldInfo;
+                if (imField != null)
                 {
-                    Jotunn.Logger.LogError($"Error updating recipe {recipe?.Recipe?.name}, did not find existing recipe in ObjectDB");
+                    var hset = imField.GetValue(ItemManager.Instance) as HashSet<CustomRecipe>;
+                    if (hset != null)
+                    {
+                        hashsetRecipes = hset;
+                        //Jotunn.Logger.LogDebug("Recipes Hashset value retrieved: " + ObjectDumper.Dump(hashsetRecipes));
+                    }
+                }
+            }
+            global::Recipe r = ObjectDB.instance.m_recipes.GetRecipe(recipe.Recipe);
+            if (r == null)
+            {
+                if (hashsetRecipes != null && hashsetRecipes.Contains(recipe))
+                {
+                    Jotunn.Logger.LogDebug($"Removing and re-adding recipe {recipe?.Recipe?.name} in ItemManager.");
+                    ItemManager.Instance.RemoveRecipe(recipe);
+                    ItemManager.Instance.AddRecipe(new CustomRecipe(newRecipe));
+                    return true;
+                }
+                else
+                {
+                    Jotunn.Logger.LogError($"Error updating recipe {recipe?.Recipe?.name}, did not find existing recipe in ObjectDB or ItemManager");
                     return false;
                 }
-
-                // Update existing recipe in place.
-                r.m_amount = newRecipe.Amount;
-                r.m_minStationLevel = newRecipe.MinStationLevel;
-                r.m_craftingStation = ZNetScene.instance.GetPrefab(newRecipe.CraftingStation).GetComponent<CraftingStation>();
-                r.m_resources = newRecipe.GetRequirements();
-
-                foreach (var res in r.m_resources)
-                {
-                    var prefab = ObjectDB.instance.GetItemPrefab(res.m_resItem.name.Replace("JVLmock_", ""));
-                    if (prefab != null)
-                    {
-                        res.m_resItem = prefab.GetComponent<ItemDrop>();
-                    }
-                }
-
-                // cache refernce to ItemManager.Instance.Recipes
-                if (hashsetRecipes == null)
-                {
-                    var imMember = ItemManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Recipes");
-                    var imField = imMember as FieldInfo;
-                    if (imField != null)
-                    {
-                        var hset = imField.GetValue(ItemManager.Instance) as HashSet<CustomRecipe>;
-                        if (hset != null)
-                        {
-                            hashsetRecipes = hset;
-                            //Jotunn.Logger.LogDebug("Recipes Hashset value retrieved: " + ObjectDumper.Dump(hashsetRecipes));
-                        }
-                    }
-                }
-                if (hashsetRecipes != null)
-                {
-                    hashsetRecipes.Remove(recipe);
-                    hashsetRecipes.Add(new CustomRecipe(r, false, false));
-                }
-
-                return true;
             }
-            else
+
+            // Update existing recipe in place.
+            Jotunn.Logger.LogDebug($"Updating recipe {recipe?.Recipe?.name} in place.");
+            r.m_amount = newRecipe.Amount;
+            r.m_minStationLevel = newRecipe.MinStationLevel;
+            r.m_craftingStation = PrefabManager.Instance.GetPrefab(newRecipe.CraftingStation)?.GetComponent<CraftingStation>();
+            r.m_resources = newRecipe.GetRequirements();
+
+            foreach (var res in r.m_resources)
             {
-                ItemManager.Instance.RemoveRecipe(recipe);
-                ItemManager.Instance.AddRecipe(new CustomRecipe(newRecipe));
+                var prefab = ObjectDB.instance.GetItemPrefab(res.m_resItem.name.Replace("JVLmock_", ""));
+                if (prefab != null)
+                {
+                    res.m_resItem = prefab.GetComponent<ItemDrop>();
+                }
+            }
+            if (hashsetRecipes != null)
+            {
+                hashsetRecipes.Remove(recipe);
+                hashsetRecipes.Add(new CustomRecipe(r, false, false));
             }
 
-            return false;
+            return true;
         }
     }
 }

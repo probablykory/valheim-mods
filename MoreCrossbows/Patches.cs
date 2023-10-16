@@ -5,26 +5,6 @@ using UnityEngine;
 
 namespace MoreCrossbows
 {
-    [HarmonyPatch]
-    public static class PlayerPatches
-    {
-        public static event Action<Player> OnPlayerSpawned;
-
-        public static event Action<Player> OnPlayerDestroyed;
-
-        [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned)), HarmonyPostfix]
-        private static void PlayerOnSpawn(Player __instance)
-        {
-            OnPlayerSpawned?.Invoke(__instance);
-        }
-
-        [HarmonyPatch(typeof(Player), nameof(Player.OnDestroy)), HarmonyPostfix]
-        private static void PlayerOnDestroy(Player __instance)
-        {
-            OnPlayerDestroyed?.Invoke(__instance);
-        }
-    }
-
     public static class TooltipHelper
     {
         public static string Damage(float damage)
@@ -96,7 +76,7 @@ namespace MoreCrossbows
         }
     }
 
-    [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float))]
+    [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float)), HarmonyPriority(Priority.First)]
     public static class GetTooltipPatch
     {
         public static string Postfix(string __result, ItemDrop.ItemData item)

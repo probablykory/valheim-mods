@@ -43,6 +43,7 @@
     <StartProgram>$(VALHEIM_INSTALL)\valheim.exe</StartProgram>
     <StartArguments>-console</StartArguments>
     <StartWorkingDirectory>$(VALHEIM_INSTALL)</StartWorkingDirectory>
+    <AfterTargets Condition="'$(AfterTargets)' == ''">ILRepacker</AfterTargets>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -82,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BronzeAgeChest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -89,6 +91,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <EmbeddedResource Include="bronzechest" />
+    <None Include="ILRepack.targets" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
@@ -101,20 +104,22 @@
   <ItemGroup>
     <Content Include="Package\icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ddb16a44-f758-4fa0-981d-a42a265335cb}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="JotunnPostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'">
+  <Target Name="JotunnPostBuildTaskWin" AfterTargets="ILRepacker" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="powershell.exe -ExecutionPolicy bypass -File &quot;$(SolutionDir)publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -ValheimPath &quot;$(VALHEIM_INSTALL.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot; " />
   </Target>
-  <PropertyGroup>
-    <BuildDependsOn>
-      $(BuildDependsOn);
-      JotunnPostBuildTaskWin
-    </BuildDependsOn>
-  </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\JotunnLib.2.12.4\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.12.4\build\JotunnLib.props'))" />
+    <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
   </Target>
+  <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />
 </Project>

@@ -4,10 +4,11 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
+using Common;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace MoreCrossbows
 {
-
     internal class Feature
     {
         public Feature(string name)
@@ -25,6 +26,7 @@ namespace MoreCrossbows
         public string Name { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
+        public FeatureType Type { get; set; }
 
         // entity data
         public string Table { get; set; }
@@ -42,6 +44,13 @@ namespace MoreCrossbows
         public virtual bool Load() { return false; }
         public virtual bool Unload() { return false; }
         public virtual bool Update() { return false; }
+
+        public enum FeatureType
+        {
+            Crossbow,
+            Arrow,
+            Bolt
+        }
     }
 
 
@@ -60,18 +69,25 @@ namespace MoreCrossbows
         private void OnEntrySettingChanged(object sender, EventArgs e)
         {
             Jotunn.Logger.LogDebug("OnEntrySettingChanged fired on feature " + Name);
-
             RequiresUpdate = true;
+        }
+
+        private void OnEnabledSettingChanged(object sender, EventArgs e)
+        {
+            Jotunn.Logger.LogDebug("OnEnabledSettingChanged fired on feature " + Name);
+            Entries.SetVisibility(EnabledConfigEntry.Value);
+            RequiresUpdate = true;
+            SharedDrawers.ReloadConfigDisplay();
         }
 
         public override bool Initialize()
         {
             if (!string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(Description))
             {
-                Entries = (ItemEntries) ItemEntries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
-                Entries.AddSettingsChangedHandler(OnEntrySettingChanged);
                 EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
-                EnabledConfigEntry.SettingChanged += OnEntrySettingChanged;
+                EnabledConfigEntry.SettingChanged += OnEnabledSettingChanged;
+                Entries = (ItemEntries) ItemEntries.GetFromFeature(MoreCrossbows.Instance, this, EnabledConfigEntry.Value);
+                Entries.AddSettingsChangedHandler(OnEntrySettingChanged);
             }
             return true;
         }
@@ -82,15 +98,13 @@ namespace MoreCrossbows
             
             RecipeConfig newRecipe = new RecipeConfig()
             {
-                Name = Entries.Name,
-                Item = Entries.Name,
-                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
-                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                Item = Entries.Name, // Do NOT implicity use RecipeConfig.Name
+                CraftingStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
+                RepairStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
                 MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
                 Amount = Entries != null ? Entries.Amount.Value : Amount,
-                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
+                Requirements = RequirementsEntry.Deserialize(Entries?.Requirements?.Value ?? Requirements)
             };
-
 
             // Directly update the recipe
             Jotunn.Logger.LogDebug("Updating recipe for " + _customItem?.ItemDrop?.name);
@@ -98,7 +112,7 @@ namespace MoreCrossbows
             _customItem.Recipe.Update(newRecipe);
 
             Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
-            setDamage(DamagesEntry.Deserialize(Entries.Damages.Value), AoePrefabName);
+            setDamage(DamagesDict.Deserialize(Entries.Damages.Value), AoePrefabName);
 
             return true;
         }
@@ -109,16 +123,16 @@ namespace MoreCrossbows
 
             ItemConfig config = new ItemConfig()
             {
-                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
-                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                CraftingStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
+                RepairStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
                 MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
                 Amount = Entries != null ? Entries.Amount.Value : Amount,
-                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
+                Requirements = RequirementsEntry.Deserialize(Entries?.Requirements?.Value ?? Requirements)
             };
             _customItem = new CustomItem(MoreCrossbows.Instance.assetBundle, AssetPath, true, config);
 
             //Jotunn.Logger.LogDebug("Overwriting damages of " + Name + " with : " + Entries.Damages.Value);
-            setDamage(DamagesEntry.Deserialize(Entries != null ? Entries.Damages.Value : Damages), AoePrefabName);
+            setDamage(DamagesDict.Deserialize(Entries != null ? Entries.Damages.Value : Damages), AoePrefabName);
             _customItem.ItemDrop.m_itemData.m_shared.m_attackForce = Knockback;
 
             ItemManager.Instance.AddItem(_customItem);
@@ -162,10 +176,6 @@ namespace MoreCrossbows
                     var aoe = prefab.GetComponent<Aoe>();
                     if (aoe != null)
                     {
-                        //Jotunn.Logger.LogDebug("aoe ref valid  " + aoe.name);
-
-                        //TODO: patch ItemDrop.ItemData.GetTooltip() to tack on AOE damage.
-
                         // Aoe frost special case as it scales poorly, 2/3 value goes aoe, 1/3 goes to projectile.
                         float frostThird = _customItem.ItemDrop.m_itemData.m_shared.m_damages.m_frost / 3f;
                         aoe.m_damage.m_frost = frostThird * 2f;
@@ -191,12 +201,20 @@ namespace MoreCrossbows
             RequiresUpdate = true;
         }
 
+        private void OnEnabledSettingChanged(object sender, EventArgs e)
+        {
+            Jotunn.Logger.LogDebug("OnEnabledSettingChanged fired on feature " + Name);
+            Entries.SetVisibility(EnabledConfigEntry.Value);
+            RequiresUpdate = true;
+            SharedDrawers.ReloadConfigDisplay();
+        }
+
         public override bool Initialize()
         {
-            Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this); // TODO ugh, refactor
-            Entries.AddSettingsChangedHandler(this.OnEntrySettingChanged);
             EnabledConfigEntry = MoreCrossbows.Instance.Config(Category, "Enable" + Name, EnabledByDefault, Description);
-            EnabledConfigEntry.SettingChanged += OnEntrySettingChanged;
+            EnabledConfigEntry.SettingChanged += OnEnabledSettingChanged;
+            Entries = Entries.GetFromFeature(MoreCrossbows.Instance, this, null, EnabledConfigEntry.Value);
+            Entries.AddSettingsChangedHandler(this.OnEntrySettingChanged);
             return true;
         }
 
@@ -206,13 +224,12 @@ namespace MoreCrossbows
 
             RecipeConfig newRecipe = new RecipeConfig()
             {
-                Name = Entries.Name,
-                Item = Entries.Name,
-                CraftingStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
-                RepairStation = CraftingTable.GetInternalName(Entries != null ? Entries.Table.Value : Table),
+                Item = Entries.Name, // Do NOT implicity use RecipeConfig.Name
+                CraftingStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
+                RepairStation = CraftingStations.GetInternalName(Entries?.Table?.Value ?? Table),
                 MinStationLevel = Entries != null ? Entries.MinTableLevel.Value : MinTableLevel,
                 Amount = Entries != null ? Entries.Amount.Value : Amount,
-                Requirements = RequirementsEntry.Deserialize(Entries != null ? Entries.Requirements.Value : Requirements)
+                Requirements = RequirementsEntry.Deserialize(Entries?.Requirements?.Value ?? Requirements)
             };
 
             var recipe = ItemManager.Instance.GetRecipe("CraftEarly" + Name);
@@ -235,7 +252,8 @@ namespace MoreCrossbows
             {
                 Name = "CraftEarly" + Entries.Name,
                 Item = Entries.Name,
-                CraftingStation = CraftingTable.GetInternalName(Entries.Table.Value),
+                CraftingStation = CraftingStations.GetInternalName(Entries.Table.Value),
+                RepairStation = CraftingStations.GetInternalName(Entries.Table.Value),
                 MinStationLevel = Entries.MinTableLevel.Value,
                 Amount = Entries.Amount.Value,
                 Requirements = RequirementsEntry.Deserialize(Entries.Requirements.Value)

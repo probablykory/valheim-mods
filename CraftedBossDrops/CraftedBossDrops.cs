@@ -5,20 +5,22 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine.PlayerLoop;
+using Common;
 
 namespace CraftedBossDrops
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
     internal class CraftedBossDrops : BaseUnityPlugin, IPlugin
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.5";
+        public const string PluginVersion = "1.0.6";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
-        private ConfigWatcher watcher;
+        private bool settingsUpdated = false;
         private Harmony harmony = null;
         internal static CraftedBossDrops Instance;
 
@@ -47,7 +49,7 @@ namespace CraftedBossDrops
             SynchronizationManager.OnConfigurationSynchronized += OnConfigurationSynchronized;
             Config.ConfigReloaded += OnConfigReloaded;
 
-            watcher = new ConfigWatcher(this);
+            var _ = new ConfigWatcher(this);
         }
 
         private void InitializeFeatures()
@@ -58,10 +60,18 @@ namespace CraftedBossDrops
             DragonTearEntry = Entries.GetFromProps(Instance, "DragonTear", nameof(CraftingStations.Workbench), 5, 2, "DragonEgg:4,Crystal:16");
             YagluthDropEntry = Entries.GetFromProps(Instance, "YagluthDrop", nameof(CraftingStations.ArtisanTable), 1, 2, "GoblinTotem:10,TrophyGoblin:3,TrophyGoblinShaman:1,TrophyGoblinBrute:1");
             QueenDropEntry = Entries.GetFromProps(Instance, "QueenDrop", nameof(CraftingStations.BlackForge), 2, 1, "DvergrKeyFragment:10,Mandible:5,TrophySeeker:3,TrophySeekerBrute:1");
+
+            HardAntlerEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            CryptKeyEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            WishboneEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            DragonTearEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            YagluthDropEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            QueenDropEntry.AddSettingsChangedHandler(OnSettingsChanged);
         }
 
         private void UpdateFeatures()
         {
+            settingsUpdated = false;
             hardAntlerRecipe.Update(getRecipeFromEntry(HardAntlerEntry));
             cryptKeyRecipe.Update(getRecipeFromEntry(CryptKeyEntry));
             wishboneRecipe.Update(getRecipeFromEntry(WishboneEntry));
@@ -91,9 +101,17 @@ namespace CraftedBossDrops
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }
 
+        private void OnSettingsChanged(object sender, System.EventArgs e)
+        {
+            settingsUpdated = true;
+        }
+
         private void OnConfigReloaded(object sender, System.EventArgs e)
         {
-            UpdateFeatures();
+            if (settingsUpdated)
+            {
+                UpdateFeatures();
+            }
         }
 
         private void OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)

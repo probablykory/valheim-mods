@@ -31,6 +31,10 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.0.6
+ * Config overhaul across mods.
+ * Added handler for SettingsChanged - should no longer have warnings of recipes already added.
+
 ### v1.0.5
  * Added a new recipe for QueenDrop, to better support progression into ashlands/deepnorth in mods like Warfare/Monstrum.
  * Configuration changes will now immediately take effect.

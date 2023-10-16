@@ -4,3 +4,4 @@ A small collection of mods for Valheim that I enjoy.  If you enjoy them too, con
 MoreCrossbows https://github.com/probablykory/valheim-mods/tree/main/MoreCrossbows  
 BronzeAgeChest https://github.com/probablykory/valheim-mods/tree/main/BronzeAgeChest  
 CraftedBossDrops https://github.com/probablykory/valheim-mods/tree/main/CraftedBossDrops  
+UsefulTrophies https://github.com/probablykory/useful-trophies  

@@ -38,13 +38,19 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
-### 1.0.4
- * Minor fix for Hildir compat.
- * Updated build to require Jotunn 2.12.4
+### 1.0.5
+ * Config overhaul across mods.
+ * Config changes will now immediately take effect.
+ * Mod now responds to Configuration Manager if available, or a config file watcher if not.
+ * Added custom drawers when using Configuration Manager.
 
 <details>
 <summary><i>View changelog history</i></summary>
 <br/>
+
+### 1.0.4
+ * Minor fix for Hildir compat.
+ * Updated build to require Jotunn 2.12.4
 
 ### 1.0.3
  * Adjustment to localization naming
