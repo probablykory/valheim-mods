@@ -1,10 +1,10 @@
 ﻿{
   "name": "BronzeAgeChest",
   "description": "Adds the chest that should be there, one made from bronze, sized between Wood and Iron.",
-  "version_number": "1.0.5",
+  "version_number": "1.0.6",
   "website_url": "https://github.com/probablykory/valheim-mods",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.2105",
-    "ValheimModding-Jotunn-2.14.4"
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "ValheimModding-Jotunn-2.18.0"
   ]
 }

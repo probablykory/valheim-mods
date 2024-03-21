@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,16 +79,16 @@ namespace MoreCrossbows
             }
             else
             {
-                Jotunn.Logger.LogDebug($"Unable to patch. method = {method}, postfix = {postfix}");
+                Get.Plugin.LogWarning($"Found Jewelcrafting but unable to patch. method = {method}, postfix = {postfix}");
             }
 
             List<string[]> prefabsToLoad = new List<string[]>()
             {
                 //In case JC is 1.4.8 or older, attempt to load generic Crossbow effects.
-                new string[] { "Perfect_Yellow_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_echo_xbow"},
-                new string[] { "Perfect_Red_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_endlessarrows_xbow"},
-                new string[] { "Perfect_Purple_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_masterarcher_xbow"},
-                new string[] { "Perfect_Green_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_necromancer_xbow"},
+                //new string[] { "Perfect_Yellow_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_echo_xbow"},
+                //new string[] { "Perfect_Red_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_endlessarrows_xbow"},
+                //new string[] { "Perfect_Purple_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_masterarcher_xbow"},
+                //new string[] { "Perfect_Green_Socket", VisualEffectCondition.Crossbows.ToString(), "jc_necromancer_xbow"},
 
                 new string[] { "Perfect_Yellow_Socket", VisualEffectCondition.CrossbowIron.ToString(), "jc_echo_ironxbow"},
                 new string[] { "Perfect_Red_Socket", VisualEffectCondition.CrossbowIron.ToString(), "jc_endlessarrows_ironxbow"},
@@ -117,7 +118,7 @@ namespace MoreCrossbows
             }
             else
             {
-                Jotunn.Logger.LogDebug("Unable to invoke attachEffectPrefabs, not found.");
+                Get.Plugin.LogDebugOnly("Unable to invoke attachEffectPrefabs, not found.");
             }
         }
 
@@ -132,23 +133,23 @@ namespace MoreCrossbows
                 GameObject effect = MoreCrossbows.Instance.assetBundle.LoadAsset<GameObject>(prefabName);
                 if (effect == null)
                 {
-                    Jotunn.Logger.LogWarning($"Prefab {prefabName} did not load correctly");
+                    Get.Plugin.LogWarning($"Prefab {prefabName} did not load correctly");
                 }
                 if (effectPrefabs.Contains(prefabSocketKey))
                 {
                     var innerDict = effectPrefabs[prefabSocketKey] as IDictionary;
                     if (innerDict != null && !innerDict.Contains(vecType.Cast(displayCondition)))
                     {
-                        Jotunn.Logger.LogDebug($"Adding: {displayCondition} {effect} to effectPrefabs[{prefabSocketKey}]");
+                        Get.Plugin.LogDebugOnly($"Adding: {displayCondition} {effect} to effectPrefabs[{prefabSocketKey}]");
                         innerDict.Add(vecType.Cast(displayCondition), effect);
                     } else
                     {
-                        Jotunn.Logger.LogDebug($"effectPrefabs[{prefabSocketKey}] already contains a {displayCondition} key, skipping.");
+                        Get.Plugin.LogDebugOnly($"effectPrefabs[{prefabSocketKey}] already contains a {displayCondition} key, skipping.");
                     }
                 }
                 else
                 {
-                    Jotunn.Logger.LogWarning($"attachEffectPrefabs does not contain {prefabSocketKey} key; Aborting.");
+                    Get.Plugin.LogWarning($"attachEffectPrefabs does not contain {prefabSocketKey} key; Aborting.");
                     break;
                 }
             }
@@ -181,14 +182,14 @@ namespace MoreCrossbows
                     Dictionary<string, GameObject[]> prefabs = effectPrefabsByType[vecType.Cast(key)] as Dictionary<string, GameObject[]>; // Dictionary<string, GameObject[]>;
                     if (prefabs != null && prefabs.Count > 0)
                     {
-                        //Jotunn.Logger.LogDebug($"prefabs not null and count > 0 {prefabs.Count}");
-                        Jotunn.Logger.LogDebug($"Patched visual effects lookup by skill, type = {shared.m_itemType}, key = {key}, results = {count}");
+                        //Get.Plugin.LogDebugOnly($"prefabs not null and count > 0 {prefabs.Count}");
+                        Get.Plugin.LogDebugOnly($"Patched visual effects lookup by skill, type = {shared.m_itemType}, key = {key}, results = {count}");
                         __result = prefabs;
                     }
                 }
                 else
                 {
-                    Jotunn.Logger.LogWarning($"Failed to find Jewelcrafting.GemEffects.VisualEffects.effectPrefabsByType via reflection.");
+                    Get.Plugin.LogWarning($"Failed to find Jewelcrafting.GemEffects.VisualEffects.effectPrefabsByType via reflection.");
                 }
             }
         }

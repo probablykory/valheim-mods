@@ -17,6 +17,8 @@ using System.Net.NetworkInformation;
 using System.Collections;
 using Common;
 using Jotunn.Configs;
+using BepInEx.Logging;
+using BepInEx.Configuration;
 
 namespace MoreCrossbows
 {
@@ -29,16 +31,20 @@ namespace MoreCrossbows
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "MoreCrossbows";
-        public const string PluginVersion = "1.2.7";
+        public const string PluginVersion = "1.2.8";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
-        public static string ConfigFileName
-        {
-            get
-            {
-                return PluginAuthor + "." + PluginName + ".cfg";
-            }
-        }
+        //public static string ConfigFileName
+        //{
+        //    get
+        //    {
+        //        return PluginAuthor + "." + PluginName + ".cfg";
+        //    }
+        //}
+
+        public new ManualLogSource Logger { get; private set; } = BepInEx.Logging.Logger.CreateLogSource(PluginName);
+        public bool Debug { get { return isDebugEnabled is not null ? isDebugEnabled.Value : true; } }
+        private static ConfigEntry<bool> isDebugEnabled = null!;
 
         internal static MoreCrossbows Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
@@ -52,6 +58,8 @@ namespace MoreCrossbows
         {
             harmony = new Harmony(PluginGUID);
             harmony.PatchAll(typeof(GetTooltipPatch));
+
+            isDebugEnabled = this.Config("1 - General", "Debugging Enabled", false, "If on, mod will output alot more information in the debug log level.");
 
             Instance = this;
             Config.SaveOnConfigSet = true;
@@ -74,34 +82,34 @@ namespace MoreCrossbows
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("org.bepinex.plugins.jewelcrafting", out jewelcraftingInfo) && jewelcraftingInfo.Instance)
             {
                 this.jewelcrafting = jewelcraftingInfo.Instance;
-                Jotunn.Logger.LogInfo("Jewelcrafting found, patching customized crossbow gem effects.");
+                this.LogInfo("Patching customized crossbow gem effects for Jewelcrafting.");
                 JewelcraftingPatches.Initialize(harmony, jewelcrafting);
             }
         }
 
         private void OnConfigReloaded(object sender, EventArgs e)
         {
-            Jotunn.Logger.LogDebug("Config reloaded received.");
+            this.LogDebugOnly("Config reloaded received.");
 
             AddOrRemoveFeatures();
         }
 
         private void OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)
         {
-            Jotunn.Logger.LogDebug("Configuration Sync received.");
+            this.LogDebugOnly("Configuration Sync received.");
 
             AddOrRemoveFeatures();
         }
 
         private void OnVanillaPrefabsAvailable()
         {
-            Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
+            this.LogDebugOnly("Vanilla Prefabs Available received.");
             AddOrRemoveFeatures();
         }
 
         private void OnDestroy()
         {
-            Jotunn.Logger.LogDebug("OnDestroy called.");
+            this.LogDebugOnly("OnDestroy called.");
 
             SynchronizationManager.OnConfigurationSynchronized -= OnConfigurationSynchronized;
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
@@ -114,7 +122,7 @@ namespace MoreCrossbows
             if (!String.IsNullOrEmpty(prefabName) && !PrefabManager.Instance.PrefabExists(prefabName))
             {
                 var prefab = new CustomPrefab(bundle, assetName, true);
-                Jotunn.Logger.LogDebug("Registering " + prefab.Prefab.name);
+                this.LogDebugOnly("Registering " + prefab.Prefab.name);
                 if (prefab != null && prefab.IsValid())
                 {
                     prefab.Prefab.FixReferences(true);
@@ -144,11 +152,8 @@ namespace MoreCrossbows
                     areAllFeaturesEnabled = areAllFeaturesEnabled && isEnabled;
                 }
 
-                //if (_debug)
-                //{
-                //    Jotunn.Logger.LogDebug("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
-                //    Jotunn.Logger.LogDebug("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
-                //}
+                this.LogDebugOnly("DEBUG: allFeaturesEnabled = " + areAllFeaturesEnabled.ToString());
+                this.LogDebugOnly("DEBUG: Feature " + f.Name + " is " + (isEnabled ? "enabled" : "disabled") + " and " + (f.LoadedInGame ? "Loaded" : "Unloaded"));
 
                 if (isEnabled != f.LoadedInGame)
                 {
@@ -203,7 +208,7 @@ namespace MoreCrossbows
 
             if (featureComment.Length > 0)
             {
-                Jotunn.Logger.LogInfo(featureComment);
+                this.LogInfo(featureComment);
             }
 
             Entries.UpdateBrowsable();
@@ -238,14 +243,14 @@ namespace MoreCrossbows
 
         private void AddDefaultLocalizations()
         {
-            Jotunn.Logger.LogDebug("AddLocalizations called.");
+            this.LogDebugOnly("AddLocalizations called.");
             CustomLocalization loc = LocalizationManager.Instance.GetLocalization();
             loc.AddTranslation("English", DefaultEnglishLanguageStrings);
         }
 
         private void OnLocalizationAdded()
         {
-            Jotunn.Logger.LogDebug("Localization Added received.");
+            this.LogDebugOnly("Localization Added received.");
 
             string pluginPath = Instance.GetType().Assembly.Location.Replace(Path.DirectorySeparatorChar + PluginName + ".dll", "");
             string pluginFolder = pluginPath;
@@ -265,7 +270,7 @@ namespace MoreCrossbows
                 string fileContent = SimpleJson.SimpleJson.SerializeObject(DefaultEnglishLanguageStrings);
                 File.WriteAllText(locFile, fileContent);
 
-                Jotunn.Logger.LogInfo("Default localizations written to " + locFile);
+                this.LogDebugOnly("Default localizations written to " + locFile);
             }
 
             LocalizationManager.OnLocalizationAdded -= OnLocalizationAdded;
@@ -276,11 +281,12 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("CrossbowWood")
             {
-                Category = "1 - Crossbows",
+                Category = "2 - Crossbows",
                 Description = "Adds a new Wooden Crossbow weapon",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowWood.prefab",
-                Type = Feature.FeatureType.Crossbow,
+                Type = FeatureType.Crossbow,
+                AmmoType = AmmunitionType.Bolt,
 
                 Table = nameof(CraftingStations.Workbench),
                 MinTableLevel = 2,
@@ -295,11 +301,12 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("CrossbowBronze")
             {
-                Category = "1 - Crossbows",
+                Category = "2 - Crossbows",
                 Description = "Adds a new Bronze Crossbow weapon",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowBronze.prefab",
-                Type = Feature.FeatureType.Crossbow,
+                Type = FeatureType.Crossbow,
+                AmmoType = AmmunitionType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 1,
@@ -314,11 +321,12 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("CrossbowIron")
             {
-                Category = "1 - Crossbows",
+                Category = "2 - Crossbows",
                 Description = "Adds a new Iron Crossbow weapon",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowIron.prefab",
-                Type = Feature.FeatureType.Crossbow,
+                Type = FeatureType.Crossbow,
+                AmmoType = AmmunitionType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 2,
@@ -329,11 +337,12 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("CrossbowSilver")
             {
-                Category = "1 - Crossbows",
+                Category = "2 - Crossbows",
                 Description = "Adds a new Silver Crossbow weapon",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowSilver.prefab",
-                Type = Feature.FeatureType.Crossbow,
+                Type = FeatureType.Crossbow,
+                AmmoType = AmmunitionType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 3,
@@ -344,11 +353,12 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("CrossbowBlackmetal")
             {
-                Category = "1 - Crossbows",
+                Category = "2 - Crossbows",
                 Description = "Adds a new Blackmetal Crossbow weapon",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/CrossbowBlackmetal.prefab",
-                Type = Feature.FeatureType.Crossbow,
+                Type = FeatureType.Crossbow,
+                AmmoType = AmmunitionType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 4,
@@ -359,11 +369,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltWood")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new wood bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltWood.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.Workbench),
@@ -378,11 +388,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFire")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new fire bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFire.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.Workbench),
@@ -398,11 +408,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltSilver")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new silver bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltSilver.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.Forge),
@@ -417,11 +427,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltPoison")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new poison bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltPoison.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.Workbench),
@@ -436,11 +446,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFrost")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new frost bolts",
                 EnabledByDefault = true,
                 AssetPath = "Assets/PrefabInstance/BoltFrost.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.Workbench),
@@ -456,11 +466,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltLightning")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Adds new lightning bolts",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltLightning.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.BlackForge),
@@ -476,11 +486,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("ArrowLightning")
             {
-                Category = "2 - Arrows",
+                Category = "3 - Arrows",
                 Description = "Adds new lightning arrows",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/ArrowLightning.prefab",
-                Type = Feature.FeatureType.Arrow,
+                Type = FeatureType.Arrow,
 
                 Amount = 20,
                 Table = nameof(CraftingStations.BlackForge),
@@ -498,11 +508,11 @@ namespace MoreCrossbows
             // New AOE Bolts
             _features.Add(new FeatureItem("BoltOoze")
             {
-                Category = "4 - Area Effect Bolts",
+                Category = "5 - Area Effect Bolts",
                 Description = "Adds new Ooze bomb bolts.  These cause the same Ooze explosions as bombs. Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltOoze.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 10,
                 Table = nameof(CraftingStations.Workbench),
@@ -519,11 +529,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltSurtling")
             {
-                Category = "4 - Area Effect Bolts",
+                Category = "5 - Area Effect Bolts",
                 Description = "Adds new Surtling bolts.  Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltSurtling.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 10,
                 Table = nameof(CraftingStations.Forge),
@@ -540,11 +550,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltBile")
             {
-                Category = "4 - Area Effect Bolts",
+                Category = "5 - Area Effect Bolts",
                 Description = "Adds new Bile bomb bolts.  These cause the same Bile explosions as bombs. Damage set here is applied to both projectile & explosion.",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltBile.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 10,
                 Table = nameof(CraftingStations.Workbench),
@@ -561,11 +571,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltIce")
             {
-                Category = "4 - Area Effect Bolts",
+                Category = "5 - Area Effect Bolts",
                 Description = "Adds new Ice bolts which strike an area with frost damage.  Damage set here is SPLIT between projectile & explosion.",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltIce.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 10,
                 Table = nameof(CraftingStations.Forge),
@@ -583,11 +593,11 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureItem("BoltFlametal")
             {
-                Category = "4 - Area Effect Bolts",
+                Category = "5 - Area Effect Bolts",
                 Description = "Adds new Flametal bolts.  Hits all targets very hard.  Damage set here is applied ONLY to projectile.",
                 EnabledByDefault = false,
                 AssetPath = "Assets/PrefabInstance/BoltFlametal.prefab",
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Amount = 10,
                 Table = nameof(CraftingStations.BlackForge),
@@ -606,10 +616,10 @@ namespace MoreCrossbows
             // new workbench recipes for existing bolts
             _features.Add(new FeatureRecipe("BoltBone")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Enables bone bolts to be craftable earlier",
                 EnabledByDefault = true,
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Table = nameof(CraftingStations.Workbench),
                 MinTableLevel = 2,
@@ -619,10 +629,10 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureRecipe("BoltIron")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Enables iron bolts to be craftable earlier",
                 EnabledByDefault = true,
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 2,
@@ -632,10 +642,10 @@ namespace MoreCrossbows
 
             _features.Add(new FeatureRecipe("BoltBlackmetal")
             {
-                Category = "3 - Bolts",
+                Category = "4 - Bolts",
                 Description = "Enables blackmetal bolts to be craftable earlier",
                 EnabledByDefault = true,
-                Type = Feature.FeatureType.Bolt,
+                Type = FeatureType.Bolt,
 
                 Table = nameof(CraftingStations.Forge),
                 MinTableLevel = 4,

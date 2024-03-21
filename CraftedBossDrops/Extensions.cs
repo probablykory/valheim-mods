@@ -1,4 +1,5 @@
-﻿using Jotunn.Configs;
+﻿using Common;
+using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using System;
@@ -38,7 +39,7 @@ namespace CraftedBossDrops
                     if (hset != null)
                     {
                         hashsetRecipes = hset;
-                        //Jotunn.Logger.LogDebug("Recipes Hashset value retrieved: " + ObjectDumper.Dump(hashsetRecipes));
+                        //Get.Plugin.LogDebugOnly("Recipes Hashset value retrieved: " + ObjectDumper.Dump(hashsetRecipes));
                     }
                 }
             }
@@ -47,7 +48,7 @@ namespace CraftedBossDrops
             {
                 if (hashsetRecipes != null && hashsetRecipes.Contains(recipe))
                 {
-                    Jotunn.Logger.LogDebug($"Removing and re-adding recipe {recipe?.Recipe?.name} in ItemManager.");
+                    Get.Plugin.LogDebugOnly($"Removing and re-adding recipe {recipe?.Recipe?.name} in ItemManager.");
                     ItemManager.Instance.RemoveRecipe(recipe);
                     ItemManager.Instance.AddRecipe(new CustomRecipe(newRecipe));
                     return true;
@@ -60,7 +61,7 @@ namespace CraftedBossDrops
             }
 
             // Update existing recipe in place.
-            Jotunn.Logger.LogDebug($"Updating recipe {recipe?.Recipe?.name} in place.");
+            Get.Plugin.LogDebugOnly($"Updating recipe {recipe?.Recipe?.name} in place.");
             r.m_amount = newRecipe.Amount;
             r.m_minStationLevel = newRecipe.MinStationLevel;
             r.m_craftingStation = PrefabManager.Instance.GetPrefab(newRecipe.CraftingStation)?.GetComponent<CraftingStation>();

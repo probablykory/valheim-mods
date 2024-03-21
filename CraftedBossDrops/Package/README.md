@@ -31,6 +31,13 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.0.7
+* Added a setting, off by default, to enable debug logging.
+
+<details>
+<summary><i>View changelog history</i></summary>
+<br/>
+
 ### v1.0.6
  * Config overhaul across mods.
  * Added handler for SettingsChanged - should no longer have warnings of recipes already added.
@@ -42,10 +49,6 @@ I spend countless hours every day working on, updating, and fixing mods for ever
    - Synced configurations now have proper support.
  * When using Configuration Manager, the requirements field is now drawn as table with multiple inputs. Better usability.
  * Adjustments to the default requirements for all other recipes, in many cases reining in the costs of the summon item
-
-<details>
-<summary><i>View changelog history</i></summary>
-<br/>
 
 ### v1.0.4
  * Fix for Haldor patch - ensure Hildir never sells Haldor's stuff.

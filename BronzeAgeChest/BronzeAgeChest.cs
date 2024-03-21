@@ -1,4 +1,6 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
 using Common;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -18,11 +20,15 @@ namespace BronzeAgeChest
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
-        public const string PluginVersion = "1.0.5";  
+        public const string PluginVersion = "1.0.6";  
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static BronzeAgeChest Instance;
         internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("bronzechest");
+
+        public new ManualLogSource Logger { get; private set; } = BepInEx.Logging.Logger.CreateLogSource(PluginName);
+        public bool Debug { get { return isDebugEnabled is not null ? isDebugEnabled.Value : true; } }
+        private static ConfigEntry<bool> isDebugEnabled = null!;
 
         public Entries Entry { get; protected set; }
         private CustomPiece bronzeChest;
@@ -34,6 +40,8 @@ namespace BronzeAgeChest
         private void Awake()
         {
             Instance = this;
+
+            isDebugEnabled = this.Config("1 - General", "Debugging Enabled", false, "If on, mod will output alot more information in the debug log level.");
 
             InitializeFeatures();
             AddDefaultLocalizations();
@@ -57,7 +65,7 @@ namespace BronzeAgeChest
 
         private void OnVanillaPrefabsAvailable()
         {
-            Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
+            this.LogDebugOnly("Vanilla Prefabs Available received.");
             bronzeChest = new CustomPiece(assetBundle, "piece_chest_bronze", true, getPieceFromEntry(Entry));
             PieceManager.Instance.AddPiece(bronzeChest);
 
@@ -96,14 +104,14 @@ namespace BronzeAgeChest
 
         private void AddDefaultLocalizations()
         {
-            Jotunn.Logger.LogDebug("AddLocalizations called.");
+            this.LogDebugOnly("AddLocalizations called.");
             CustomLocalization loc = LocalizationManager.Instance.GetLocalization();
             loc.AddTranslation("English", DefaultEnglishLanguageStrings);
         }
 
         private void OnLocalizationAdded()
         {
-            Jotunn.Logger.LogDebug("Localization Added received.");
+            this.LogDebugOnly("Localization Added received.");
 
             string pluginPath = Instance.GetType().Assembly.Location.Replace(Path.DirectorySeparatorChar + PluginName + ".dll", "");
             string pluginFolder = pluginPath;
@@ -123,7 +131,7 @@ namespace BronzeAgeChest
                 string fileContent = SimpleJson.SimpleJson.SerializeObject(DefaultEnglishLanguageStrings);
                 File.WriteAllText(locFile, fileContent);
 
-                Jotunn.Logger.LogInfo("Default localizations written to " + locFile);
+                this.LogInfo("Default localizations written to " + locFile);
             }
 
             LocalizationManager.OnLocalizationAdded -= OnLocalizationAdded;

@@ -67,15 +67,19 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.2.8
+ * Added custom table option for crafting.
+ * Added a setting, off by default, to enable debug logging.
+
+<details>
+<summary><i>View changelog history</i></summary>
+<br/>
+
 ### v1.2.7
  * Config overhaul across mods.
  * Config changes now immediately take effect.
  * Added custom drawers when using Configuration Manager.
  * Update for 0.217.24, with a small fix removing a glitch in tooltips for bolts.
-
-<details>
-<summary><i>View changelog history</i></summary>
-<br/>
 
 ### v1.2.6
  * Small bugfix to ensure crossbow sfx are properly registered to znetview.

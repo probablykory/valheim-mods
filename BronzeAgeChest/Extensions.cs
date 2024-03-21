@@ -1,4 +1,5 @@
-﻿using Jotunn.Configs;
+﻿using Common;
+using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
@@ -42,7 +43,7 @@ namespace BronzeAgeChest
                 global::Piece p = GetPiece(piece.Piece);
                 if (p == null)
                 {
-                    Jotunn.Logger.LogError($"Error updating piece {piece?.Piece?.name}, did not find existing piece in available piece tables.");
+                    Get.Plugin.Logger.LogError($"Error updating piece {piece?.Piece?.name}, did not find existing piece in available piece tables.");
                     return false;
                 }
 

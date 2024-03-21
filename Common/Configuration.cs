@@ -12,11 +12,6 @@ using UnityEngine;
 
 namespace Common
 {
-    //public interface IPlugin
-    //{
-    //    ConfigFile Config { get; }
-    //}
-
     public class AcceptableValueConfigNote : AcceptableValueBase
     {
         public virtual string Note { get; }
@@ -128,7 +123,7 @@ namespace Common
         public static void ReloadConfigDisplay()
         {
             BaseUnityPlugin configManager = GetConfigManager();
-            if (configManager != null)
+            if (configManager != null && configManager.GetType()?.GetProperty("DisplayingWindow")?.GetValue(configManager) is true)
             {
                 configManager.GetType().GetMethod("BuildSettingList").Invoke(configManager, Array.Empty<object>());
             }

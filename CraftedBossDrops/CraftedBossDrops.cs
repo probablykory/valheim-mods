@@ -6,6 +6,8 @@ using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine.PlayerLoop;
 using Common;
+using BepInEx.Logging;
+using BepInEx.Configuration;
 
 namespace CraftedBossDrops
 {
@@ -17,12 +19,16 @@ namespace CraftedBossDrops
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.6";
+        public const string PluginVersion = "1.0.7";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         private bool settingsUpdated = false;
         private Harmony harmony = null;
         internal static CraftedBossDrops Instance;
+
+        public new ManualLogSource Logger { get; private set; } = BepInEx.Logging.Logger.CreateLogSource(PluginName);
+        public bool Debug { get { return isDebugEnabled is not null ? isDebugEnabled.Value : true; } }
+        private static ConfigEntry<bool> isDebugEnabled = null!;
 
         public Entries HardAntlerEntry { get; protected set; }
         public Entries CryptKeyEntry { get; protected set; }
@@ -43,6 +49,7 @@ namespace CraftedBossDrops
             harmony = new Harmony(PluginGUID);
             harmony.PatchAll();
 
+            isDebugEnabled = this.Config("1 - General", "Debugging Enabled", false, "If on, mod will output alot more information in the debug log level.");
             Instance = this;
             InitializeFeatures();
             PrefabManager.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
@@ -82,7 +89,7 @@ namespace CraftedBossDrops
 
         private void OnVanillaPrefabsAvailable()
         {
-            Jotunn.Logger.LogDebug("Vanilla Prefabs Available received.");
+            this.LogDebugOnly("Vanilla Prefabs Available received.");
 
             hardAntlerRecipe = new CustomRecipe(getRecipeFromEntry(HardAntlerEntry));
             cryptKeyRecipe = new CustomRecipe(getRecipeFromEntry(CryptKeyEntry));

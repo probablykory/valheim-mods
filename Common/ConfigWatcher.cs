@@ -1,18 +1,18 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using BepInEx.Logging;
+using HarmonyLib;
 using Jotunn.Managers;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Common
 {
-    public interface IPlugin
-    {
-        ConfigFile Config { get; }
-    }
-
     public class ConfigWatcher
     {
         private BaseUnityPlugin configurationManager;
@@ -29,26 +29,22 @@ namespace Common
             CheckForConfigManager();
         }
 
-        private void InitializeConfigWatcher()
+        private void InitializeWatcher()
         {
             string file = Path.GetFileName(plugin.Config.ConfigFilePath);
             string path = Path.GetDirectoryName(plugin.Config.ConfigFilePath);
-            FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(path, file);
-            fileSystemWatcher.Changed += this.OnConfigFileChangedCreatedOrRenamed;
-            fileSystemWatcher.Created += this.OnConfigFileChangedCreatedOrRenamed;
-            fileSystemWatcher.Renamed += new RenamedEventHandler(this.OnConfigFileChangedCreatedOrRenamed);
-            fileSystemWatcher.IncludeSubdirectories = true;
-            fileSystemWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
-            fileSystemWatcher.EnableRaisingEvents = true;
 
-            Jotunn.Logger.LogDebug("File system config watcher initialized.");
+            var watcher = new Watcher(path, file);
+            watcher.FileChanged += OnFileChanged;
+
+            Get.Plugin.LogDebugOnly("File system watcher initialized.");
         }
 
         private void CheckForConfigManager()
         {
             if (GUIManager.IsHeadless())
             {
-                InitializeConfigWatcher();
+                InitializeWatcher();
             }
             else
             {
@@ -56,7 +52,7 @@ namespace Common
                 if (Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.configurationmanager", out configManagerInfo) && configManagerInfo.Instance)
                 {
                     this.configurationManager = configManagerInfo.Instance;
-                    Jotunn.Logger.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
+                    Get.Plugin.LogDebugOnly("Configuration manager found, hooking DisplayingWindowChanged");
                     EventInfo eventinfo = this.configurationManager.GetType().GetEvent("DisplayingWindowChanged");
                     if (eventinfo != null)
                     {
@@ -67,12 +63,12 @@ namespace Common
                 }
                 else
                 {
-                    InitializeConfigWatcher();
+                    InitializeWatcher();
                 }
             }
         }
 
-        private void OnConfigFileChangedCreatedOrRenamed(object sender, FileSystemEventArgs e)
+        private void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             string path = plugin.Config.ConfigFilePath;
 
@@ -89,15 +85,14 @@ namespace Common
             }
             catch
             {
-                Jotunn.Logger.LogError("There was an issue with your " + Path.GetFileName(path) + " file.");
-                Jotunn.Logger.LogError("Please check the format and spelling.");
+                Get.Plugin.LogError("There was an issue with your " + Path.GetFileName(path) + " file.");
+                Get.Plugin.LogError("Please check the format and spelling.");
                 return;
             }
         }
 
         private void OnConfigManagerDisplayingWindowChanged(object sender, object e)
         {
-            //Jotunn.Logger.LogDebug("OnConfigManagerDisplayingWindowChanged recieved.");
             PropertyInfo pi = this.configurationManager.GetType().GetProperty("DisplayingWindow");
             bool cmActive = (bool)pi.GetValue(this.configurationManager, null);
 

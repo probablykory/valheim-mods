@@ -386,6 +386,15 @@ Environment.props
 */Package/plugins/*.dll
 
 # unity project, ignore the huge library files and logs, only want to save assets.
+MoreCrossbowsUnity/AssetBundles/*
+MoreCrossbowsUnity/Assets/AssetBundles/*
 MoreCrossbowsUnity/Library/*
 MoreCrossbowsUnity/Logs/*
 MoreCrossbowsUnity/Temp/*
+
+HiddenTemplesUnity/AssetBundles/*
+HiddenTemplesUnity/Assets/AssetBundles/*
+HiddenTemplesUnity/Library/*
+HiddenTemplesUnity/Logs/*
+HiddenTemplesUnity/Temp/*
+

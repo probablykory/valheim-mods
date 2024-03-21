@@ -1,6 +1,7 @@
 ﻿using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using HarmonyLib;
 
 namespace MoreCrossbows
 {
@@ -51,43 +53,45 @@ namespace MoreCrossbows
         private static HashSet<CustomRecipe> hashsetRecipes = null;
         public static bool Update(this CustomRecipe recipe, RecipeConfig newRecipe)
         {
-            // cache refernce to ItemManager.Instance.Recipes
             if (hashsetRecipes == null)
             {
-                var imMember = ItemManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Recipes");
-                var imField = imMember as FieldInfo;
-                if (imField != null)
-                {
-                    var hset = imField.GetValue(ItemManager.Instance) as HashSet<CustomRecipe>;
-                    if (hset != null)
-                    {
-                        hashsetRecipes = hset;
-                        //Jotunn.Logger.LogDebug("Recipes Hashset value retrieved: " + ObjectDumper.Dump(hashsetRecipes));
-                    }
-                }
+                hashsetRecipes = AccessTools.Field(typeof(ItemManager), "Recipes").GetValue(ItemManager.Instance) as HashSet<CustomRecipe>;
+                Get.Plugin.LogDebugOnly("Recipes Hashset value retrieved: {hashsetRecipes}");
+                //var imMember = ItemManager.Instance.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Recipes");
+                //var imField = imMember as FieldInfo;
+                //if (imField != null)
+                //{
+                //    var hset = imField.GetValue(ItemManager.Instance) as HashSet<CustomRecipe>;
+                //    if (hset != null)
+                //    {
+                //        hashsetRecipes = hset;
+                //        Get.Plugin.LogDebugOnly("Recipes Hashset value retrieved: {hashsetRecipes}"); // + ObjectDumper.Dump(hashsetRecipes));
+                //    }
+                //}
             }
             global::Recipe r = ObjectDB.instance.m_recipes.GetRecipe(recipe.Recipe);
             if (r == null)
             {
                 if (hashsetRecipes != null && hashsetRecipes.Contains(recipe))
                 {
-                    Jotunn.Logger.LogDebug($"Removing and re-adding recipe {recipe?.Recipe?.name} in ItemManager.");
+                    Get.Plugin.LogDebugOnly($"Removing and re-adding recipe {recipe?.Recipe?.name} in ItemManager.");
                     ItemManager.Instance.RemoveRecipe(recipe);
                     ItemManager.Instance.AddRecipe(new CustomRecipe(newRecipe));
                     return true;
                 }
                 else
                 {
-                    Jotunn.Logger.LogError($"Error updating recipe {recipe?.Recipe?.name}, did not find existing recipe in ObjectDB or ItemManager");
+                    Get.Plugin.LogError($"Error updating recipe {recipe?.Recipe?.name}, did not find existing recipe in ObjectDB or ItemManager");
                     return false;
                 }
             }
 
             // Update existing recipe in place.
-            Jotunn.Logger.LogDebug($"Updating recipe {recipe?.Recipe?.name} in place.");
+            Get.Plugin.LogDebugOnly($"Updating recipe {recipe?.Recipe?.name} in place.");
             r.m_amount = newRecipe.Amount;
             r.m_minStationLevel = newRecipe.MinStationLevel;
             r.m_craftingStation = PrefabManager.Instance.GetPrefab(newRecipe.CraftingStation)?.GetComponent<CraftingStation>();
+            Get.Plugin.LogDebugOnly($"... setting cs to {r.m_craftingStation}.");
             r.m_resources = newRecipe.GetRequirements();
 
             foreach (var res in r.m_resources)
@@ -136,6 +140,22 @@ namespace MoreCrossbows
             }
 
             return result;
+        }
+
+        public static void ApplyToAll(this ItemDrop itemDrop, Action<ItemDrop.ItemData> callback)
+        {
+            callback(itemDrop.m_itemData);
+
+            string itemName = itemDrop.m_itemData.m_shared.m_name;
+
+            Inventory[] inventories = Player.s_players.Select(p => p.GetInventory()).Concat(UnityEngine.Object.FindObjectsOfType<Container>().Select(c => c.GetInventory())).Where(c => c != null).ToArray();
+            foreach (ItemDrop.ItemData itemdata in ObjectDB.instance.m_items.Select(p => p.GetComponent<ItemDrop>()).Where(c => c && c.GetComponent<ZNetView>()).Concat(ItemDrop.s_instances).Select(i => i.m_itemData).Concat(inventories.SelectMany(i => i.GetAllItems())))
+            {
+                if (itemdata.m_shared.m_name == itemName)
+                {
+                    callback(itemdata);
+                }
+            }
         }
 
         public static object Cast(this Type Type, object data)

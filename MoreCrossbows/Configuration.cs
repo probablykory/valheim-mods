@@ -8,6 +8,20 @@ using UnityEngine;
 
 namespace MoreCrossbows
 {
+    public enum FeatureType
+    {
+        Crossbow,
+        Arrow,
+        Bolt
+    }
+
+    public enum AmmunitionType
+    {
+        None,
+        Arrow,
+        Bolt
+    }
+
     public static class DamageTypes
     {
         public static string Damage { get { return nameof(Damage); } }
@@ -102,13 +116,23 @@ namespace MoreCrossbows
     {
         public static Dictionary<ConfigurationManagerAttributes, Entries> SavedAttributes = new Dictionary<ConfigurationManagerAttributes, Entries>();
 
+        private static AcceptableValueList<string> AcceptableTableValues = new AcceptableValueList<string>(CraftingStations.GetAcceptableValueList().AcceptableValues.Concat(new[] { "Custom" }).ToArray());
+
+
         protected bool visible = true;
 
         public string Name { get; set; } = string.Empty;
         public ConfigEntry<string> Table { get; set; } = null;
+        public ConfigEntry<string> TableCustomName { get; set; } = null;
         public ConfigEntry<int> MinTableLevel { get; set; } = null;
         public ConfigEntry<int> Amount { get; set; } = null;
         public ConfigEntry<string> Requirements { get; set; } = null;
+
+        public static bool IsTableCustom(string table)
+        {
+            return !CraftingStations.GetNames().TryGetValue(table, out string _);
+            //return string.Equals(table, "Custom");
+        }
 
         public static ConfigurationManagerAttributes GetAttribute(Entries entries, bool isAdminOnly = true, bool isBrowsable = true, Action<ConfigEntryBase> customDrawer = null)
         {
@@ -123,20 +147,37 @@ namespace MoreCrossbows
             {
                 kvp.Key.Browsable = kvp.Value.visible;
             }
+
+            ConfigurationManagerAttributes cma;
+            Get.Plugin.LogDebugOnly("UpdateBrowsable called.");
+            foreach(Entries entries in SavedAttributes.Values.Distinct())
+            {
+                //Get.Plugin.LogDebugOnly("Foo: " + entries.TableCustomName.Description.Tags);
+
+                cma = entries.TableCustomName.Description.Tags.FirstOrDefault((object x) => x is ConfigurationManagerAttributes) as ConfigurationManagerAttributes;
+                if (cma != null)
+                {
+                    cma.Browsable = IsTableCustom(entries.Table.Value) && entries.visible;
+                    Get.Plugin.LogDebugOnly(entries.Name + ": " + entries.Table.Value + ", browsable: " + cma.Browsable);
+                }
+            }
         }
 
         public static Entries GetFromFeature(IPlugin instance, Feature config, Entries entries = null, bool visible = true)
         {
-            var hasUpgrades = (config.Type == Feature.FeatureType.Crossbow);
+            var hasUpgrades = (config.Type == FeatureType.Crossbow);
 
             if (entries == null)
             {
                 entries = new Entries();
             }
+
             entries.visible = visible;
             entries.Name = config.Name;
             entries.Table = instance.Config(entries.Name, "Table", config.Table,
-                new ConfigDescription($"Crafting station where {entries.Name} is available.", CraftingStations.GetAcceptableValueList(), GetAttribute(entries, true, visible)));
+                new ConfigDescription($"Crafting station where {entries.Name} is available.", AcceptableTableValues, GetAttribute(entries, true, visible)));
+            entries.TableCustomName = instance.Config(entries.Name, "Table (Custom Name)", IsTableCustom(config.Table) ? config.Table : "",
+                new ConfigDescription($"If custom, the name of the crafting station where {entries.Name} is available.", null, GetAttribute(entries, true, IsTableCustom(config.Table) && visible)));
             entries.MinTableLevel = instance.Config(entries.Name, "Table Level", config.MinTableLevel,
                 new ConfigDescription($"Level of crafting station required to craft {entries.Name}.", null, GetAttribute(entries, entries.visible, true)));
             entries.Amount = instance.Config(entries.Name, "Amount", config.Amount,
@@ -145,7 +186,16 @@ namespace MoreCrossbows
                 new ConfigDescription($"The required items to craft {entries.Name}.", new AcceptableValueConfigNote("You must use valid spawn item codes."),
                 GetAttribute(entries, entries.visible, true, SharedDrawers.DrawReqConfigTable(hasUpgrades))));
 
+            entries.Table.SettingChanged += OnTableSettingChanged;
+            //entries.TableCustomName.SettingChanged += OnTableSettingChanged;
+
             return entries;
+        }
+
+        private static void OnTableSettingChanged(object sender, EventArgs e)
+        {
+            UpdateBrowsable();
+            SharedDrawers.ReloadConfigDisplay();
         }
 
         public void SetVisibility(bool visible)
