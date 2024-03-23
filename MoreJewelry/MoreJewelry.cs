@@ -26,7 +26,7 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.3";
+        internal const string PluginVersion = "1.0.4";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
@@ -58,6 +58,7 @@ namespace MoreJewelry
         public void Awake()
         {
             Instance = this;
+            Config.SaveOnConfigSet = true;
 
             if (!JcAPI.IsLoaded())
             {

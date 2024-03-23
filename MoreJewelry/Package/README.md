@@ -52,6 +52,9 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### 1.0.4
+ * Set Config.SaveOnConfigSet to ensure config settings don't unintentionally revert.
+
 ### 1.0.3
  * Added soft dep for VNEI, disabling the template prefabs.
  * Bugfix for ConfigManager api, rebuilding settings works.
@@ -63,7 +66,7 @@ I spend countless hours every day working on, updating, and fixing mods for ever
  * Fixes for the YamlConfigEditor.  Enabled proper color usage when using Azu's Unofficial Config Manager, and fallback when not.
 
 ### 1.0.0
- * Initial Version
+ * Initial Version.
 
 ## Known issues
 If you find a problem, please visit my [github](https://github.com/probablykory/valheim-mods)

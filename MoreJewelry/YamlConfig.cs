@@ -249,6 +249,7 @@ namespace MoreJewelry
             }
         }
 
+
         private string ReadTextFromBuiltinFile()
         {
             return Encoding.UTF8.GetString(Localizer.ReadEmbeddedFileBytes(fileName + ".defaults.yml"));
