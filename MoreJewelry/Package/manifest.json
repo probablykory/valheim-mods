@@ -1,0 +1,10 @@
+﻿{
+  "name": "MoreJewelry",
+  "description": "A highly customizable mod for Valheim which adds several new jewelery models for Jewelcrafting.",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/probablykory/valheim-mods",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "Smoothbrain-Jewelcrafting-1.5.19"
+  ]
+}

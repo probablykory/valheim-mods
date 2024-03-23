@@ -1,0 +1,187 @@
+##########
+#
+# Supported prefab names
+#   defaultring, customring, stonering, bonering, silverring, defaultneck, customneck, leatherneck, silverneck
+#
+# Supported color names
+#   red, cyan, blue, darkblue, lightblue, purple, yellow, lime, fuchsia, white, silver, grey, black, orange, brown, maroon, green, olive, navy, teal, aqua, magenta.
+#
+##########
+
+# Here is a very overpowered ring which documents nearly all of the settings you have access to in this yaml config.
+#
+# The Everything Ring:
+#   description: "I was bored one day and put everything on a bagel.  Everything...."
+#   prefab: silverring
+#   gem: black 
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 2
+#     costs:
+#       Wood: 1
+#       Stone: 1
+#   upgrade:
+#     1:
+#       Perfect_Black_Socket: 99
+#       BlackMetal: 99
+#   effect:
+#     name: The Everything Bagel
+#     tooltip:
+#     startmsgloc: Center
+#     startmsg: "You're overwhelmed"
+#     stopmsgloc:
+#     stopmsg:
+#     runstaminamodifier: -0.5
+#     jumpstaminamodifier: -0.5
+#     healthregen: 1.5
+#     staminaregen: 1.5
+#     eitrregen: 1.5
+#     raiseskill:
+#     skilllevel:
+#       type: all
+#       modifier: 20
+#     skillleveltwo:
+#     damagemodifiers: 
+#     - type: fire
+#       modifier: veryresistant
+#     - type: frost
+#       modifier: veryresistant
+#     - type: poison
+#       modifier: veryresistant
+#     attackskill:
+#     maxcarry: 200
+#     movespeed: 2.0
+#     fallspeed: 5
+#     falldamage: -1
+
+Stone ring:
+  description: "A simple ring made of stone"
+  prefab: "StoneRing"
+  gem: FFBF00
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 1
+    maxquality: 1
+    costs:
+      Stone: 10
+      Amber: 1
+  effect:
+    skilllevel:
+      type: woodcutting
+      modifier: 4
+
+Bone ring:
+  description: "A band wrought from bone."
+  prefab: "bonering"
+  gem: red
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 1
+    maxquality: 1
+    costs:
+      BoneFragments: 12
+      Advanced_Red_Socket: 1
+  effect:
+    maxcarry: 25
+
+Leather cord:
+  description: "Rustic but comfortable."
+  prefab: "leatherneck"
+  gem: green
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 1
+    maxquality: 1
+    costs:
+      LeatherScraps: 8
+      DeerHide: 1
+      Advanced_Green_Socket: 1
+  effect: "Lumberjack"
+
+Silver band:
+  description: "It's heavier than it looks."
+  prefab: "silverring"
+  gem: black
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 1
+    maxquality: 1
+    costs:
+      Silver: 8
+      WolfPelt: 2
+      WolfHairBundle: 2
+      Perfect_Black_Socket: 1
+  effect: Perception
+
+Polished silver necklace:
+  description: "Highly polished, finely wrought necklace."
+  prefab: "silverneck"
+  gem: blue
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 3
+    maxquality: 1
+    costs:
+      SilverNecklace: 1
+      Silver: 8
+      WolfPelt: 4
+      Perfect_Blue_Socket: 1
+  effect:
+    name: Lightfooted
+    tooltip: "With this equipped, you feel slightly lighter..."
+    startmsgloc: center
+    startmsg: "You feel lighter"
+    runstaminamodifier: -0.05
+    movespeed: .05
+
+## Testing random jewelry settings to ensure models+styles are working
+# Alpha:
+#   prefab: defaultring
+#   gem: white
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 1
+#     costs:
+#       Stone: 1
+
+# Beta:
+#   prefab: customring
+#   gem: 4A412A # the ugliest color
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 1
+#     costs:
+#       Stone: 1
+
+# Gamma:
+#   prefab: defaultneck
+#   gem: orange
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 1
+#     costs:
+#       Stone: 1
+
+# Delta:
+#   prefab: customneck
+#   gem: fuchsia
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 1
+#     costs:
+#       Stone: 1
+
+# Epsilon:
+#   prefab: defaultring
+#   gem: lightblue
+#   crafting:
+#     craftingstation: gemcutter
+#     stationlevel: 1
+#     maxquality: 1
+#     costs:
+#       Stone: 1
