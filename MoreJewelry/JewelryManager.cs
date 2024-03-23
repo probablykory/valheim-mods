@@ -104,6 +104,11 @@ namespace MoreJewelry
                 itemList.Add(prefabName);
         }
 
+        public static void AddAvailablePrefab(JewelryKind kind, GameObject prefab)
+        {
+            AvailablePrefabs.Add(kind, prefab);
+        }
+
         public static bool IsEffectItemEquipped(Player player, string effectName)
         {
             if (!initialized) return false;

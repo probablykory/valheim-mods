@@ -14,22 +14,13 @@ namespace Managers
 {
     public static class CmAPI
     {
-        public static event EventHandler<EventArgs> OnDisplayingWindowChanged;
-
-        private static Type cmType = null;
-        private static BaseUnityPlugin instance = null;
-
-        public static bool IsLoaded()
-        {
-            var cm = GetConfigManager();
-            return cm != null;
-        }
+        public const string DependencyString = "com.bepis.bepinex.configurationmanager";
 
         public static Texture2D EntryBackground
         {
             get
             {
-                var tex = GetConfigManagerField<Texture2D>("<EntryBackground>k__BackingField");
+                var tex = GetField<Texture2D>("<EntryBackground>k__BackingField");
                 if (tex != null)
                     return tex;
                 else
@@ -40,7 +31,7 @@ namespace Managers
         {
             get
             {
-                var tex = GetConfigManagerField<Texture2D>("<WidgetBackground>k__BackingField");
+                var tex = GetField<Texture2D>("<WidgetBackground>k__BackingField");
                 if (tex != null)
                     return tex;
                 else
@@ -48,9 +39,9 @@ namespace Managers
 
             }
         }
-        public static Texture2D WindowBackground { get { return GetConfigManagerField<Texture2D>("<WindowBackground>k__BackingField"); } }
+        public static Texture2D WindowBackground { get { return GetField<Texture2D>("<WindowBackground>k__BackingField"); } }
 
-        public static int fontSize { get { return GetConfigManagerField<int>("fontSize"); } }
+        public static int fontSize { get { return GetField<int>("fontSize"); } }
 
         private static Color __entryBackgroundColor;
         public static Color _entryBackgroundColor
@@ -58,7 +49,7 @@ namespace Managers
             get
             {
                 __entryBackgroundColor = Color.black;
-                ConfigEntry<Color> entry = GetConfigManagerField<ConfigEntry<Color>>("_entryBackgroundColor");
+                ConfigEntry<Color> entry = GetField<ConfigEntry<Color>>("_entryBackgroundColor");
                 if (entry != null)
                     __entryBackgroundColor = entry.Value;
                 else if (instance != null)
@@ -73,7 +64,7 @@ namespace Managers
             get
             {
                 __fontColor = Color.white;
-                ConfigEntry<Color> entry = GetConfigManagerField<ConfigEntry<Color>>("_fontColor");
+                ConfigEntry<Color> entry = GetField<ConfigEntry<Color>>("_fontColor");
                 if (entry != null)
                     __fontColor = entry.Value;
                 else if (instance != null)
@@ -89,7 +80,7 @@ namespace Managers
             get
             {
                 __widgetBackgroundColor = Color.black;
-                ConfigEntry<Color> entry = GetConfigManagerField<ConfigEntry<Color>>("_widgetBackgroundColor");
+                ConfigEntry<Color> entry = GetField<ConfigEntry<Color>>("_widgetBackgroundColor");
                 if (entry != null)
                     __widgetBackgroundColor = entry.Value;
                 else if (instance != null)
@@ -104,7 +95,7 @@ namespace Managers
             get
             {
                 __windowBackgroundColor = Color.black;
-                ConfigEntry<Color> entry = GetConfigManagerField<ConfigEntry<Color>>("_windowBackgroundColor");
+                ConfigEntry<Color> entry = GetField<ConfigEntry<Color>>("_windowBackgroundColor");
                 if (entry != null)
                     __windowBackgroundColor = entry.Value;
                 else if (instance != null)
@@ -113,10 +104,20 @@ namespace Managers
             }
         }
 
-        public static bool DisplayingWindow { get { return GetConfigManagerField<bool>("_displayingWindow"); } }
+        public static bool DisplayingWindow { get { return GetField<bool>("_displayingWindow"); } }
+        public static int LeftColumnWidth { get { return GetField<int>("<LeftColumnWidth>k__BackingField"); } }
+        public static int RightColumnWidth { get { return GetField<int>("<RightColumnWidth>k__BackingField"); } }
 
-        public static int LeftColumnWidth { get { return GetConfigManagerField<int>("<LeftColumnWidth>k__BackingField"); } }
-        public static int RightColumnWidth { get { return GetConfigManagerField<int>("<RightColumnWidth>k__BackingField"); } }
+
+        public static event EventHandler<EventArgs> OnDisplayingWindowChanged;
+        private static Type cmType = null;
+        private static BaseUnityPlugin instance = null;
+
+        public static bool IsLoaded()
+        {
+            var cm = GetConfigManager();
+            return cm != null;
+        }
 
         // initializer
         private static BaseUnityPlugin GetConfigManager()
@@ -124,7 +125,7 @@ namespace Managers
             if (instance is null)
             {
                 PluginInfo configManagerInfo;
-                if (Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.configurationmanager", out configManagerInfo) && configManagerInfo.Instance)
+                if (Chainloader.PluginInfos.TryGetValue(DependencyString, out configManagerInfo) && configManagerInfo.Instance)
                 {
                     instance = configManagerInfo.Instance;
                     cmType = instance.GetType().Assembly.GetType("ConfigurationManager.ConfigurationManager");
@@ -150,7 +151,7 @@ namespace Managers
         }
 
         // TODO - profile to see if a cache table may be required here
-        private static T GetConfigManagerField<T>(string fieldName)
+        private static T GetField<T>(string fieldName)
         {
             var cm = GetConfigManager();
             if (cmType is null) return default(T);
@@ -177,7 +178,7 @@ namespace Managers
         {
             if (instance is not null && DisplayingWindow is true)
             {
-                cmType.GetType().GetMethod("BuildSettingList").Invoke(instance, Array.Empty<object>());
+                cmType.GetMethod("BuildSettingList").Invoke(instance, Array.Empty<object>());
             }
         }
 

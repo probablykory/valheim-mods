@@ -99,6 +99,7 @@
     <Compile Include="MockManager\PropertyMember.cs" />
     <Compile Include="MockManager\ReflectionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VneiAPI.cs" />
     <Compile Include="Watcher.cs" />
   </ItemGroup>
   <ItemGroup>

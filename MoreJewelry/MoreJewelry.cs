@@ -20,12 +20,13 @@ using Logger = Managers.Logger;
 namespace MoreJewelry
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-    [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(CmAPI.DependencyString, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(VneiAPI.DependencyString, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("org.bepinex.plugins.jewelcrafting", BepInDependency.DependencyFlags.SoftDependency)]
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.2";
+        internal const string PluginVersion = "1.0.3";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
@@ -217,26 +218,34 @@ namespace MoreJewelry
         private bool assetsLoaded = false;
         private void LoadAssets()
         {
-            var defaultNeckGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Necklace_Default_PK");
-            var wroughtNeckGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Necklace_Wrought_PK");
-            var leatherNeckGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Necklace_Leather_PK");
-            var silverNeckGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Necklace_Silver_PK");
-            var defaultRingGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Ring_Default_PK.prefab");
-            var wroughtRingGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Ring_Wrought_PK");
-            var stoneRingGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Ring_Stone_PK.prefab");
-            var boneRingGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Ring_Bone_PK.prefab");
-            var silverRingGO = PrefabManager.RegisterPrefab(assetBundle, "Custom_Ring_Silver_PK.prefab");
+            Dictionary<string, JewelryKind> prefabs = new()
+            {
+                { "Custom_Necklace_Default_PK", JewelryKind.DefaultNecklace },
+                { "Custom_Necklace_Wrought_PK", JewelryKind.CustomNecklace },
+                { "Custom_Necklace_Leather_PK", JewelryKind.LeatherNecklace },
+                { "Custom_Necklace_Silver_PK", JewelryKind.SilverNecklace },
+                { "Custom_Ring_Default_PK", JewelryKind.DefaultRing },
+                { "Custom_Ring_Wrought_PK", JewelryKind.CustomRing },
+                { "Custom_Ring_Stone_PK", JewelryKind.StoneRing },
+                { "Custom_Ring_Bone_PK", JewelryKind.BoneRing },
+                { "Custom_Ring_Silver_PK", JewelryKind.SilverRing },
+            };
 
+            foreach (var kvp in prefabs)
+            {
+                var prefab = PrefabManager.RegisterPrefab(assetBundle, kvp.Key);
+                JewelryManager.AddAvailablePrefab(kvp.Value, prefab);
+            }
 
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.DefaultNecklace, defaultNeckGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.CustomNecklace, wroughtNeckGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.LeatherNecklace, leatherNeckGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.SilverNecklace, silverNeckGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.DefaultRing, defaultRingGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.CustomRing, wroughtRingGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.StoneRing, stoneRingGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.BoneRing, boneRingGO);
-            JewelryManager.AvailablePrefabs.Add(JewelryKind.SilverRing, silverRingGO);
+            if (VneiAPI.IsLoaded())
+            {
+                VneiAPI.AfterDisableItems += () =>
+                {
+                    Logger.LogDebugOnly("VNEI detected, disabling template prefabs.");
+                    prefabs.Keys.Do(name => VneiAPI.DisableItem(name, PluginName));
+                };
+            }
+
             assetsLoaded = true;
 
             ApplyYamlConfig();
