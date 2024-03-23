@@ -5,7 +5,6 @@ using System.Linq;
 using BepInEx.Configuration;
 using UnityEngine;
 
-
 namespace MoreJewelry
 {
     // Custom setting drawer for Perception's Locations setting 

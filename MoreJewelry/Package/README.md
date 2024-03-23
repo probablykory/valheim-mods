@@ -3,9 +3,9 @@ A highly customizable mod for Valheim which adds several new jewelery models for
 
 ## Features
 
-New early-game rings & necks, as well as couple late-game jewelry options.
-Yaml-based configuration, allowing you to detail exactly what your rings and necks should look like and behave.
-New perception effect, a customizable version of Guidance/Legacy.  Find your way to any location without a map!
+New early-game rings & necks, as well as couple late-game jewelry options.  
+Yaml-based configuration, allowing you to detail exactly what your rings and necks should look like and behave.  
+New perception effect, a customizable version of Guidance/Legacy.  Find your way to any location without a map!  
 
 ### Detailed list of new items
 Stone ring and Leather cord - very early jewelery made with meadows materials  
@@ -51,6 +51,9 @@ For Questions or Comments, find <span style="color: purple;">probablykory</span>
 I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://paypal.me/probablyk) is greatly appreciated!
 
 ## Changelog
+
+### 1.0.1
+ * Fixes for the YamlConfigEditor.  Enabled proper color usage when using Azu's Unofficial Config Manager, and fallback when not.
 
 ### 1.0.0
  * Initial Version
