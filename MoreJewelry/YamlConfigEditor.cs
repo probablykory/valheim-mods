@@ -32,7 +32,6 @@ namespace MoreJewelry
         private YamlConfig yamlConfig = null!;
         private CustomSyncedValue<string>? activeConfig = null;
         private Func<string, List<string>> errorChecker = null!;
-        private ConfigManagerStyle cmStyle = null!;
         private ConfigSync configSync = null!;
         private string modName;
 
@@ -46,7 +45,6 @@ namespace MoreJewelry
                 activeConfig = yaml.SyncedValue;
                 errorChecker = errorCheck;
 
-                cmStyle = CmAPI.GetConfigManagerStyle();
                 Logger.LogDebugOnly($"Setting up {modName} YAML Editor");
             }
             else
