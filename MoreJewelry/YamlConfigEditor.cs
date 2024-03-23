@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BepInEx.Configuration;
+using Managers;
 using ServerSync;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -31,25 +32,37 @@ namespace MoreJewelry
         private YamlConfig yamlConfig = null!;
         private CustomSyncedValue<string>? activeConfig = null;
         private Func<string, List<string>> errorChecker = null!;
+        private ConfigManagerStyle cmStyle = null!;
         private ConfigSync configSync = null!;
         private string modName;
 
-        public void Initialize(string modName, ConfigSync configSync, YamlConfig yaml, Func<string, List<string>> errorCheck) {
+        public void Initialize(string modName, ConfigSync configSync, YamlConfig yaml, Func<string, List<string>> errorCheck)
+        {
+            if (CmAPI.IsLoaded())
+            {
+                this.modName = modName;
+                this.configSync = configSync;
+                this.yamlConfig = yaml;
+                activeConfig = yaml.SyncedValue;
+                errorChecker = errorCheck;
 
-            this.modName = modName;
-            this.configSync = configSync;
-            this.yamlConfig = yaml;
-            activeConfig = yaml.SyncedValue;
-            errorChecker = errorCheck;
-            Logger.LogDebugOnly($"Setting up {modName} YAML Editor");
+                cmStyle = CmAPI.GetConfigManagerStyle();
+                Logger.LogDebugOnly($"Setting up {modName} YAML Editor");
+            }
+            else
+            {
+                Logger.LogDebugOnly($"No CM pressent, skipping YAML Editor setup.");
+            }
         }
 
         public void DrawYamlEditorButton(ConfigEntryBase _)
         {
+            if (!CmAPI.IsLoaded()) return;
+
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
 
-            GUILayout.Space(236f);
+            GUILayout.Space(CmAPI.LeftColumnWidth + 2f);
             if (!string.IsNullOrWhiteSpace(activeConfig.Value) && GUILayout.Button(EditButtonName, GUILayout.ExpandWidth(true)))
             {
                 currentYamlInput = activeConfig.Value;
@@ -71,8 +84,6 @@ namespace MoreJewelry
 
         private void LateUpdate() => Update();
 
-        private void Start() {}
-
         private void OnGUI()
         {
             if (currentYamlInput == null)
@@ -83,18 +94,26 @@ namespace MoreJewelry
             Update();
 
             yamlWindowRect = new Rect(10, 10, Screen.width - 20, Screen.height - 20);
-            GUILayout.Window(WindowId, yamlWindowRect, yamlWindowDrawer, $"{modName} YAML Editor", GUI.skin.window);
+            GUI.Box(yamlWindowRect, GUIContent.none, new GUIStyle { normal = new GUIStyleState { background = CmAPI.WindowBackground } });
+            GUI.backgroundColor = CmAPI._windowBackgroundColor;
+            GUILayout.Window(WindowId, yamlWindowRect, yamlWindowDrawer, $"{modName} YAML Editor");
         }
 
         private void yamlWindowDrawer(int id)
         {
-            GUI.Box(new Rect(0, 0, Screen.width, Screen.height), Texture2D.blackTexture);
-            GUILayout.BeginHorizontal(GUI.skin.box);
+            var style = new GUIStyle(GUI.skin.box);
+            style.normal.textColor = CmAPI._fontColor;
+            style.normal.background = CmAPI.EntryBackground;
+            style.fontSize = CmAPI.fontSize;
+            GUI.backgroundColor = CmAPI._entryBackgroundColor;
+            GUILayout.BeginHorizontal(style);
             GUI.enabled = !hasErrors && (!configSync.IsLocked || configSync.IsSourceOfTruth);
 
             void save() => activeConfig!.Value = currentYamlInput;
 
-            if (GUILayout.Button(Localization.instance.Localize("$mj_yaml_editor_save")) && !hasErrors)
+            Color color = GUI.backgroundColor;
+            GUI.backgroundColor = CmAPI._widgetBackgroundColor;
+            if (GUILayout.Button(Localization.instance.Localize("$mj_yaml_editor_save"), new GUILayoutOption[0]) && !hasErrors)
             {
                 save();
                 currentYamlInput = null;
@@ -107,6 +126,7 @@ namespace MoreJewelry
                 yamlConfig.SkipSavingOfValueChange = false;
                 currentYamlInput = null;
             }
+            GUI.backgroundColor = color;
 
             GUI.enabled = true;
             if (GUILayout.Button(Localization.instance.Localize("$mj_yaml_editor_discard")))
@@ -191,9 +211,10 @@ namespace MoreJewelry
                 }
             }
 
+
             if (currentYamlInput != null)
             {
-                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.BeginVertical(style);
 
                 yamlTextareaScrollPosition = GUILayout.BeginScrollView(yamlTextareaScrollPosition, GUILayout.ExpandHeight(true));
                 GUI.SetNextControlName($"{modName} yaml textarea");
@@ -214,12 +235,14 @@ namespace MoreJewelry
             }
             catch (YamlException e)
             {
-                Logger.LogWarning($"Parsing your yaml config failed with an error:\n{e.Message + (e.InnerException != null ? ": " + e.InnerException.Message : "")}");
+                yamlErrorContent = $"Parsing your yaml config failed with an error:\n{e.Message + (e.InnerException != null ? ": " + e.InnerException.Message : "")}";
                 hasErrors = true;
-            }            
+            }
 
-            GUILayout.BeginVertical(GUI.skin.box);
-            yamlErrorsScrollPosition = GUILayout.BeginScrollView(yamlErrorsScrollPosition, GUILayout.Height(100));
+            style.normal.background = CmAPI.WindowBackground;
+            GUI.backgroundColor = CmAPI._entryBackgroundColor;
+            GUILayout.BeginVertical(style);
+            yamlErrorsScrollPosition = GUILayout.BeginScrollView(yamlErrorsScrollPosition, style, GUILayout.Height(100));
 
             if (yamlErrorContent != "")
             {
@@ -227,11 +250,11 @@ namespace MoreJewelry
                 {
                     normal =
                     {
-                        textColor = new Color(200, 50, 50),
+                        textColor = new Color(.8f, .14f, .14f, 1f),
                     },
                 };
                 Color oldColor = GUI.contentColor;
-                GUI.contentColor = new Color(200, 50, 50);
+                GUI.contentColor = new Color(.8f, .14f, .14f, 1f);
                 GUILayout.Label(yamlErrorContent, labelStyle);
                 GUI.contentColor = oldColor;
             }

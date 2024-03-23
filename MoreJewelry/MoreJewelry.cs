@@ -71,6 +71,7 @@ namespace MoreJewelry
 
 
             int order = 0;
+            
             serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On, "If on, the configuration is locked and can be changed by server admins only.");
             _ = ConfigSync.AddLockingConfigEntry(serverConfigLocked);
 
@@ -127,7 +128,9 @@ namespace MoreJewelry
             yamlConfig.UseBuiltinConfig = !enabled;
             var cma = yamlAnchor.Description.Tags.Where(o => o is ConfigurationManagerAttributes).FirstOrDefault() as ConfigurationManagerAttributes;
             cma.Browsable = enabled;
-            ConfigDrawers.ReloadConfigDisplay();
+
+            if (CmAPI.IsLoaded())
+                CmAPI.ReloadConfigDisplay();
 
             if (sender != null)
                 yamlConfig.ReloadConfig(isLocal);

@@ -78,6 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CmAPI.cs" />
+    <Compile Include="Configuration\AcceptableValueConfigNote.cs" />
+    <Compile Include="Configuration\ConfigWatcher.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="LocalizationManager\LocalizationManager.cs" />
     <Compile Include="Main.cs" />
