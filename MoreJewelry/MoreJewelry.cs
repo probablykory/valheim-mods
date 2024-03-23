@@ -25,7 +25,7 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.1";
+        internal const string PluginVersion = "1.0.2";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 

@@ -52,6 +52,9 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### 1.0.2
+ * Bugfix for JC's original jewelry.  Lumberjacking, etc should all work again.  Thanks Majestic!
+
 ### 1.0.1
  * Fixes for the YamlConfigEditor.  Enabled proper color usage when using Azu's Unofficial Config Manager, and fallback when not.
 

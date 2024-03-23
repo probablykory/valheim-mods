@@ -92,6 +92,18 @@ namespace MoreJewelry
             initialized = true;
         }
 
+        private static void AddItemToEffectItemMap(string prefabName, string effectName)
+        {
+            List<string> itemList;
+            if (!EffectItemMap.TryGetValue(effectName, out itemList) || itemList == null)
+            {
+                itemList = new List<string>();
+                EffectItemMap.Add(effectName, itemList);
+            }
+            if (!itemList.Contains(prefabName))
+                itemList.Add(prefabName);
+        }
+
         public static bool IsEffectItemEquipped(Player player, string effectName)
         {
             if (!initialized) return false;
@@ -142,20 +154,6 @@ namespace MoreJewelry
             }
 
             return false;
-        }
-
-        private static void AddItemToEffectItemMap(string prefabName, string effectName)
-        {
-            if (!initialized) return;
-
-            List<string> itemList;
-            if (!EffectItemMap.TryGetValue(effectName, out itemList) || itemList == null)
-            {
-                itemList = new List<string>();
-                EffectItemMap.Add(effectName, itemList);
-            }
-            if (!itemList.Contains(prefabName))
-                itemList.Add(prefabName);
         }
 
         public static void RemoveItemFromEffectItemMap(string prefabName, string effectName)
