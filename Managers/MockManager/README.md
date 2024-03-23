@@ -1,0 +1,2 @@
+This is a partial snapshot of Jotunn code, containing only the MockManager and reflection helpers on which it depends.
+Please refer to the [Jotunn library](https://github.com/Valheim-Modding/Jotunn) for more information.
