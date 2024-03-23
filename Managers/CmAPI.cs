@@ -12,18 +12,6 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class ConfigManagerStyle
-    {
-        public Color entryBgColor;
-        public Color fontBgColor;
-        public Color widgetBgColor;
-        public Color windowBgColor;
-
-        public Texture2D entryBgTexture = null!;
-        public Texture2D widgetBgTexture = null!;
-        public Texture2D windowBgTexture = null!;
-    }
-
     public static class CmAPI
     {
         public static event EventHandler<EventArgs> OnDisplayingWindowChanged;
@@ -183,38 +171,6 @@ namespace Managers
             {
                 return default(T);
             }
-        }
-
-        public static ConfigManagerStyle GetConfigManagerStyle()
-        {
-            if (instance is null) return null;
-
-            ConfigManagerStyle result = null;
-
-            var tex = GetConfigManagerField<Texture2D>("<EntryBackground>k__BackingField");
-            if (tex is not null)
-                result = new ConfigManagerStyle() { entryBgTexture = tex };
-            tex = GetConfigManagerField<Texture2D>("<WidgetBackground>k__BackingField");
-            if (result is not null && tex is not null)
-                result.widgetBgTexture = tex;
-            tex = GetConfigManagerField<Texture2D>("<WindowBackground>k__BackingField");
-            if (result is not null && tex is not null)
-                result.windowBgTexture = tex;
-
-            var entry = GetConfigManagerField<ConfigEntry<Color>>("_entryBackgroundColor");
-            if (result is not null && entry is not null)
-                result.entryBgColor = entry.Value;
-            entry = GetConfigManagerField<ConfigEntry<Color>>("_widgetBackgroundColor");
-            if (result is not null && entry is not null)
-                result.widgetBgColor = entry.Value;
-            entry = GetConfigManagerField<ConfigEntry<Color>>("_windowBackgroundColor");
-            if (result is not null && entry is not null)
-                result.windowBgColor = entry.Value;
-            entry = GetConfigManagerField<ConfigEntry<Color>>("_fontColor");
-            if (result is not null && entry is not null)
-                result.fontBgColor = entry.Value;
-
-            return result;
         }
 
         public static void ReloadConfigDisplay()
