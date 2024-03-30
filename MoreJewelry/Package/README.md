@@ -1,5 +1,5 @@
 ![Splash](https://raw.githubusercontent.com/probablykory/valheim-mods/main/MoreJewelry/splash.png)  
-A highly customizable mod for Valheim which adds several new jewelery models for Jewelcrafting.
+A highly configurable mod for Valheim which adds several new jewelery models for Jewelcrafting.
 
 ## Features
 
@@ -51,6 +51,9 @@ For Questions or Comments, find <span style="color: purple;">probablykory</span>
 I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://paypal.me/probablyk) is greatly appreciated!
 
 ## Changelog
+
+### 1.0.5
+ * Bugfix: Ensure custom skill types work when used in adhoc status effects (ones defined with yaml).  Thanks William!
 
 ### 1.0.4
  * Set Config.SaveOnConfigSet to ensure config settings don't unintentionally revert.

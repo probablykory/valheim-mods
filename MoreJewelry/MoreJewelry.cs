@@ -26,7 +26,7 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.4";
+        internal const string PluginVersion = "1.0.5";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
@@ -115,7 +115,8 @@ namespace MoreJewelry
             OnExternalYamlSettingChanged();
             LoadAssets();
 
-            Events.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+            Main.OnVanillaPrefabsAvailable += OnVanillaPrefabsAvailable;
+            //Config.ConfigReloaded += OnConfigReloaded;
             _ = new ConfigWatcher(this);
         }
 

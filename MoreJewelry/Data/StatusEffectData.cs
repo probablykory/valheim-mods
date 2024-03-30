@@ -6,9 +6,20 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using YamlDotNet.Serialization;
+using Logger = Managers.Logger;
 
 namespace MoreJewelry.Data
 {
+    public static class SkillUtils
+    {
+        public static string FromSkill(Skills.SkillType skill)
+        {
+            return Localization.instance.Localize("$skill_" + skill.ToString().ToLower());
+        }
+
+        public static Skills.SkillType FromName(string englishName) => (Skills.SkillType)Math.Abs(englishName.GetStableHashCode());
+    }
+
     [Serializable, CanBeNull]
     public class DamageModifierData
     {
@@ -281,16 +292,16 @@ namespace MoreJewelry.Data
         public static string GetSkillTypeString(string type)
         {
             if (string.Equals(type, "fists", StringComparison.InvariantCultureIgnoreCase))
-                return "unarmed";
+                return "Unarmed";
             if (string.Equals(type, "wood-cutting", StringComparison.InvariantCultureIgnoreCase))
-                return "woodcutting";
+                return "WoodCutting";
             if (string.Equals(type, "wood cutting", StringComparison.InvariantCultureIgnoreCase))
-                return "woodcutting";
+                return "WoodCutting";
             if (string.Equals(type, "elemental magic", StringComparison.InvariantCultureIgnoreCase))
-                return "elementalmagic";
+                return "ElementalMagic";
             if (string.Equals(type, "blood magic", StringComparison.InvariantCultureIgnoreCase))
-                return "bloodmagic";
-            return type.ToLower();
+                return "BloodMagic";
+            return type;
         }
 
         public static HitData.DamageType GetDamageType(string type)
@@ -309,9 +320,13 @@ namespace MoreJewelry.Data
 
         public static Skills.SkillType GetSkillType(string type)
         {
-            if (Enum.TryParse(GetSkillTypeString(type), true, out Skills.SkillType dmgType))
+            type = GetSkillTypeString(type);
+            if (Enum.TryParse(type, true, out Skills.SkillType dmgType))
                 return dmgType;
-            return 0;
+
+            dmgType = SkillUtils.FromName(type);
+
+            return dmgType;
         }
     }
 }

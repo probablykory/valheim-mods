@@ -105,9 +105,9 @@ namespace MoreJewelry
 
             if (IsSourceOfTruth() && !isLocalChange)
             {
-                if (Main.IsHeadless)
+                if (ZNet.instance is not null && ZNet.instance.IsServer())
                 {
-                    Logger.LogDebugOnly($"Headless, nonlocal change, isSourceTruth, queue a rebroadcast of synced value.");
+                    Logger.LogDebugOnly($"server, nonlocal change, isSourceTruth, queue a rebroadcast of synced value.");
                     RebroadcastSyncedValue();
                 }
 
@@ -119,9 +119,9 @@ namespace MoreJewelry
                 string source = "remote yaml";
                 if (TryParseConfig(source, SyncedValue.Value, out ParsedResult result))
                 {
-                    if (Main.IsHeadless && !isLocalChange)
+                    if (ZNet.instance is not null && ZNet.instance.IsServer() && !isLocalChange)
                     {
-                        Logger.LogDebugOnly($"Headless, nonlocal change, NOT SourceTruth, queue a rebroadcast of synced value.");
+                        Logger.LogDebugOnly($"server, nonlocal change, NOT SourceTruth, queue a rebroadcast of synced value.");
                         RebroadcastSyncedValue();
                     }
 

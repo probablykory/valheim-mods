@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,8 +36,10 @@ namespace Managers
                 Logger.LogDebugOnly($"Cached static Mod reference from {mod.Assembly.GetName()}, IsHeadless={isHeadless}");
 
             }
+            Main.Mod.Harmony.PatchAll(typeof(Patches));
         }
 
+        public static event Action OnVanillaPrefabsAvailable;
         public static IPlugin Mod { get { return cachedModRef; } }
 
         public static GameObject GetRootObject()
@@ -56,6 +59,15 @@ namespace Managers
         public static bool IsHeadless
         {
             get { return isHeadless; }
+        }
+
+        private static class Patches
+        {
+            [HarmonyPatch(typeof(ObjectDB), "CopyOtherDB"), HarmonyPrefix, UsedImplicitly]
+            private static void InvokeOnVanillaPrefabsAvailable()
+            {
+                OnVanillaPrefabsAvailable?.Invoke();
+            }
         }
     }
 }
