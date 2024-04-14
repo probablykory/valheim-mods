@@ -67,6 +67,10 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.2.9
+ * Korean translation added, thanks to So1207
+ * Requires Jotunn 2.19.1
+
 ### v1.2.8
  * Added custom table option for crafting.
  * Added a setting, off by default, to enable debug logging.

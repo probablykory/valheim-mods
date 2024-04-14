@@ -16,6 +16,7 @@ namespace Managers
     // Implement this interface in your Mod to enable the logger & config functionality.
     public interface IPlugin
     {
+        string GUID { get; }
         ConfigFile Config { get; }
         bool Debug { get; }
         Harmony Harmony { get; }

@@ -26,13 +26,13 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.5";
+        internal const string PluginVersion = "1.0.6";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
+        public string GUID { get { return PluginGUID; } }
         public new Managers.Logger Logger { get { return Managers.Logger.Instance; } } // occlude BaseUnityPlugin.Logger
         public ManualLogSource LogSource { get; private set; } = BepInEx.Logging.Logger.CreateLogSource(PluginName); // non-debug logger
-
         public bool Debug { get { return isDebugEnabled is not null ? isDebugEnabled.Value == Toggle.On : false; } }
 
         internal static string ConnectionError = "";

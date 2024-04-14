@@ -6,6 +6,9 @@
 # Supported color names
 #   red, cyan, blue, darkblue, lightblue, purple, yellow, lime, fuchsia, white, silver, grey, black, orange, brown, maroon, green, olive, navy, teal, aqua, magenta.
 #
+# Supported effect names
+#   aquatic, awareness, guidance, headhunter, legacy, lumberjack, magicRepair, modersBlessing, rigidFinger, warmth, perception.
+#
 ##########
 
 # Here is a very overpowered ring which documents nearly all of the settings you have access to in this yaml config.
@@ -99,6 +102,19 @@ Leather cord:
       Advanced_Green_Socket: 1
   effect: "Lumberjack"
 
+Humite Ring of Perception:
+  description: "Carefully cut and polished, increasing the perception of the wearer."
+  prefab: "defaultring"
+  gem: orange
+  crafting:
+    craftingstation: gemcutter
+    stationlevel: 2
+    maxquality: 1
+    costs:
+      Chain: 1
+      Perfect_Orange_Socket: 1
+  effect: "Perception"
+
 Silver band:
   description: "It's heavier than it looks."
   prefab: "silverring"
@@ -112,7 +128,7 @@ Silver band:
       WolfPelt: 2
       WolfHairBundle: 2
       Perfect_Black_Socket: 1
-  effect: Perception
+  effect: Aquatic
 
 Polished silver necklace:
   description: "Highly polished, finely wrought necklace."

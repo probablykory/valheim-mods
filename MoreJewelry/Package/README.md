@@ -52,6 +52,15 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### 1.0.6
+ * Minor update to ensure mocks work with Valheim 0.217.46
+ * Small updates to default yaml config which includes a new ring, Humite Ring of Perception
+ * Changed default silver ring effect to be Aquatic (gift damage buff while wet)
+
+<details>
+<summary><i>View changelog history</i></summary>
+<br/>
+
 ### 1.0.5
  * Bugfix: Ensure custom skill types work when used in adhoc status effects (ones defined with yaml).  Thanks William!
 
@@ -70,6 +79,8 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ### 1.0.0
  * Initial Version.
+
+</details>
 
 ## Known issues
 If you find a problem, please visit my [github](https://github.com/probablykory/valheim-mods)

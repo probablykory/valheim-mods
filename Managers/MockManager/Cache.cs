@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SoftReferenceableAssets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,27 @@ namespace MockManager
         /// <returns></returns>
         public static Object GetPrefab(Type type, string name)
         {
+            if (AssetManager.Instance.IsReady())
+            {
+                SoftReference<Object> asset = AssetManager.Instance.GetSoftReference(type, name);
+
+                if (asset.IsValid)
+                {
+                    // load an never release reference to keep it loaded
+                    asset.Load();
+
+                    if (asset.Asset.GetType() == type)
+                    {
+                        return asset.Asset;
+                    }
+
+                    if (asset.Asset is GameObject gameObject && TryFindAssetInSelfOrChildComponents(gameObject, type, out Object childAsset))
+                    {
+                        return childAsset;
+                    }
+                }
+            }
+
             if (GetCachedMap(type).TryGetValue(name, out var unityObject))
             {
                 return unityObject;
@@ -169,6 +191,58 @@ namespace MockManager
         public static void Clear<T>() where T : Object
         {
             dictionaryCache.Remove(typeof(T));
+        }
+
+        private static bool TryFindAssetOfComponent(Component unityObject, Type objectType, out Object asset)
+        {
+            var type = unityObject.GetType();
+            ClassMember classMember = ClassMember.GetClassMember(type);
+
+            foreach (var member in classMember.Members)
+            {
+                if (member.MemberType == objectType && member.HasGetMethod)
+                {
+                    asset = (Object)member.GetValue(unityObject);
+                    if (asset != null)
+                    {
+                        return asset;
+                    }
+                }
+            }
+
+            asset = null;
+            return false;
+        }
+
+        internal static bool TryFindAssetInSelfOrChildComponents(GameObject unityObject, Type objectType, out Object asset)
+        {
+            if (!unityObject)
+            {
+                asset = null;
+                return false;
+            }
+
+            foreach (var component in unityObject.GetComponents<Component>())
+            {
+                if (!(component is Transform))
+                {
+                    if (TryFindAssetOfComponent(component, objectType, out asset))
+                    {
+                        return (bool)asset;
+                    }
+                }
+            }
+
+            foreach (Transform tf in unityObject.transform)
+            {
+                if (TryFindAssetInSelfOrChildComponents(tf.gameObject, objectType, out asset))
+                {
+                    return (bool)asset;
+                }
+            }
+
+            asset = null;
+            return false;
         }
     }
 }
