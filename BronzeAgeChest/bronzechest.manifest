@@ -1,12 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2772203654
+CRC: 2273497882
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d6ee0bea95e6e6b90018bde64387fb0f
+    Hash: 2797ed7c075e36ccb82339515592d9ac
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4488fa6670bf3864d50009f72596ef9f
+    Hash: 11a0ae453582968cae25ed10b743c58c
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 2797ed7c075e36ccb82339515592d9ac
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -54,7 +57,6 @@ SerializeReferenceClassIdentifiers:
   ClassName: HitData/DamageModifiers
 Assets:
 - Assets/Material/bronzechest.mat
-- Assets/Shader/JVLmock_Custom_Piece.shader
 - Assets/PrefabInstance/JVLmock_vfx_SawDust.prefab
 - Assets/Texture2D/bronzechest_m.png
 - Assets/PrefabInstance/JVLmock_sfx_chest_open.prefab
@@ -66,7 +68,6 @@ Assets:
 - Assets/PrefabInstance/JVLmock_vfx_Place_chest.prefab
 - Assets/PrefabInstance/JVLmock_sfx_wood_destroyed.prefab
 - Assets/Mesh/BronzeChestTopOpen.mesh
-- Assets/PrefabInstance/JVLmock_empty.prefab
 - Assets/PrefabInstance/JVLmock_sfx_build_hammer_wood.prefab
 - Assets/Texture2D/JVLmock_Noise.png
 - Assets/Texture2D/bronzechest_d.png

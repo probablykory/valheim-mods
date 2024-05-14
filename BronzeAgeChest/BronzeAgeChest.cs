@@ -20,11 +20,11 @@ namespace BronzeAgeChest
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "BronzeAgeChest";
-        public const string PluginVersion = "1.0.6";  
+        public const string PluginVersion = "1.0.7";  
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         internal static BronzeAgeChest Instance;
-        internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("bronzechest");
+        internal AssetBundle assetBundle = null;
 
         public new ManualLogSource Logger { get; private set; } = BepInEx.Logging.Logger.CreateLogSource(PluginName);
         public bool Debug { get { return isDebugEnabled is not null ? isDebugEnabled.Value : true; } }
@@ -40,6 +40,7 @@ namespace BronzeAgeChest
         private void Awake()
         {
             Instance = this;
+            assetBundle = AssetUtils.LoadAssetBundleFromResources("bronzechest");
 
             isDebugEnabled = this.Config("1 - General", "Debugging Enabled", false, "If on, mod will output alot more information in the debug log level.");
 

@@ -1,12 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1367595928
+CRC: 2798411744
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 686846f04fe785c384c01544fa625664
+    Hash: 0ef50a7b391f037e713e8c1e5f68f0e3
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5e4283666972bd907acada0c7a110b9f
+    Hash: 5fc1fe0e69340f8214edd49b1613f7da
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 0ef50a7b391f037e713e8c1e5f68f0e3
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -42,9 +45,9 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1521249158, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
-  Script: {fileID: 825357479, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+  Script: {fileID: 1109157524, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
-  Script: {fileID: 313648218, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+  Script: {fileID: 1404409730, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
   Script: {fileID: 469224316, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
@@ -52,11 +55,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1541706127, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
-  Script: {fileID: 1404409730, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+  Script: {fileID: 825357479, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
   Script: {fileID: 69470131, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 114
-  Script: {fileID: 1109157524, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
+  Script: {fileID: 313648218, guid: 02f806226319f1d4b8ae0232b57e8b19, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 198
@@ -136,7 +139,6 @@ Assets:
 - Assets/Texture2D/WoodCrossbow_d.png
 - Assets/Material/JVLmock_pixel_unlit_red.mat
 - Assets/PrefabInstance/JVLmock_sfx_arbalest_fire.prefab
-- Assets/Shader/JVLmock_Lux Lit Particles_ Bumped.shader
 - Assets/Mesh/JVLmock_polySurface20.mesh
 - Assets/Sprite/ooze_bolt.png
 - Assets/Sprite/lightning_bolt.png
@@ -145,7 +147,6 @@ Assets:
 - Assets/AudioClip/JVLmock_Eiter_Impact_04.ogg
 - Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_blackmetalxbow.prefab
 - Assets/odinplusteam/projects/crystalsplus/inprogress/weaponeffects/crossbow/jc_necromancer_xbow.prefab
-- Assets/Shader/JVLmock_Particles_Standard Unlit2.shader
 - Assets/AudioClip/JVLmock_Eiter_Projectile_08.ogg
 - Assets/Mesh/CrossbowSilverUnloaded.mesh
 - Assets/Material/arrow_lightning.mat
@@ -234,7 +235,6 @@ Assets:
 - Assets/Sprite/bile_bolt.png
 - Assets/PrefabInstance/firebolt_explosion.prefab
 - Assets/Sprite/wood_bolt.png
-- Assets/Shader/JVLmock_Standard TwoSided.shader
 - Assets/Sprite/crossbow_bronze.png
 - Assets/Mesh/default_327.asset
 - Assets/AudioClip/JVLmock_Eiter_Projectile_Alt_04.ogg

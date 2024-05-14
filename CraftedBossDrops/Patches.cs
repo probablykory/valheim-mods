@@ -50,8 +50,9 @@ namespace CraftedBossDrops
         public static void PlayerAddKnownItem(ItemDrop.ItemData item, Player __instance)
         {
             var self = __instance;
+            var name = item?.m_dropPrefab?.name;
 
-            if(item.m_dropPrefab.name.Equals("HardAntler"))
+            if (!string.IsNullOrEmpty(name) && string.Equals(name, "HardAntler"))
             {
                 if (!self.m_knownMaterial.Contains(item.m_shared.m_name))
                 {

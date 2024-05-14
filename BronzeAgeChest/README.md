@@ -38,6 +38,10 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### 1.0.7
+ * Updated for ashlands.
+ * Fix error related to asset loading, now works with 0.217.46.
+
 ### 1.0.6
  * Added a setting, off by default, to enable debug logging.
 

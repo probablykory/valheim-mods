@@ -67,6 +67,9 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.2.10
+ * Minor update for ashlands.
+
 ### v1.2.9
  * Korean translation added, thanks to So1207
  * Requires Jotunn 2.19.1

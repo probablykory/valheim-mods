@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle(CraftedBossDrops.CraftedBossDrops.PluginName)]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("https://thunderstore.io/c/valheim/p/probablykory/CraftedBossDrops/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(CraftedBossDrops.CraftedBossDrops.PluginAuthor)]
 [assembly: AssemblyProduct(CraftedBossDrops.CraftedBossDrops.PluginName)]
-[assembly: AssemblyCopyright("Copyright © 2023")]
+[assembly: AssemblyCopyright("Copyright " + CraftedBossDrops.CraftedBossDrops.PluginAuthor + " © 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

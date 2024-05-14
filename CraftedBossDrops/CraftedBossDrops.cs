@@ -19,7 +19,7 @@ namespace CraftedBossDrops
     {
         public const string PluginAuthor = "probablykory";
         public const string PluginName = "CraftedBossDrops";
-        public const string PluginVersion = "1.0.7";
+        public const string PluginVersion = "1.0.8";
         public const string PluginGUID = PluginAuthor + "." + PluginName;
 
         private bool settingsUpdated = false;
@@ -36,6 +36,7 @@ namespace CraftedBossDrops
         public Entries DragonTearEntry { get; protected set; }
         public Entries YagluthDropEntry { get; protected set; }
         public Entries QueenDropEntry { get; protected set; }
+        public Entries FaderDropEntry { get; protected set; }
 
         private CustomRecipe hardAntlerRecipe;
         private CustomRecipe cryptKeyRecipe;
@@ -43,6 +44,7 @@ namespace CraftedBossDrops
         private CustomRecipe dragonTearRecipe;
         private CustomRecipe yagluthDropRecipe;
         private CustomRecipe queenDropRecipe;
+        private CustomRecipe faderDropRecipe;
 
         private void Awake()
         {
@@ -67,6 +69,7 @@ namespace CraftedBossDrops
             DragonTearEntry = Entries.GetFromProps(Instance, "DragonTear", nameof(CraftingStations.Workbench), 5, 2, "DragonEgg:4,Crystal:16");
             YagluthDropEntry = Entries.GetFromProps(Instance, "YagluthDrop", nameof(CraftingStations.ArtisanTable), 1, 2, "GoblinTotem:10,TrophyGoblin:3,TrophyGoblinShaman:1,TrophyGoblinBrute:1");
             QueenDropEntry = Entries.GetFromProps(Instance, "QueenDrop", nameof(CraftingStations.BlackForge), 2, 1, "DvergrKeyFragment:10,Mandible:5,TrophySeeker:3,TrophySeekerBrute:1");
+            FaderDropEntry = Entries.GetFromProps(Instance, "FaderDrop", nameof(CraftingStations.ArtisanTable), 2, 1, "BellFragment:10,MorgenHeart:5,TrophyCharredMelee:4,TrophyCharredMage:1");
 
             HardAntlerEntry.AddSettingsChangedHandler(OnSettingsChanged);
             CryptKeyEntry.AddSettingsChangedHandler(OnSettingsChanged);
@@ -74,6 +77,7 @@ namespace CraftedBossDrops
             DragonTearEntry.AddSettingsChangedHandler(OnSettingsChanged);
             YagluthDropEntry.AddSettingsChangedHandler(OnSettingsChanged);
             QueenDropEntry.AddSettingsChangedHandler(OnSettingsChanged);
+            FaderDropEntry.AddSettingsChangedHandler(OnSettingsChanged);
         }
 
         private void UpdateFeatures()
@@ -85,6 +89,7 @@ namespace CraftedBossDrops
             dragonTearRecipe.Update(getRecipeFromEntry(DragonTearEntry));
             yagluthDropRecipe.Update(getRecipeFromEntry(YagluthDropEntry));
             queenDropRecipe.Update(getRecipeFromEntry(QueenDropEntry));
+            faderDropRecipe.Update(getRecipeFromEntry(FaderDropEntry));
         }
 
         private void OnVanillaPrefabsAvailable()
@@ -97,6 +102,7 @@ namespace CraftedBossDrops
             dragonTearRecipe = new CustomRecipe(getRecipeFromEntry(DragonTearEntry));
             yagluthDropRecipe = new CustomRecipe(getRecipeFromEntry(YagluthDropEntry));
             queenDropRecipe = new CustomRecipe(getRecipeFromEntry(QueenDropEntry));
+            faderDropRecipe = new CustomRecipe(getRecipeFromEntry(FaderDropEntry));
 
             ItemManager.Instance.AddRecipe(hardAntlerRecipe);
             ItemManager.Instance.AddRecipe(cryptKeyRecipe);
@@ -104,6 +110,7 @@ namespace CraftedBossDrops
             ItemManager.Instance.AddRecipe(dragonTearRecipe);
             ItemManager.Instance.AddRecipe(yagluthDropRecipe);
             ItemManager.Instance.AddRecipe(queenDropRecipe);
+            ItemManager.Instance.AddRecipe(faderDropRecipe);
 
             PrefabManager.OnVanillaPrefabsAvailable -= OnVanillaPrefabsAvailable;
         }

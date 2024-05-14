@@ -31,6 +31,9 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### v1.0.8
+ * Minor update for ashlands.  Added recipe for FaderDrop.
+
 ### v1.0.7
 * Added a setting, off by default, to enable debug logging.
 

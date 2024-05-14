@@ -1,10 +1,10 @@
 ﻿{
   "name": "MoreCrossbows",
   "description": "Love the Arbalest? Wish there were more?  More Crossbows adds bolts and crossbows for all biomes.",
-  "version_number": "1.2.9",
+  "version_number": "1.2.10",
   "website_url": "https://github.com/probablykory/valheim-mods",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2202",
-    "ValheimModding-Jotunn-2.19.1"
+    "ValheimModding-Jotunn-2.20.0"
   ]
 }

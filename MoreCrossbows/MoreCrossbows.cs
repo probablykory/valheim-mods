@@ -47,7 +47,7 @@ namespace MoreCrossbows
         private static ConfigEntry<bool> isDebugEnabled = null!;
 
         internal static MoreCrossbows Instance;
-        internal AssetBundle assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
+        internal AssetBundle assetBundle = null;
         internal Harmony harmony = null;
         internal BaseUnityPlugin jewelcrafting;
 
@@ -58,6 +58,7 @@ namespace MoreCrossbows
         {
             harmony = new Harmony(PluginGUID);
             harmony.PatchAll(typeof(GetTooltipPatch));
+            assetBundle = AssetUtils.LoadAssetBundleFromResources("crossbows");
 
             isDebugEnabled = this.Config("1 - General", "Debugging Enabled", false, "If on, mod will output alot more information in the debug log level.");
 

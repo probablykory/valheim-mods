@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle(MoreCrossbows.MoreCrossbows.PluginName)]
-[assembly: AssemblyDescription("https://valheim.thunderstore.io/package/probablykory/MoreCrossbows/")]
+[assembly: AssemblyDescription("https://thunderstore.io/c/valheim/p/probablykory/MoreCrossbows/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MoreCrossbows.MoreCrossbows.PluginAuthor)]
 [assembly: AssemblyProduct(MoreCrossbows.MoreCrossbows.PluginName)]
-[assembly: AssemblyCopyright("Copyright " + MoreCrossbows.MoreCrossbows.PluginAuthor + " © 2023")]
+[assembly: AssemblyCopyright("Copyright " + MoreCrossbows.MoreCrossbows.PluginAuthor + " © 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
