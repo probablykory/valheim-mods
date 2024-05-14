@@ -30,19 +30,22 @@ namespace MockManager
             {
                 SoftReference<Object> asset = AssetManager.Instance.GetSoftReference(type, name);
 
-                if (asset.IsValid)
+                if (asset != null && asset.IsValid)
                 {
                     // load an never release reference to keep it loaded
                     asset.Load();
 
-                    if (asset.Asset.GetType() == type)
+                    if (asset.Asset)
                     {
-                        return asset.Asset;
-                    }
+                        if (asset.Asset != null && asset.Asset.GetType() == type)
+                        {
+                            return asset.Asset;
+                        }
 
-                    if (asset.Asset is GameObject gameObject && TryFindAssetInSelfOrChildComponents(gameObject, type, out Object childAsset))
-                    {
-                        return childAsset;
+                        if (asset.Asset is GameObject gameObject && TryFindAssetInSelfOrChildComponents(gameObject, type, out Object childAsset))
+                        {
+                            return childAsset;
+                        }
                     }
                 }
             }

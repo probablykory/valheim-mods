@@ -26,7 +26,7 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.6";
+        internal const string PluginVersion = "1.0.7";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
@@ -106,6 +106,7 @@ namespace MoreJewelry
             rootContainer = new GameObject("jewelryPrefabs");
             rootContainer.transform.parent = Main.GetRootObject().transform;
             rootContainer.SetActive(false);
+            MockManager.MockManager.Instance.Init();
 
             assetBundle = PrefabManager.RegisterAssetBundle("jewelry");
             Logger.LogDebugOnly($"assetbundle loaded {assetBundle}");
@@ -270,9 +271,10 @@ namespace MoreJewelry
             { "ArtisanTable", "ArtisanTable" },
             { "BlackForge", "BlackForge" },
             { "GaldrTable", "GaldrTable" },
-            { "GemcutterTable", JcAPI.GetGemcuttersTable().name},
-            { "Gemcutter", JcAPI.GetGemcuttersTable().name}
+            { "GemcutterTable", "op_transmution_table" }, // JcAPI.GetGemcuttersTable().name},
+            { "Gemcutter", "op_transmution_table" }
         };
+
         private static string getStation(string station)
         {
             if (stationMap.TryGetValue(station, out var value))
@@ -423,7 +425,7 @@ namespace MoreJewelry
                     {
                         if (JewelryManager.AvailableEffects.ContainsKey(effectName))
                             JewelryManager.AddEffectToItem(item, effectName);
-                        else if (effectName.Equals(Effects.Aquatic) || effectName.Equals(Effects.Headhunter))
+                        else if (effectName.Equals(Effects.Aquatic, StringComparison.InvariantCultureIgnoreCase) || effectName.Equals(Effects.Headhunter, StringComparison.InvariantCultureIgnoreCase))
                             JewelryManager.AddEffectToItem(item, effectName);
                         else
                         {
@@ -518,7 +520,7 @@ namespace MoreJewelry
             {
                 if (!activeTrinkets.Contains(kv.Key) && kv.Value is not null)
                 {
-                    // still looking for a better way to deactivate items/recipes..
+                    // is there a better way to deactivate items/recipes?
                     var result = kv.Value.GetActiveRecipesEnabled();
                     if (result == Item.RecipesEnabled.True || result == Item.RecipesEnabled.Mixed)
                     {

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle(MoreJewelry.MoreJewelry.PluginName)]
-[assembly: AssemblyDescription("https://valheim.thunderstore.io/package/probablykory/MoreJewelry/")]
+[assembly: AssemblyDescription("https://thunderstore.io/c/valheim/p/probablykory/MoreJewelry/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MoreJewelry.MoreJewelry.PluginAuthor)]
 [assembly: AssemblyProduct(MoreJewelry.MoreJewelry.PluginName)]

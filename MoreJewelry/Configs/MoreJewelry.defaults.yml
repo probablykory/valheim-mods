@@ -35,8 +35,15 @@
 #     startmsg: "You're overwhelmed"
 #     stopmsgloc:
 #     stopmsg:
-#     runstaminamodifier: -0.5
+#     runstaminadrainmodifier: -0.5
 #     jumpstaminamodifier: -0.5
+#     runstaminamodifier: -0.5
+#     attackstaminamodifier: -0.5
+#     blockstaminamodifier: -0.5
+#     dodgestaminamodifier: -0.5
+#     baseitemstaminamodifier: -0.5
+#     swimstaminamodifier: -0.5
+#     sneakstaminamodifier: -0.5
 #     healthregen: 1.5
 #     staminaregen: 1.5
 #     eitrregen: 1.5
@@ -52,6 +59,10 @@
 #       modifier: veryresistant
 #     - type: poison
 #       modifier: veryresistant
+#     percentdamagemodifiers:
+#       pierce: .1
+#       slash: .1
+#       chop: .1
 #     attackskill:
 #     maxcarry: 200
 #     movespeed: 2.0

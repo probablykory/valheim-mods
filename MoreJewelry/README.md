@@ -52,6 +52,12 @@ I spend countless hours every day working on, updating, and fixing mods for ever
 
 ## Changelog
 
+### 1.0.7
+ * Updated mod and manager dependencies for Valheim Ashlands 0.218.15
+ * Added support for all the new SE_Stat properties for ring effects (Enable external Yaml and look at the everything ring for examples)
+ * Fix for case-insensitive name matching of built-in JC effects
+ * Fix crash when running on a full Valheim debug build
+
 ### 1.0.6
  * Minor update to ensure mocks work with Valheim 0.217.46
  * Small updates to default yaml config which includes a new ring, Humite Ring of Perception

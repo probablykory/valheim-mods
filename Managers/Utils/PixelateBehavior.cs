@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Managers.Utils
+namespace Managers
 {
     public class PixelateBehavior : MonoBehaviour
     {

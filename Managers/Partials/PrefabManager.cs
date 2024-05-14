@@ -27,7 +27,16 @@ public static partial class PrefabManager
             return item;
         }
 
-        return null;
+        if (Item.RegisteredItems.Count > 0)
+        {
+            var result = Item.RegisteredItems.FirstOrDefault((i) => name.Equals(i.Prefab.name));
+            if (result != null)
+                return result.Prefab;
+        }
+
+        return MockManager.Cache.GetPrefab<GameObject>(name);
+
+        //return null;
     }
 
     public static GameObject RegisterPrefabWithMocks(AssetBundle assets, string prefabName, bool addToObjectDb = false, bool recursive = true) {

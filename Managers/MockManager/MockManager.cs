@@ -75,6 +75,8 @@ namespace MockManager
 
             Main.Mod.Harmony.PatchAll(typeof(Patches));
             Logger.LogDebugOnly("MockManager initialized.");
+
+            AssetManager.Instance.Init();
         }
 
         private static class Patches
@@ -171,7 +173,7 @@ namespace MockManager
 
             if (!prefab)
             {
-                throw new MockResolveException($"Object with name '{assetName}' was not found.", assetName, mockObjectType);
+                throw new MockResolveException($"GameObject with name '{assetName}' was not found.", assetName, mockObjectType);
             }
 
             if (childNames.Count > 0)
@@ -534,7 +536,7 @@ namespace MockManager
                 return true;
             }
 
-            Shader realShader = Shader.Find(cleanedShaderName);
+            Shader realShader = Cache.GetPrefab<Shader>(cleanedShaderName);
 
             if (realShader)
             {
@@ -580,6 +582,17 @@ namespace MockManager
             {
                 asset = null;
                 return false;
+            }
+
+            if (objectType.IsSubclassOf(typeof(Component)))
+            {
+                var component = unityObject.GetComponent(objectType);
+
+                if (component)
+                {
+                    asset = component;
+                    return true;
+                }
             }
 
             foreach (var component in unityObject.GetComponents<Component>())

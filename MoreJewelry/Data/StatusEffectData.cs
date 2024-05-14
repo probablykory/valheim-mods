@@ -2,10 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 using YamlDotNet.Serialization;
+using static CharacterAnimEvent;
 using Logger = Managers.Logger;
 
 namespace MoreJewelry.Data
@@ -18,6 +21,23 @@ namespace MoreJewelry.Data
         }
 
         public static Skills.SkillType FromName(string englishName) => (Skills.SkillType)Math.Abs(englishName.GetStableHashCode());
+    }
+
+    [Serializable, CanBeNull]
+    public class DamageTypeData
+    {
+        public DamageTypeData() { }
+
+        public float Blunt { get; set; }
+        public float Slash { get; set; }
+        public float Pierce { get; set; }
+        public float Chop { get; set; }
+        public float Pickaxe { get; set; }
+        public float Fire { get; set; }
+        public float Frost { get; set; }
+        public float Poison { get; set; }
+        public float Lightning { get; set; }
+        public float Spirit { get; set; }
     }
 
     [Serializable, CanBeNull]
@@ -84,7 +104,7 @@ namespace MoreJewelry.Data
         //public float? m_staminaOverTime;
         //public float? m_staminaOverTimeDuration;
         //public float? m_staminaDrainPerSec;
-        [YamlMember(Alias = "RunStaminaModifier")]
+        [YamlMember(Alias = "RunStaminaDrainModifier")]
         public float? m_runStaminaDrainModifier;
         [YamlMember(Alias = "JumpStaminaModifier")]
         public float? m_jumpStaminaUseModifier;
@@ -140,6 +160,24 @@ namespace MoreJewelry.Data
         //public float? m_healthOverTimeTicks;
         //public float? m_healthOverTimeTickHP;
 
+
+        [YamlMember(Alias = "AttackStaminaModifier")]
+        public float m_attackStaminaUseModifier;
+        [YamlMember(Alias = "BlockStaminaModifier")]
+        public float m_blockStaminaUseModifier;
+        [YamlMember(Alias = "DodgeStaminaModifier")]
+        public float m_dodgeStaminaUseModifier;
+        [YamlMember(Alias = "SwimStaminaModifier")]
+        public float m_swimStaminaUseModifier;
+        [YamlMember(Alias = "BaseItemStaminaModifier")]
+        public float m_homeItemStaminaUseModifier;
+        [YamlMember(Alias = "SneakStaminaModifier")]
+        public float m_sneakStaminaUseModifier;
+        [YamlMember(Alias = "RunStaminaModifier")]
+        public float m_runStaminaUseModifier;
+
+        [YamlMember(Alias = "PercentDamageModifiers")]
+        public DamageTypeData PercentDamageModifiers;
 
         public StatusEffect ToStatusEffect()
         {
@@ -209,6 +247,9 @@ namespace MoreJewelry.Data
                 se.m_modifyAttackSkill = GetSkillType(AttackSkillMod.Type);
                 se.m_damageModifier = AttackSkillMod.Modifier;
             }
+
+            if (PercentDamageModifiers != null)
+                se.m_percentigeDamageModifiers = GetDamageTypes(PercentDamageModifiers);
 
             if (m_addMaxCarryWeight.HasValue)
                 se.m_addMaxCarryWeight = m_addMaxCarryWeight.Value;
@@ -309,6 +350,23 @@ namespace MoreJewelry.Data
             if (Enum.TryParse(type, true, out HitData.DamageType dmgType))
                 return dmgType;
             return 0;
+        }
+
+        public static HitData.DamageTypes GetDamageTypes(DamageTypeData typeData)
+        {
+                HitData.DamageTypes types = new HitData.DamageTypes();
+                types.m_blunt = typeData.Blunt;
+                types.m_slash = typeData.Slash;
+                types.m_pierce = typeData.Pierce;
+                types.m_chop = typeData.Chop;
+                types.m_pickaxe = typeData.Pickaxe;
+
+                types.m_fire = typeData.Fire;
+                types.m_frost = typeData.Frost;
+                types.m_poison = typeData.Poison;
+                types.m_lightning = typeData.Lightning;
+                types.m_spirit = typeData.Spirit;
+                return types;
         }
 
         public static HitData.DamageModifier GetDamageModifier(string type)
