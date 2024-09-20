@@ -6,6 +6,7 @@ namespace MoreJewelry
     {
         public static string None => string.Empty;
         public static string Aquatic => "aquatic";
+        public static string Atunement => "atunement";
         public static string Awareness => "awareness";
         public static string Guidance => "guidance"; // to gacha or boss spawn location
         public static string Headhunter => "headhunter";
@@ -25,6 +26,7 @@ namespace MoreJewelry
             "JC_Necklace_Blue" => Aquatic, //*
             "JC_Necklace_Yellow" => Lumberjack,
             "JC_Necklace_Purple" => Guidance,
+            "JC_Necklace_Orange" => Atunement,
             "JC_Ring_Purple" => RigidFinger,
             "JC_Ring_Green" => Headhunter, //*
             "JC_Ring_Red" => Warmth,

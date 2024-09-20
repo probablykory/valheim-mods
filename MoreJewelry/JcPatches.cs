@@ -124,6 +124,7 @@ namespace MoreJewelry
             {
                 if (item.m_shared?.m_equipStatusEffect != null && JewelryManager.AvailableEffects.ContainsValue(item.m_shared.m_equipStatusEffect))
                 {
+                    Logger.LogDebugOnly($"Checked if {item.m_shared.m_name} is equipped and JM comtains {item.m_shared.m_equipStatusEffect}");
                     item.m_shared.m_equipStatusEffect.m_icon = item.GetIcon();
                 }
             }

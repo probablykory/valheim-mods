@@ -26,7 +26,7 @@ namespace MoreJewelry
     public class MoreJewelry : BaseUnityPlugin, IPlugin
     {
         internal const string PluginName = "MoreJewelry";
-        internal const string PluginVersion = "1.0.7";
+        internal const string PluginVersion = "1.0.9";
         internal const string PluginAuthor = "probablykory";
         internal const string PluginGUID = PluginAuthor + "." + PluginName;
 
@@ -264,13 +264,13 @@ namespace MoreJewelry
         private static readonly Dictionary<string, string> stationMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
         {
             { "None", string.Empty },
-            { "Workbench", "Workbench" },
-            { "Forge", "Forge" },
-            { "Stonecutter", "Stonecutter" },
-            { "Cauldron", "Cauldron" },
-            { "ArtisanTable", "ArtisanTable" },
-            { "BlackForge", "BlackForge" },
-            { "GaldrTable", "GaldrTable" },
+            { "Workbench", "piece_workbench" },
+            { "Forge", "forge" },
+            { "Stonecutter", "piece_stonecutter" },
+            { "Cauldron", "piece_cauldron" },
+            { "ArtisanTable", "piece_artisanstation" },
+            { "BlackForge", "blackforge" },
+            { "GaldrTable", "piece_magetable" },
             { "GemcutterTable", "op_transmution_table" }, // JcAPI.GetGemcuttersTable().name},
             { "Gemcutter", "op_transmution_table" }
         };
@@ -417,7 +417,10 @@ namespace MoreJewelry
                 var kind = mapNameToJewelryKind(config.Prefab);
                 JcAPI.SetItemStyle(item.Prefab, determineStyle(config.Gem), config.Gem.Color);
 
-                var shared = item.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+                var drop = item.Prefab.GetComponent<ItemDrop>();
+                drop.m_autoPickup = true;
+                drop.m_autoDestroy = true;
+                var shared = drop.m_itemData.m_shared;
                 if (JewelryManager.IsInitialized())
                 {
                     JewelryManager.ClearAllEffectsFromItem(item);

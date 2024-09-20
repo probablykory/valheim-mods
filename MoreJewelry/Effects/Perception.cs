@@ -27,6 +27,13 @@ namespace MoreJewelry
             m_tooltip = m_name + "_description";
         }
 
+        public static Perception GetInstance()
+        {
+            var p = ScriptableObject.CreateInstance<Perception>();
+            p.name = "Custom_SE_Perception_PK";
+            return p;
+        }
+
         public static void SetLocations(string locations)
         {
             if (!string.IsNullOrWhiteSpace(locations))

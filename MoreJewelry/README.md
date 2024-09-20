@@ -50,43 +50,5 @@ For Questions or Comments, find <span style="color: purple;">probablykory</span>
 
 I spend countless hours every day working on, updating, and fixing mods for everyone to enjoy.  While I will never ask for anyone to pay me to make a mod or add a feature, any [support](https://paypal.me/probablyk) is greatly appreciated!
 
-## Changelog
-
-### 1.0.7
- * Updated mod and manager dependencies for Valheim Ashlands 0.218.15
- * Added support for all the new SE_Stat properties for ring effects (Enable external Yaml and look at the everything ring for examples)
- * Fix for case-insensitive name matching of built-in JC effects
- * Fix crash when running on a full Valheim debug build
-
-### 1.0.6
- * Minor update to ensure mocks work with Valheim 0.217.46
- * Small updates to default yaml config which includes a new ring, Humite Ring of Perception
- * Changed default silver ring effect to be Aquatic (gift damage buff while wet)
-
-<details>
-<summary><i>View changelog history</i></summary>
-<br/>
-
-### 1.0.5
- * Bugfix: Ensure custom skill types work when used in adhoc status effects (ones defined with yaml).  Thanks William!
-
-### 1.0.4
- * Set Config.SaveOnConfigSet to ensure config settings don't unintentionally revert.
-
-### 1.0.3
- * Added soft dep for VNEI, disabling the template prefabs.
- * Bugfix for ConfigManager api, rebuilding settings works.
-
-### 1.0.2
- * Bugfix for JC's original jewelry.  Lumberjacking, etc should all work again.  Thanks Majestic!
-
-### 1.0.1
- * Fixes for the YamlConfigEditor.  Enabled proper color usage when using Azu's Unofficial Config Manager, and fallback when not.
-
-### 1.0.0
- * Initial Version.
-
-</details>
-
 ## Known issues
 If you find a problem, please visit my [github](https://github.com/probablykory/valheim-mods)

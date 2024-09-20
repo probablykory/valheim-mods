@@ -127,7 +127,7 @@ Humite Ring of Perception:
   effect: "Perception"
 
 Silver band:
-  description: "It's heavier than it looks."
+  description: "It's heavier than it looks.  Wearing this ring will increase your damage dealt while you are wet."
   prefab: "silverring"
   gem: black
   crafting:

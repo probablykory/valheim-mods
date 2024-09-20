@@ -47,6 +47,7 @@ namespace MoreJewelry
                     //"JC_Necklace_Blue", // intentionally omitted, aquatic 
                     "JC_Necklace_Yellow",
                     "JC_Necklace_Purple",
+                    "JC_Necklace_Orange",
                     "JC_Ring_Purple",
                     // "JC_Ring_Green", // intentionally omitted, headhunter
                     "JC_Ring_Red",
@@ -85,7 +86,7 @@ namespace MoreJewelry
                 }
             }
 
-            AvailableEffects.Add(Effects.Perception, ScriptableObject.CreateInstance<Perception>());
+            AvailableEffects.Add(Effects.Perception, Perception.GetInstance());
             AddItemToEffectItemMap("JC_Necklace_Blue", Effects.Aquatic);
             AddItemToEffectItemMap("JC_Ring_Green", Effects.Headhunter);
 
@@ -101,7 +102,10 @@ namespace MoreJewelry
                 EffectItemMap.Add(effectName, itemList);
             }
             if (!itemList.Contains(prefabName))
+            {
                 itemList.Add(prefabName);
+                Logger.LogDebugOnly($"Adding {effectName} to prefab {prefabName}");
+            }
         }
 
         public static void AddAvailablePrefab(JewelryKind kind, GameObject prefab)
