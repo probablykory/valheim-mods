@@ -16,6 +16,61 @@ namespace Managers
     {
         public const string DependencyString = "com.bepis.bepinex.configurationmanager";
 
+        public static event EventHandler<EventArgs> OnDisplayingWindowChanged;
+        private static Type cmType = null;
+        private static MethodInfo buildSettingListMethod = null;
+        private static Dictionary<string, FieldInfo> cachedFieldInfos = new();
+        private static BaseUnityPlugin instance = null;
+
+        public static bool IsLoaded()
+        {
+            var isPresent = Chainloader.PluginInfos.ContainsKey(DependencyString);
+            if (isPresent)
+            {
+                Initialize();
+                return instance is not null;
+            }
+            return isPresent;
+        }
+
+        // initializer
+        private static void Initialize()
+        {
+            if (instance is null)
+            {
+                PluginInfo configManagerInfo;
+                if (Chainloader.PluginInfos.TryGetValue(DependencyString, out configManagerInfo) && configManagerInfo.Instance)
+                {
+                    instance = configManagerInfo.Instance;
+                    cmType = instance.GetType().Assembly.GetType("ConfigurationManager.ConfigurationManager");
+                    buildSettingListMethod = cmType.GetMethod("BuildSettingList");
+
+                    Logger.LogDebugOnly("Configuration manager found, hooking DisplayingWindowChanged");
+                    EventInfo eventinfo = cmType.GetEvent("DisplayingWindowChanged");
+                    if (eventinfo != null)
+                    {
+                        Action<object, object> local = new Action<object, object>(OnConfigManagerDisplayingWindowChanged);
+                        Delegate converted = Delegate.CreateDelegate(eventinfo.EventHandlerType, local.Target, local.Method);
+                        eventinfo.AddEventHandler(instance, converted);
+                    }
+                }
+            }
+        }
+
+        private static void OnConfigManagerDisplayingWindowChanged(object sender, object e)
+        {
+            OnDisplayingWindowChanged?.Invoke(sender, e as EventArgs);
+        }
+
+        public static void ReloadConfigDisplay()
+        {
+            if (instance is not null && DisplayingWindow is true && buildSettingListMethod is not null)
+            {
+                buildSettingListMethod.Invoke(instance, Array.Empty<object>());
+            }
+        }
+
+        // Field accessor properties
         public static Texture2D EntryBackground
         {
             get
@@ -24,7 +79,7 @@ namespace Managers
                 if (tex != null)
                     return tex;
                 else
-                    return GUI.skin.box.normal.background;                
+                    return GUI.skin.box.normal.background;
             }
         }
         public static Texture2D WidgetBackground
@@ -108,58 +163,23 @@ namespace Managers
         public static int LeftColumnWidth { get { return GetField<int>("<LeftColumnWidth>k__BackingField"); } }
         public static int RightColumnWidth { get { return GetField<int>("<RightColumnWidth>k__BackingField"); } }
 
-
-        public static event EventHandler<EventArgs> OnDisplayingWindowChanged;
-        private static Type cmType = null;
-        private static BaseUnityPlugin instance = null;
-
-        public static bool IsLoaded()
-        {
-            var cm = GetConfigManager();
-            return cm != null;
-        }
-
-        // initializer
-        private static BaseUnityPlugin GetConfigManager()
-        {
-            if (instance is null)
-            {
-                PluginInfo configManagerInfo;
-                if (Chainloader.PluginInfos.TryGetValue(DependencyString, out configManagerInfo) && configManagerInfo.Instance)
-                {
-                    instance = configManagerInfo.Instance;
-                    cmType = instance.GetType().Assembly.GetType("ConfigurationManager.ConfigurationManager");
-
-                    Logger.LogDebugOnly("Configuration manager found, hooking DisplayingWindowChanged");
-                    EventInfo eventinfo = cmType.GetEvent("DisplayingWindowChanged");
-                    if (eventinfo != null)
-                    {
-                        Action<object, object> local = new Action<object, object>(OnConfigManagerDisplayingWindowChanged);
-                        Delegate converted = Delegate.CreateDelegate(eventinfo.EventHandlerType, local.Target, local.Method);
-                        eventinfo.AddEventHandler(instance, converted);
-                    }
-
-                }
-            }
-
-            return instance;
-        }
-
-        private static void OnConfigManagerDisplayingWindowChanged(object sender, object e)
-        {
-            OnDisplayingWindowChanged?.Invoke(sender, e as EventArgs);
-        }
-
-        // TODO - profile to see if a cache table may be required here
         private static T GetField<T>(string fieldName)
         {
-            var cm = GetConfigManager();
+            Initialize();
             if (cmType is null) return default(T);
 
-            if (!AccessTools.GetFieldNames(cmType).Contains(fieldName))
-                return default(T);
+            object result = null;
+            if (cachedFieldInfos.ContainsKey(fieldName))
+                result = cachedFieldInfos[fieldName].GetValue(instance);
+            else
+            {
+                if (!AccessTools.GetFieldNames(cmType).Contains(fieldName))
+                    return default(T);
 
-            object result = AccessTools.Field(cmType, fieldName).GetValue(cm);
+                cachedFieldInfos[fieldName] = AccessTools.Field(cmType, fieldName);
+                result = cachedFieldInfos[fieldName].GetValue(instance);
+            }
+
             if (result is T)
             {
                 return (T)result;
@@ -173,14 +193,5 @@ namespace Managers
                 return default(T);
             }
         }
-
-        public static void ReloadConfigDisplay()
-        {
-            if (instance is not null && DisplayingWindow is true)
-            {
-                cmType.GetMethod("BuildSettingList").Invoke(instance, Array.Empty<object>());
-            }
-        }
-
     }
 }

@@ -19,12 +19,18 @@ namespace Managers
         public static event Action AfterDisableItems;
         private static Type vneiType = null;
         private static Type indexingType = null;
+        private static MethodInfo disableItemMethod = null;
         private static BaseUnityPlugin instance = null;
 
         public static bool IsLoaded()
         {
-            var vnei = GetVnei();
-            return vnei != null;
+            var isPresent = Chainloader.PluginInfos.ContainsKey(DependencyString);
+            if (isPresent)
+            {
+                Initialize();
+                return instance is not null;
+            }
+            return isPresent;
         }
 
         public static void DisableItem(string name, string context)
@@ -33,10 +39,10 @@ namespace Managers
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
             if (string.IsNullOrEmpty(context)) throw new ArgumentNullException(nameof(context));
 
-            indexingType.GetMethod("DisableItem", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] {name, context});
+            disableItemMethod.Invoke(null, new object[] {name, context});
         }
 
-        private static BaseUnityPlugin GetVnei()
+        private static void Initialize()
         {
             if (instance is null)
             {
@@ -46,6 +52,7 @@ namespace Managers
                     instance = vneiInfo.Instance;
                     vneiType = instance.GetType().Assembly.GetType("VNEI.Plugin");
                     indexingType = vneiType.Assembly.GetType("VNEI.Logic.Indexing");
+                    disableItemMethod = indexingType.GetMethod("DisableItem", BindingFlags.Static | BindingFlags.Public);
 
                     Logger.LogDebugOnly("VNEI found, hooking AfterDisableItems");
                     EventInfo eventinfo = indexingType.GetEvent("AfterDisableItems");
@@ -57,8 +64,6 @@ namespace Managers
                     }
                 }
             }
-
-            return instance;
         }
 
         private static void OnVneiAfterDisableItems()
